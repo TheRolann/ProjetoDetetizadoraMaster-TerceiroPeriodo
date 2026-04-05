@@ -1,7 +1,7 @@
 -- Cliente
 CREATE TABLE IF NOT EXISTS clientes (
-                                        id serial PRIMARY KEY,
-                                        nome_empresa varchar(150) NOT NULL,
+    id serial PRIMARY KEY,
+    nome_empresa varchar(150) NOT NULL,
     documento varchar(18) NOT NULL UNIQUE,
     endereco text,
     telefone varchar(20),
@@ -42,3 +42,32 @@ CREATE TABLE IF NOT EXISTS agenda (
     servico_id integer NOT NULL REFERENCES servicos(id),
     funcionario_id integer REFERENCES funcionarios(id)
 );
+
+-- =====================
+-- CRUD - SELECT
+-- =====================
+
+-- Listar todos
+SELECT * FROM clientes;
+SELECT * FROM funcionarios;
+SELECT * FROM servicos;
+SELECT * FROM agenda;
+
+-- Buscar por ID
+SELECT * FROM clientes WHERE id = 1;
+SELECT * FROM funcionarios WHERE id = 1;
+SELECT * FROM servicos WHERE id = 1;
+SELECT * FROM agenda WHERE id = 1;
+
+-- Buscar por status
+SELECT * FROM clientes WHERE status = 'ATIVO';
+SELECT * FROM funcionarios WHERE cargo = 'GERENTE';
+SELECT * FROM servicos WHERE status = 'AGENDADO';
+
+-- =====================
+-- CRUD - UPDATE
+-- =====================
+
+UPDATE clientes
+SET status = 'INATIVO'
+WHERE id = ;
