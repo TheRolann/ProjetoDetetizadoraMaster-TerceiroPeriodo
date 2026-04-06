@@ -25,7 +25,7 @@ public class FuncionarioRepository implements Crud<Funcionario> {
         if (funcionario != null) {
             funcionarios.remove(funcionario);
         }
-    }
+    } 
 
     // Editar vazio, pois a edicao do funcionario pode ser feita diretamente na lista, utilizando o metodo buscarPorId para encontrar o funcionario e editar seus atributos
     @Override

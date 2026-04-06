@@ -223,20 +223,23 @@ AFTER UPDATE ON servicos
 FOR EACH ROW
 EXECUTE FUNCTION fn_atualizar_agenda_servico();
 
--- Testando os Triggers
--- Concluindo o servico e deve registrar o historico e atualizar agenda
-UPDATE servicos
-SET status = 'EM_ANDAMENTO'
-WHERE id = 1;
+-- =====================
+-- TESTES DOS TRIGGERS
+-- =====================
 
+-- Teste 1 e 3: Mudar status do servico para CONCLUIDO
+-- Isso vai disparar Trigger 1 (historico) e Trigger 3 (atualizar agenda)
 UPDATE servicos
 SET status = 'CONCLUIDO'
-WHERE id = 1;
+WHERE id = 2;
 
+-- Verificar historico registrado (Trigger 1)
 SELECT * FROM historico_servicos;
 
-SELECT * FROM agenda WHERE servico_id = 1;
+-- Verificar agenda atualizada (Trigger 3)
+SELECT * FROM agenda WHERE servico_id = 2;
 
--- Trigger 2
+-- Teste 2: Tentar inserir funcionario com status INATIVO
+-- Deve gerar erro (Trigger 2)
 INSERT INTO funcionarios (nome, cpf, telefone, email, salario, cargo, status)
-VALUES ('Teste Trigger', '111.111.111-22', '45 999000-909', 'teste@gmail.com', 1000, 'FUNCIONARIO', 'INATIVO');
+VALUES ('Teste Inativo', '111.111.111-11', '(45) 90000-0000', 'teste@email.com', 1000.00, 'FUNCIONARIO', 'INATIVO');
