@@ -152,7 +152,7 @@ FULL JOIN servicos s ON s.cliente_id = c.id;
 
 
 -- =====================
--- TRIGGERS
+-- TRIGGERS E FUNCOES
 -- =====================
 
 -- Tabela de historico
