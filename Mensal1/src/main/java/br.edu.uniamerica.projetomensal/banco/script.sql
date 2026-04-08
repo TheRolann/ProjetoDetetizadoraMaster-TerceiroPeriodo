@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS clientes (
     telefone varchar(20),
     email varchar(100),
     status varchar(20) NOT NULL DEFAULT 'ATIVO'
-    );
+);
 
 -- Funcionarios
 CREATE TABLE IF NOT EXISTS funcionarios (
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     salario numeric(10,2),
     cargo varchar(20) NOT NULL DEFAULT 'FUNCIONARIO',
     status varchar(20) NOT NULL DEFAULT 'ATIVO'
-    );
+);
 
 -- Servicos
 CREATE TABLE IF NOT EXISTS servicos (
@@ -34,14 +34,14 @@ CREATE TABLE IF NOT EXISTS servicos (
     valor numeric(10,2),
     status varchar(20) NOT NULL DEFAULT 'AGENDADO',
     cliente_id integer NOT NULL REFERENCES clientes(id)
-    );
+);
 
 -- Agenda
 CREATE TABLE IF NOT EXISTS agenda (
-      id serial PRIMARY KEY,
-      data_agendada date NOT NULL,
-      hora time NOT NULL,
-      observacoes text,
+    id serial PRIMARY KEY,
+    data_agendada date NOT NULL,
+    hora time NOT NULL,
+    observacoes text,
     status varchar(20) NOT NULL DEFAULT 'AGENDADO',
     servico_id integer NOT NULL REFERENCES servicos(id),
     funcionario_id integer REFERENCES funcionarios(id)

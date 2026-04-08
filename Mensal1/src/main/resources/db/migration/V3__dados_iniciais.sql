@@ -4,7 +4,7 @@
 
 INSERT INTO clientes (nome_empresa, documento, endereco, telefone, email, status) VALUES
     ('Empresa A', '123233210000102', 'Rua A, 123 - Foz do Iguacu', '(45) 99999-9999', 'aaaaaaaaaa@gmail.com', 'ATIVO'),
-    ('Empresa B', '987654320000109', 'Rua B, 456 - Foz do Iguacu', '(45) 98888-8888', 'asdasdasda@hotmail.com', 'INATIVO');
+    ('Empresa B', '987654320000109', 'Rua B, 456 - Foz do Iguacu', '(45) 98888-8888', 'asdasdasda@hotmail.com', 'ATIVO');
 
 INSERT INTO funcionarios (nome, cpf, telefone, email, salario, cargo, status) VALUES
     ('João Silva', '123.456.789-00', '(45) 97777-7777', 'banana@gmail.com', 2500.00, 'FUNCIONARIO', 'INATIVO'),

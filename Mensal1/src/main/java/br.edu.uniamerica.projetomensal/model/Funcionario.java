@@ -2,16 +2,37 @@ package br.edu.uniamerica.projetomensal.model;
 
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "funcionarios")
 public class Funcionario {
     // Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // "IDENTITY" banco responsalvel por gerar
     private int id;
+
+    @Column(name = "nome", length = 100,  nullable = false)
     private String nome;
+
+    @Column(name = "cpf", length = 14,  nullable = false, unique = true)
     private String cpf;
+
+    @Column(name = "telefone", length = 20)
     private String telefone;
+
+    @Column(name = "email", length = 100)
     private String email;
+
+    @Column(name = "salario", columnDefinition = "numeric(10,2)") // length e para String, aqui definimos uma definicao
     private double salario;
+
+    @Enumerated(EnumType.STRING) // "Enumerated": Avisa o hibernate que o atributo e ENUM
+    @Column(name = "cargo", nullable = false)
     private Cargo cargo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private Status status;
 
      // Construtor
