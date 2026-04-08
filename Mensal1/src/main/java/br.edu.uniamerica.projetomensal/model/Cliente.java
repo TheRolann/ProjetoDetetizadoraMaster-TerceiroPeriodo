@@ -1,10 +1,17 @@
 package br.edu.uniamerica.projetomensal.model;
 
 import br.edu.uniamerica.projetomensal.model.enums.Status;
+import jakarta.persistence.*;
 
+@Entity // Transforma classe em tabela
+@Table(name = "clientes") // Nome da tabela
 public class Cliente {
     // Atributos
+    @Id // Novo ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID com novo auto-incremento
     private int id;
+
+    @Column
     private String nomeEmpresa;
     private String documento; // Pode ser CNPJ ou CPF
     private String endereco;

@@ -6,7 +6,8 @@ import br.edu.uniamerica.projetomensal.interfaces.Crud;
 import java.util.ArrayList;
 import java.util.List;
 
-// Classe repository, que implementa a interface Crud, e é responsável por realizar as operações de CRUD (Create, Read, Update, Delete) para a entidade Cliente
+
+// Classe repository, que implementa a interface Crud, e e responsavel por realizar as operacoes de CRUD (Create, Read, Update, Delete) para a entidade Cliente
 public class ClienteRepository implements Crud<Cliente>{
     // Crianco o "banco de dados" em memoria
     // Criando a List do tipo Cliente
