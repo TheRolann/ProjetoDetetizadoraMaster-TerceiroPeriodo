@@ -23,6 +23,13 @@
             <version>42.7.3</version>
         </dependency>
 
+        <!-- API JPA (Java Persistence API) -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
         <!-- Hibernate Core (implementação do JPA) -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
