@@ -8,7 +8,7 @@
     <persistence-unit name="detetizadora_master" transaction-type="RESOURCE_LOCAL">
 
         <!-- Provider JPA - Hibernate como gerenciador -->
-        <provider>org.hibernate.jpa.HibernateJpaProvider</provider>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <!-- Classes mapeadas (as @Entity) - TABELAS -->
         <class>br.edu.uniamerica.projetomensal.model.Cliente</class>
@@ -21,7 +21,7 @@
             <!-- Driver JDBC do PostgreSQL -->
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <!-- URL de conexao ao banco de dados -->
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:3006/detetizadora_master"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/detetizadora_master"/>
             <!-- Credenciais de acesso ao banco -->
             <property name="jakarta.persistence.jdbc.user" value="postgres"/>
             <property name="jakarta.persistence.jdbc.password" value="asdwsad"/>

@@ -7,6 +7,7 @@ import br.edu.uniamerica.projetomensal.service.ClienteService;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -78,7 +79,8 @@ public class ServicoMenu {
         // Utilizando a Classe InputUtils para ler os dados do servico com validacao
         String nomeServico = InputUtils.lerString(sc, "| Nome do Servico: ");
         String descricao = InputUtils.lerString(sc, "| Descricao do Servico: ");
-        String data = InputUtils.lerData(sc, "| Data Agendada (DD/MM/AAAA): ");
+        String dataString = InputUtils.lerData(sc, "| Data Agendada (DD/MM/AAAA): ");
+        LocalDate data = InputUtils.converterStringParaLocalDate(dataString);
         double valor = InputUtils.lerDouble(sc, "| Valor do Servico: R$ ");
 
         System.out.println("| Clientes disponiveis ----------------|");
@@ -252,9 +254,10 @@ public class ServicoMenu {
             servico.setNomeServico(nomeServico);
         }
 
-        System.out.println("| Data atual: " + InputUtils.formatarData(servico.getData()));
-        String data = InputUtils.lerDataOpcional(sc, "| Nova data (ENTER para manter): ");
-        if (!data.isEmpty()) {
+        System.out.println("| Data atual: " + servico.getData().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        String dataString = InputUtils.lerDataOpcional(sc, "| Nova data (ENTER para manter): ");
+        if (!dataString.isEmpty()) {
+            LocalDate data = InputUtils.converterStringParaLocalDate(dataString);
             servico.setData(data);
         }
 

@@ -2,6 +2,7 @@ package br.edu.uniamerica.projetomensal.model;
 
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "servicos")
@@ -19,7 +20,7 @@ public class Servico {
     private String descricao = "";
 
     @Column(name = "data", nullable = false)
-    private String data = "";
+    private LocalDate data;
 
     @Column(name = "valor", columnDefinition = "numeric(10, 2)")
     private double valor;
@@ -39,7 +40,7 @@ public class Servico {
     public Servico() {}
 
     // Construtor - Ja atualizado com Cliente cliente
-    public Servico(String nomeServico, String descricao, String data, double valor, Cliente cliente, Status status){
+    public Servico(String nomeServico, String descricao, LocalDate data, double valor, Cliente cliente, Status status){
         this.nomeServico = nomeServico;
         this.descricao = descricao;
         this.data = data;
@@ -58,8 +59,8 @@ public class Servico {
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public String getData() { return data; }
-    public void setData(String data) { this.data = data; }
+    public LocalDate getData() { return data; }
+    public void setData(LocalDate data) { this.data = data; }
 
     public double getValor() { return valor; }
     public void setValor(double valor) { this.valor = valor; }

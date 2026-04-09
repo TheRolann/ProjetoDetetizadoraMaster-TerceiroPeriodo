@@ -5,6 +5,7 @@ import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.repository.ServicoRepository;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ServicoService {
     private ServicoRepository repository = new ServicoRepository();
 
     // Construtor
-    public Servico cadastrar(String nomeServico, String descricao, String data, double valor, Cliente cliente, Status status) {
+    public Servico cadastrar(String nomeServico, String descricao, LocalDate data, double valor, Cliente cliente, Status status) {
         Servico servico = new Servico(nomeServico, descricao, data, valor, cliente, status);
         salvar(servico);
 

@@ -4,6 +4,7 @@ import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
+import java.time.format.DateTimeFormatter;
 
 public class RelatorioServico {
 
@@ -59,7 +60,7 @@ public class RelatorioServico {
                 totalPendente += s.getValor();
                 quantidadePendente++;
                 // Mostra os servicos pendentes, com o id, nome do servico, data e id do cliente
-                System.out.println("| " + s.getId() + " | " + s.getNomeServico() + " | " + InputUtils.formatarData(s.getData()) + " | Cliente ID: " + s.getCliente());
+                System.out.println("| " + s.getId() + " | " + s.getNomeServico() + " | " + s.getData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " | Cliente ID: " + s.getCliente());
             }
         }
 
