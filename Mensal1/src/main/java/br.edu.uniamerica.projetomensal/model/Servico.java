@@ -35,10 +35,11 @@ public class Servico {
     @Column(name = "status", nullable = false)
     private Status status;
 
+    // Construtor vazio para estrutura para o JPA
+    public Servico() {}
+
     // Construtor - Ja atualizado com Cliente cliente
-    public Servico(int id, String nomeServico, String descricao, String data,
-                   double valor, Cliente cliente, Status status){
-        this.id = id;
+    public Servico(String nomeServico, String descricao, String data, double valor, Cliente cliente, Status status){
         this.nomeServico = nomeServico;
         this.descricao = descricao;
         this.data = data;

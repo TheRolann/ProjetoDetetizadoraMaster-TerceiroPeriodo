@@ -35,9 +35,11 @@ public class Funcionario {
     @Column(name = "status", nullable = false)
     private Status status;
 
+    // Construtor vazio para estrutura para o JPA
+    public Funcionario() {}
+
      // Construtor
-    public Funcionario(int id, String nome, String cpf, String telefone, String email, double salario, Cargo cargo, Status status) {
-        this.id = id;
+    public Funcionario(String nome, String cpf, String telefone, String email, double salario, Cargo cargo, Status status) {
         this.nome = nome;
         this.cpf = cpf;
         this.telefone = telefone;

@@ -18,7 +18,7 @@ public class ClienteService implements Crud<Cliente> {
 
     // Construtor padrao que ja inicializa o repository com ID predefinido, ordem crescente
     public Cliente cadastrarCliente(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
-        Cliente cliente = new Cliente(proximoId++, nomeEmpresa, documento, endereco, telefone, email, status);
+        Cliente cliente = new Cliente(nomeEmpresa, documento, endereco, telefone, email, status);
         salvar(cliente);
 
         return  cliente;
