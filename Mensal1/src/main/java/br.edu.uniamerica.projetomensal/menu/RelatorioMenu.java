@@ -12,9 +12,9 @@ public class RelatorioMenu {
 
     Scanner sc = new Scanner(System.in);
 
-    private RelatorioCliente relatorioCliente = new RelatorioCliente();
-    private RelatorioServico relatorioServico = new RelatorioServico();
-    private RelatorioFuncionario relatorioFuncionario = new RelatorioFuncionario();
+    private final RelatorioCliente relatorioCliente = new RelatorioCliente();
+    private final RelatorioServico relatorioServico = new RelatorioServico();
+    private final RelatorioFuncionario relatorioFuncionario = new RelatorioFuncionario();
 
 
     public void iniciar() {
