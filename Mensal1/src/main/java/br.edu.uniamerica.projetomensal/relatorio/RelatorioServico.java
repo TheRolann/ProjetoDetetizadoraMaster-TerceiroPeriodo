@@ -59,7 +59,7 @@ public class RelatorioServico {
                 totalPendente += s.getValor();
                 quantidadePendente++;
                 // Mostra os servicos pendentes, com o id, nome do servico, data e id do cliente
-                System.out.println("| " + s.getId() + " | " + s.getNomeServico() + " | " + InputUtils.formatarData(s.getData()) + " | Cliente ID: " + s.getClienteID());
+                System.out.println("| " + s.getId() + " | " + s.getNomeServico() + " | " + InputUtils.formatarData(s.getData()) + " | Cliente ID: " + s.getCliente());
             }
         }
 
