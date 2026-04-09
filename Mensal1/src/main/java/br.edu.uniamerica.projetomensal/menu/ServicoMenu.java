@@ -85,10 +85,11 @@ public class ServicoMenu {
         for (Cliente c : clientes) {
             System.out.println("| ID: " + c.getId() + " - Nome: " + c.getNomeEmpresa());
         }
-        int clienteID;
+        Cliente cliente;
         while (true) {
-            clienteID = InputUtils.lerInt(sc, "| ID do Cliente: ");
-            if (clienteService.buscarPorId(clienteID) != null) {
+            int clienteID = InputUtils.lerInt(sc, "| ID do Cliente: ");
+            cliente = clienteService.buscarPorId(clienteID);
+            if (cliente != null) {
                 break; // Cliente encontrado, sai do loop
             } else {
                 System.out.println("| Cliente nao encontrado. Tente novamente.");
@@ -113,7 +114,7 @@ public class ServicoMenu {
         }
 
         // Cria o objeto Servico utilizando o ServicoService e o metodo cadastrar, passando os dados informados pelo usuario
-        Servico servico = servicoService.cadastrar(nomeServico, descricao, data, valor, clienteID, status);
+        Servico servico = servicoService.cadastrar(nomeServico, descricao, data, valor, cliente, status);
 
         System.out.println("\n|---------------------------------------|");
         System.out.println("| Servico cadastrado com sucesso!       |");
@@ -146,7 +147,7 @@ public class ServicoMenu {
             System.out.println("| Descricao: " + c.getDescricao());
             System.out.println("| Data: " + c.getData());
             System.out.println("| Valor: R$ " + c.getValor());
-            System.out.println("| ID do Cliente: " + c.getClienteID());
+            System.out.println("| ID do Cliente: " + c.getCliente().getId());
             System.out.println("| Status: " + c.getStatus());
             System.out.println("|--------------------------------------|");
         }
