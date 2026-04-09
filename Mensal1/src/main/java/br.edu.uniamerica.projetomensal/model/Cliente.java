@@ -30,9 +30,11 @@ public class Cliente {
     @Column(name = "status", nullable = false)
     private Status status;
 
+    // Construtor vazio para estrutura para o JPA
+    public Cliente() {}
+
     // Construtor
-    public Cliente(int id, String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
-        this.id = id;
+    public Cliente(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
         this.nomeEmpresa = nomeEmpresa;
         this.documento = documento;
         this.endereco = endereco;

@@ -11,7 +11,7 @@ public class PersistenceManager {
     // Ao iniciar a aplicacao, e chamado para criar a conexao com o banco de dados
     // utilizando o nome da unidade de persistencia definida no arquivo persistence.xml
     public static void conectar() {
-        emf = Persistence.createEntityManagerFactory("detetizadora");
+        emf = Persistence.createEntityManagerFactory("detetizadora_master");
         em = emf.createEntityManager();
     }
 
