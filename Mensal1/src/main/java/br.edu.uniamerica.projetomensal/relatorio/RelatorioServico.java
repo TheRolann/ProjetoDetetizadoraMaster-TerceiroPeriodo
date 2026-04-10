@@ -4,8 +4,6 @@ import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
-import java.time.format.DateTimeFormatter;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -152,7 +150,7 @@ public class RelatorioServico {
                 continue;
             }
 
-            LocalDate dataServico = converterData(s.getData());
+            LocalDate dataServico = s.getData();
 
             // Filtro por periodo, quando selecionado
             if (filtrarPorPeriodo) {
@@ -188,11 +186,8 @@ public class RelatorioServico {
             } else if (s.getStatus() == Status.EM_ANDAMENTO || s.getStatus() == Status.AGENDADO) {
                 totalPendente += valorServico;
                 quantidadePendente++;
-                // Mostra os servicos pendentes, com o id, nome do servico, data e id do cliente
-                System.out.println("| " + s.getId() + " | " + s.getNomeServico() + " | " + s.getData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " | Cliente ID: " + s.getCliente());
-            }
-        }
 
+                // Calcula a situacao da agenda (hoje, futuro, atrasado)
                 LocalDate hoje = LocalDate.now();
                 String situacaoAgenda = "SEM DATA";
 
@@ -209,10 +204,11 @@ public class RelatorioServico {
                     }
                 }
 
+                // Mostra os servicos pendentes, com o id, nome do servico, data, id do cliente e situacao
                 System.out.println("| " + s.getId()
                         + " | " + nomeServico
-                        + " | " + validarDataExibicao(s.getData())
-                        + " | Cliente ID: " + s.getClienteID()
+                        + " | " + (dataServico != null ? dataServico.format(formatter) : "SEM DATA")
+                        + " | Cliente ID: " + s.getCliente()
                         + " | " + situacaoAgenda);
             }
         }
