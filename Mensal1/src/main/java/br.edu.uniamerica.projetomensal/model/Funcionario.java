@@ -4,13 +4,16 @@ import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "funcionarios")
-public class Funcionario {
-    // Atributos
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // "IDENTITY" banco responsalvel por gerar
-    private int id;
+    import java.math.BigDecimal;
+    import java.util.List;
+
+    @Entity
+    @Table(name = "funcionarios")
+    public class Funcionario {
+        // Atributos
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY) // "IDENTITY" banco responsalvel por gerar
+        private Long id;
 
     @Column(name = "nome", length = 100,  nullable = false)
     private String nome;
@@ -35,6 +38,27 @@ public class Funcionario {
     @Column(name = "status", nullable = false)
     private Status status;
 
+        @ManyToMany(mappedBy = "servicos")
+        private List<Funcionario> funcionarios;
+
+        @OneToOne(cascade = CascadeType.ALL)
+        @JoinColumn(name = "endereco_id")
+        private Endereco endereco;
+
+
+        // Construtor vazio para estutura para o JPA
+        public Funcionario() {}
+
+         // Construtor
+        public Funcionario(String nome, String cpf, String telefone, String email, BigDecimal salario, Cargo cargo, Status status) {
+            this.nome = nome;
+            this.cpf = cpf;
+            this.telefone = telefone;
+            this.email = email;
+            this.salario = salario;
+            this.cargo = cargo;
+            this.status = status;
+        }
     // Construtor vazio para estrutura para o JPA
     public Funcionario() {}
 

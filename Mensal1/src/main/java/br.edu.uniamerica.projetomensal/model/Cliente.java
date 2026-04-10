@@ -3,6 +3,9 @@ package br.edu.uniamerica.projetomensal.model;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity // Transforma classe em tabela
 @Table(name = "clientes") // Nome da tabela
 public class Cliente {
@@ -32,6 +35,13 @@ public class Cliente {
 
     // Construtor vazio para estrutura para o JPA
     public Cliente() {}
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Servico> servicos;
+
+    @OneToOne
+    @JoinColumn(name = "endereco_id")
+    private Cliente cliente;
 
     // Construtor
     public Cliente(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {

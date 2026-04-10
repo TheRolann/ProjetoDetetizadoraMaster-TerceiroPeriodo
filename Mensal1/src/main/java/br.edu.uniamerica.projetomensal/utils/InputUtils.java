@@ -127,17 +127,6 @@ public class InputUtils {
         }
     }
 
-    // Converte Data string para LocalDate
-    public static LocalDate converterStringParaLocalDate(String data) {
-        // Entrada: "09/04/2026"
-        String[] partes = data.split("/");
-        int dia = Integer.parseInt(partes[0]);
-        int mes = Integer.parseInt(partes[1]);
-        int ano = Integer.parseInt(partes[2]);
-        return LocalDate.of(ano, mes, dia);
-    }
-
-
     // Metodo para ler numeros de telefone, validando o formato e garantindo que o usuario digite um numero de telefone valido, com 10 ou 11 digitos, sem letras ou simbolos
     public static String lerTelefone(Scanner sc, String mensagem) {
         while (true) {
