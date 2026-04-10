@@ -20,11 +20,11 @@
             <!-- Conexao PostgreSQL -->
             <!-- Driver JDBC do PostgreSQL -->
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <!-- URL de conexao ao banco de dados -->
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/detetizadora_master"/>
-            <!-- Credenciais de acesso ao banco -->
+            <!-- URL de conexao ao banco de dados - ALTERE CONFORME SUA PORTA LOCAL -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/detetizadora_master"/>
+            <!-- Credenciais de acesso ao banco - ALTERE CONFORME SEU BD LOCAL -->
             <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password" value="asdwsad"/>
+            <property name="jakarta.persistence.jdbc.password" value="sua_senha_aqui"/>
 
             <!-- Configuracao Hibernate -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
@@ -32,8 +32,9 @@
             <!-- Valida tabelas, mas nao altera o schema (nao cria, nao atualiza, nao deleta) -->
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <!-- Exibe as consultas SQL geradas pelo Hibernate no console -->
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>
+
