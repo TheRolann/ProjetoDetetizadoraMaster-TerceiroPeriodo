@@ -1,5 +1,6 @@
 package br.edu.uniamerica.projetomensal.menu;
 
+import br.edu.uniamerica.projetomensal.relatorio.RelatorioAgenda;
 import br.edu.uniamerica.projetomensal.relatorio.RelatorioCliente;
 import br.edu.uniamerica.projetomensal.relatorio.RelatorioFuncionario;
 import br.edu.uniamerica.projetomensal.relatorio.RelatorioServico;
@@ -15,7 +16,7 @@ public class RelatorioMenu {
     private RelatorioCliente relatorioCliente = new RelatorioCliente();
     private RelatorioServico relatorioServico = new RelatorioServico();
     private RelatorioFuncionario relatorioFuncionario = new RelatorioFuncionario();
-
+    private RelatorioAgenda relatorioAgenda = new RelatorioAgenda();
 
     public void iniciar() {
         do {
@@ -26,6 +27,7 @@ public class RelatorioMenu {
             System.out.println("| 1 - Relatorio de Cliente             |");
             System.out.println("| 2 - Relatorio de Funcionario         |");
             System.out.println("| 3 - Relatorio de Servico             |");
+            System.out.println("| 4 - Relatorio de Agendamentos        |");
             System.out.println("| 0 - Voltar                           |");
             System.out.println("|--------------------------------------|");
             opcao = InputUtils.lerInt(sc, "Opcao: ");
@@ -40,6 +42,14 @@ public class RelatorioMenu {
                 case 3:
                     relatorioServico.totalFaturado();
                     break;
+                case 4:
+                    relatorioAgenda.iniciar();
+                    break;
+                case 0:
+                    System.out.println("Voltando ao menu principal...");
+                    break;
+                default:
+                    System.out.println("Opcao invalida.");
             }
         } while (opcao != 0);
     }
