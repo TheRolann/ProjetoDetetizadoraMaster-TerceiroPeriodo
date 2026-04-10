@@ -3,6 +3,8 @@ package br.edu.uniamerica.projetomensal.model;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "servicos")
 public class Servico {
@@ -34,6 +36,14 @@ public class Servico {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
+
+    @ManyToMany
+    @JoinTable(
+            name = "funcionario_servico",
+            joinColumns = @JoinColumn(name = "funcionario_id"),
+            inverseJoinColumns = @JoinColumn(name = "servico_id")
+    )
+    private List<Servico> servicos;
 
     // Construtor - Ja atualizado com Cliente cliente
     public Servico(int id, String nomeServico, String descricao, String data,

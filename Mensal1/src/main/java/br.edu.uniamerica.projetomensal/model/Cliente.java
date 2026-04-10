@@ -3,6 +3,9 @@ package br.edu.uniamerica.projetomensal.model;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity // Transforma classe em tabela
 @Table(name = "clientes") // Nome da tabela
 public class Cliente {
@@ -29,6 +32,13 @@ public class Cliente {
     @Enumerated(EnumType.STRING) // Indica que é um ENUM
     @Column(name = "status", nullable = false)
     private Status status;
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Servico> servicos;
+
+    @OneToOne
+    @JoinColumn(name = "endereco_id")
+    private Cliente cliente;
 
     // Construtor
     public Cliente(int id, String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {

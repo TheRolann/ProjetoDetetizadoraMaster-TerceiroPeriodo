@@ -1,7 +1,7 @@
 package br.edu.uniamerica.projetomensal.repository;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
+import br.edu.uniamerica.projetomensal.model.Cliente;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;

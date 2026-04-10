@@ -1,6 +1,5 @@
 package br.edu.uniamerica.projetomensal.relatorio;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
 
 public class RelatorioCliente {

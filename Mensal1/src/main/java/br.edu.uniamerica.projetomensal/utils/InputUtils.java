@@ -1,5 +1,6 @@
 package br.edu.uniamerica.projetomensal.utils;
 
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 // Classe para ler e validar entradas de usuario, garantindo que os dados sejam do tipo esperado e evitando erros de formato
@@ -27,18 +28,19 @@ public class InputUtils {
     }
 
     // Metodo para ler um numero decimal, validando a entrada e tratando erros de formato
-    public static double lerDouble(Scanner sc, String mensagem) {
+    public static BigDecimal lerBigDecimal(Scanner sc, String mensagem) {
         // Loop para continuar solicitando a entrada ate que o usuario digite um numero decimal valido
         while (true) {
             System.out.print(mensagem);
             String entrada = sc.nextLine().trim(); // Remove espacos em branco no inicio e no final da entrada para evitar erros de formato
+
             if (entrada.isEmpty()) { // Verifica se a entrada esta vazia, se sim, solicita novamente
                 System.out.println("Entrada vazia. Por favor, digite um numero valido.");
                 continue;
             }
             try { // Tenta converter a entrada para double, se nao, lanca um NumberFormatException.
                 // Substitui virgula por ponto para permitir formatos decimais
-                return Double.parseDouble(entrada.replace(",", "."));
+                return new BigDecimal(entrada.replace(",", "."));
             } catch (NumberFormatException e) {
                 System.out.println("Entrada invalida. Por favor, digite um numero valido.");
             }
@@ -188,14 +190,31 @@ public class InputUtils {
     }
 
     public static int lerIntOpcional(Scanner sc, String mensagem) {
+        while (true) {
+            try {
+                System.out.print(mensagem);
+                String entrada = sc.nextLine().trim();
+
+                if (entrada.isEmpty()) {
+                    return 0; // Retorna 0 se o usuario nao digitar nada
+                }
+
+                return Integer.parseInt(entrada);
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Por favor, digite um numero inteiro.");
+            }
+        }
+    }
+
+    public static Long lerLongOpcional(Scanner sc, String mensagem) {
         while(true) {
             try {
                 System.out.print(mensagem);
                 String entrada = sc.nextLine().trim();
                 if (entrada.isEmpty()) {
-                    return 0; // Retorna 0 se o usuario nao digitar nada
+                    return 0L; // Retorna 0 se o usuario nao digitar nada
                 }
-                return Integer.parseInt(entrada);
+                return Long.parseLong(entrada);
             } catch (NumberFormatException e) {
                 System.out.println("Entrada invalida. Por favor, digite um numero inteiro.");
             }

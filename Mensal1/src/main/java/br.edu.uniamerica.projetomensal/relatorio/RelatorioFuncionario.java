@@ -1,13 +1,15 @@
 package br.edu.uniamerica.projetomensal.relatorio;
 
+import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Funcionario;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.service.FuncionarioService;
+import jakarta.persistence.EntityManager;
 
 public class RelatorioFuncionario {
-
+    private EntityManager em = PersistenceManager.getEntityManager();
     // Instancia do FuncionarioService para acessar os dados dos funcionarios
-    private FuncionarioService funcionarioService = new FuncionarioService();
+    private FuncionarioService funcionarioService = new FuncionarioService(em);
 
     // Relatorio que exibe o total de funcionarios, gerentes, devs e o total de salarios a pagar
     public void relatorioFuncionarios() {
