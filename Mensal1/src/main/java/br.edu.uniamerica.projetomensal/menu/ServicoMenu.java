@@ -1,11 +1,13 @@
 package br.edu.uniamerica.projetomensal.menu;
 
+import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
+import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,13 +16,20 @@ import java.util.Scanner;
 public class ServicoMenu {
 
     // Instancia do ServicoService e ClienteService para realizar operacoes
-    private ServicoService servicoService = new ServicoService();
-    private ClienteService clienteService = new ClienteService();
+    private ServicoService servicoService;
+    private ClienteService clienteService;
 
     // Scanner para entrada de dados
     Scanner sc = new Scanner(System.in);
 
     int opcao;
+
+    // Construtor que inicializa os services com EntityManager
+    public ServicoMenu() {
+        EntityManager em = PersistenceManager.getEntityManager();
+        this.servicoService = new ServicoService(em);
+        this.clienteService = new ClienteService(em);
+    }
 
     // Metodo para iniciar o menu de servicos
     public void iniciar() {

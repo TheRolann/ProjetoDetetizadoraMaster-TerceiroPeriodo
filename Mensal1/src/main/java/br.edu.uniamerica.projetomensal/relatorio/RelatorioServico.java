@@ -1,9 +1,11 @@
 package br.edu.uniamerica.projetomensal.relatorio;
 
+import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -13,11 +15,17 @@ import java.util.Scanner;
 public class RelatorioServico {
 
     // Instanciamento do servicoService para acessar os serviços cadastrados
-    private final ServicoService servicoService = new ServicoService();
+    private final ServicoService servicoService;
     private final Scanner sc = new Scanner(System.in);
 
     // Formatador de data no padrao do sistema
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    // Construtor que inicializa o service com EntityManager
+    public RelatorioServico() {
+        EntityManager em = PersistenceManager.getEntityManager();
+        this.servicoService = new ServicoService(em);
+    }
 
     // Relatorio de servico com escolha entre geral ou por periodo
     public void totalFaturado() {

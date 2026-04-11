@@ -5,39 +5,45 @@ import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import jakarta.persistence.EntityManager;
 
-// Classe repository, que implementa a interface Crud, e é responsável por realizar as operações de CRUD (Create, Read, Update, Delete) para a entidade Servico
+// Classe repository responsável por realizar as operações de CRUD para a entidade Servico
 public class ServicoRepository {
 
-    private EntityManager em = PersistenceManager.getEntityManager();
+    private EntityManager em;
 
-    public void salvar(Servico servico) {
-        em.getTransaction().begin(); // Inicia a operacao
-        em.persist(servico);         // Salva no banco
-        em.getTransaction().commit();// Finaliza a operacao
+    // Construtor que aceita EntityManager como parâmetro
+    public ServicoRepository(EntityManager em) {
+        this.em = em;
     }
 
-    // Apaga o servico da lista, caso o id seja encontrado, pelo numero do id, utilizando o metodo buscarPorId para encontrar
+    // Construtor padrão para compatibilidade
+    public ServicoRepository() {
+        this.em = PersistenceManager.getEntityManager();
+    }
+
+    // Salva o serviço no banco
+    public void salvar(Servico servico) {
+        em.persist(servico);
+    }
+
+    // Apaga o serviço do banco caso o id seja encontrado
     public void excluir(int id) {
         Servico servico = buscarPorId(id);
         if (servico != null) {
-            em.getTransaction().begin();
-            em.remove(servico);           // Remove do banco
-            em.getTransaction().commit();
+            em.remove(servico);
         }
     }
 
+    // Atualiza o serviço no banco
     public void editar(Servico servico) {
-        em.getTransaction().begin();
-        em.merge(servico);           // Atualiza no banco
-        em.getTransaction().commit();
+        em.merge(servico);
     }
 
-    // Busca o servico na lista por id com for each, caso nao tenha, retorna null
+    // Busca o serviço no banco por id
     public Servico buscarPorId(int id) {
-        return em.find(Servico.class, id); // Procura na classe Servico, o id passado como parametro
+        return em.find(Servico.class, id);
     }
 
-    // Lista todos os servicos da lista, utilizando o metodo listar para retornar a lista de servicos
+    // Lista todos os serviços do banco
     public List<Servico> listar() {
         return em.createQuery("SELECT s FROM Servico s", Servico.class).getResultList();
     }

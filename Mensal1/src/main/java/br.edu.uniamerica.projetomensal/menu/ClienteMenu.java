@@ -1,9 +1,11 @@
 package br.edu.uniamerica.projetomensal.menu;
 
+import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
+import jakarta.persistence.EntityManager;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,12 +13,18 @@ import java.util.Scanner;
 public class ClienteMenu {
 
     // Instancia do servico de cliente para realizar as operacoes
-    private ClienteService clienteService = new ClienteService();
+    private ClienteService clienteService;
 
     // Scanner para entrada de dados do usuario
     Scanner sc = new Scanner(System.in);
 
     int opcao;
+
+    // Construtor que inicializa o service com EntityManager
+    public ClienteMenu() {
+        EntityManager em = PersistenceManager.getEntityManager();
+        this.clienteService = new ClienteService(em);
+    }
 
     // Metodo para iniciar o menu de cliente
     public void iniciar() {

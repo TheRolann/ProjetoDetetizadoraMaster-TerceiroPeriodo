@@ -4,85 +4,119 @@ import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.repository.ServicoRepository;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
+import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 // Classe de servico para gerenciar as operacoes relacionadas aos servicos
 
 public class ServicoService {
 
-    // Instancia do repository para acessar os dados dos servicos
-    private ServicoRepository repository = new ServicoRepository();
+    private EntityManager em;
+    private ServicoRepository repository;
 
-    // Construtor
+    public ServicoService(EntityManager em) {
+        this.em = em;
+        this.repository = new ServicoRepository(em);
+    }
+
+    // Metodo para cadastrar servico
     public Servico cadastrar(String nomeServico, String descricao, LocalDate data, double valor, Cliente cliente, Status status) {
         Servico servico = new Servico(nomeServico, descricao, data, valor, cliente, status);
         salvar(servico);
-
         return servico;
     }
 
-    // Metodos Crud implementados para realizar as operacoes de salvar, excluir, editar, buscar por ID e listar servicos
+    // Metodos CRUD com transações
 
     public void salvar(Servico servico) {
         try {
+            em.getTransaction().begin();
+
             // Validação do valor do serviço
             if (servico.getValor() <= 0) {
                 throw new RuntimeException("O valor do serviço deve ser maior que 0");
             }
 
+            // Validação de cliente
+            if (servico.getCliente() == null) {
+                throw new RuntimeException("Serviço deve ter um cliente vinculado");
+            }
+
+            // Validação de data
+            if (servico.getData() == null) {
+                throw new RuntimeException("Data do serviço não pode estar vazia");
+            }
+
             repository.salvar(servico);
+            em.getTransaction().commit();
         } catch (Exception e) {
-            System.out.println("Erro ao salvar: " + e.getMessage());
+            em.getTransaction().rollback();
+            throw e;
+        }
+    }
+
+    public void editar(Servico servico) {
+        try {
+            em.getTransaction().begin();
+
+            if (servico.getId() == 0) {
+                throw new RuntimeException("ID não pode ser zero para edição");
+            }
+
+            Servico existente = repository.buscarPorId(servico.getId());
+            if (existente == null) {
+                throw new RuntimeException("Serviço não encontrado");
+            }
+
+            // Validação do valor
+            if (servico.getValor() <= 0) {
+                throw new RuntimeException("O valor do serviço deve ser maior que 0");
+            }
+
+            // Validação de cliente
+            if (servico.getCliente() == null) {
+                throw new RuntimeException("Serviço deve ter um cliente vinculado");
+            }
+
+            existente.setNomeServico(servico.getNomeServico());
+            existente.setDescricao(servico.getDescricao());
+            existente.setData(servico.getData());
+            existente.setValor(servico.getValor());
+            existente.setCliente(servico.getCliente());
+            existente.setStatus(servico.getStatus());
+
+            repository.editar(existente);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
         }
     }
 
     public void excluir(int id) {
         try {
-            repository.excluir(id);
-        } catch (Exception e) {
-            System.out.println("Erro ao remover: " + e.getMessage());
-        }
-    }
+            em.getTransaction().begin();
 
-    // Metodo de edicao que busca o cliente existente por ID e atualiza seus dados com os novos valores fornecidos
-    public void editar(Servico servico) {
-        try {
-            Servico servicoExistente = buscarPorId(servico.getId());
-
-            if (servicoExistente != null) {
-                servicoExistente.setNomeServico(servico.getNomeServico());
-                servicoExistente.setDescricao(servico.getDescricao());
-                servicoExistente.setData(servico.getData());
-                servicoExistente.setValor(servico.getValor());
-                servicoExistente.setCliente(servico.getCliente());
-                servicoExistente.setStatus(servico.getStatus());
-
-                repository.editar(servicoExistente); // Salva no banco a edicao do servicos
+            Servico servico = repository.buscarPorId(id);
+            if (servico == null) {
+                throw new RuntimeException("Serviço não encontrado");
             }
+
+            repository.excluir(id);
+            em.getTransaction().commit();
         } catch (Exception e) {
-            System.out.println("Erro ao editar: " + e.getMessage());
+            em.getTransaction().rollback();
+            throw e;
         }
     }
 
-    // Metodo para listar todos os servicos cadastrados, retornando uma lista de objetos servicos
     public Servico buscarPorId(int id) {
-        try {
-            return repository.buscarPorId(id);
-        } catch (Exception e) {
-            System.out.println("Erro ao buscar por id: " + e.getMessage());
-            return null;
-        }
+        return repository.buscarPorId(id);
     }
 
     public List<Servico> listar() {
-        try {
-            return repository.listar();
-        } catch (Exception e) {
-            System.out.println("Erro ao listar: " + e.getMessage());
-            return new ArrayList<>(); // Retornando lista vazia para nao crashar no MENU. NullPointerException
-        }
+        return repository.listar();
     }
 }
