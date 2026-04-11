@@ -27,7 +27,6 @@
             <property name="jakarta.persistence.jdbc.password" value="asdwsad"/>
 
             <!-- Configuracao Hibernate -->
-            <!-- Configuracao Hibernate -->
             <!-- Usa 'update' para criar/atualizar tabelas conforme necessário -->
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <!-- Exibe as consultas SQL geradas pelo Hibernate no console -->
