@@ -208,7 +208,7 @@ public class RelatorioServico {
                 System.out.println("| " + s.getId()
                         + " | " + nomeServico
                         + " | " + (dataServico != null ? dataServico.format(formatter) : "SEM DATA")
-                        + " | Cliente ID: " + s.getCliente()
+                        + " | Cliente ID: " + s.getCliente().getId()
                         + " | " + situacaoAgenda);
             }
         }

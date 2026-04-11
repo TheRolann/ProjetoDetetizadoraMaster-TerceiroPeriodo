@@ -248,6 +248,17 @@ public class ClienteMenu {
             }
         }
 
+        System.out.println("| Documento atual: " + cliente.getDocumento());
+        String documento = InputUtils.lerStringOpcional(sc, "| Novo documento (ENTER para manter): ");
+        if (!documento.isEmpty()) {
+            String documentoLimpo = documento.replaceAll("[./-]", "");
+            if (documentoLimpo.matches("\\d{11}|\\d{14}")) {
+                cliente.setDocumento(documentoLimpo);
+            } else {
+                System.out.println("| Documento invalido. Mantendo documento atual.");
+            }
+        }
+
         // Edita o objeto cliente utilizando o clienteService, e mostra mensagem de sucesso
         clienteService.editar(cliente);
 

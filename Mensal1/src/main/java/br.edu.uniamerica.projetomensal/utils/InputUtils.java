@@ -109,7 +109,7 @@ public class InputUtils {
         }
     }
 
-    // Classe para ler datas, validando o formato e garantindo que o usuario digite uma data valida no formato DD/MM/AAAA ou DD.MM.AAAA
+    // Classe para ler datas, validando o formato e garantindo que o usuario digite uma data valida no formato DD/MM/AAAA
     public static String lerData(Scanner sc, String mensagem) {
         while (true) {
             System.out.print(mensagem);
@@ -118,12 +118,26 @@ public class InputUtils {
                 System.out.println("Entrada vazia. Por favor, digite uma data valida.");
                 continue;
             }
-            // Mesma validacao com matches, numero regular com 2 digitos separado por / ou . e depois 4 que seria o ano
-            if (!entrada.matches("\\d{2}/\\d{2}/\\d{4}") || !entrada.matches("\\d{2}.\\d{2}.\\d{4}")) { // Verifica se a entrada tem o formato DD/MM/AAAA
+            // Valida se tem o formato DD/MM/AAAA com /
+            if (!entrada.matches("\\d{2}/\\d{2}/\\d{4}")) {
                 System.out.println("Entrada invalida. A data deve estar no formato DD/MM/AAAA.");
                 continue;
             }
-            return entrada;
+
+            // Extrai dia, mes e ano da entrada
+            String[] partes = entrada.split("/");
+            int dia = Integer.parseInt(partes[0]);
+            int mes = Integer.parseInt(partes[1]);
+            int ano = Integer.parseInt(partes[2]);
+
+            // Valida se a data realmente existente
+            try {
+                LocalDate.of(ano, mes, dia);
+                return entrada; // Se conseguir criar a data, ela é válida
+            } catch (Exception e) {
+                System.out.println("Data inexistente. Por favor, digite uma data valida (ex: 25/12/2026).");
+                continue;
+            }
         }
     }
 
@@ -222,11 +236,26 @@ public class InputUtils {
             if (entrada.isEmpty()) {
                 return ""; // Retorna string vazia se o usuario nao digitar nada
             }
-            if (!entrada.matches("\\d{2}/\\d{2}/\\d{4}") || !entrada.matches("\\d{2}.\\d{2}.\\d{4}")) { // Verifica se a entrada tem o formato DD/MM/AAAA
+            // Valida se tem o formato DD/MM/AAAA com /
+            if (!entrada.matches("\\d{2}/\\d{2}/\\d{4}")) {
                 System.out.println("Entrada invalida. A data deve estar no formato DD/MM/AAAA.");
                 continue;
             }
-            return entrada;
+
+            // Extrai dia, mes e ano da entrada
+            String[] partes = entrada.split("/");
+            int dia = Integer.parseInt(partes[0]);
+            int mes = Integer.parseInt(partes[1]);
+            int ano = Integer.parseInt(partes[2]);
+
+            // Valida se a data é realmente existente
+            try {
+                LocalDate.of(ano, mes, dia);
+                return entrada; // Se conseguir criar a data, ela é válida
+            } catch (Exception e) {
+                System.out.println("Data inexistente. Por favor, digite uma data valida (ex: 25/12/2026).");
+                continue;
+            }
         }
     }
 
@@ -259,6 +288,28 @@ public class InputUtils {
                 continue;
             }
             return entrada;
+        }
+    }
+
+    // Metodo para ler valor de servico, validando que seja maior que 0
+    public static double lerValorServico(Scanner sc, String mensagem) {
+        while (true) {
+            System.out.print(mensagem);
+            String entrada = sc.nextLine().trim();
+            if (entrada.isEmpty()) {
+                System.out.println("Entrada vazia. Por favor, digite um valor valido.");
+                continue;
+            }
+            try {
+                double valor = Double.parseDouble(entrada.replace(",", "."));
+                if (valor <= 0) {
+                    System.out.println("Entrada invalida. O valor do servico deve ser maior que 0.");
+                    continue;
+                }
+                return valor;
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Por favor, digite um numero valido.");
+            }
         }
     }
 }

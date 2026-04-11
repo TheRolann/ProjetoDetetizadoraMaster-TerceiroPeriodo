@@ -28,6 +28,11 @@ public class ServicoService {
 
     public void salvar(Servico servico) {
         try {
+            // Validação do valor do serviço
+            if (servico.getValor() <= 0) {
+                throw new RuntimeException("O valor do serviço deve ser maior que 0");
+            }
+
             repository.salvar(servico);
         } catch (Exception e) {
             System.out.println("Erro ao salvar: " + e.getMessage());

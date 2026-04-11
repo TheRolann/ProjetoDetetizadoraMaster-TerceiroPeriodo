@@ -24,6 +24,14 @@ public class ClienteService {
 
     public void salvar(Cliente cliente) {
         try {
+            // Validação de documento válido (CPF/CNPJ)
+            if (cliente.getDocumento() == null || cliente.getDocumento().isEmpty()) {
+                throw new RuntimeException("Documento não pode estar vazio");
+            }
+            if (!cliente.getDocumento().matches("\\d{11}|\\d{14}")) {
+                throw new RuntimeException("Documento deve conter exatamente 11 ou 14 dígitos");
+            }
+
             repository.salvar(cliente);
         } catch (Exception e) {
             System.out.println("Erro ao salvar: " + e.getMessage());
