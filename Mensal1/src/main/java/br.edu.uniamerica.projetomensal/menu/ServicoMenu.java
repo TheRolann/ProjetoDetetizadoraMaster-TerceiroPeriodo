@@ -7,6 +7,7 @@ import br.edu.uniamerica.projetomensal.service.ClienteService;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -78,17 +79,21 @@ public class ServicoMenu {
         // Utilizando a Classe InputUtils para ler os dados do servico com validacao
         String nomeServico = InputUtils.lerString(sc, "| Nome do Servico: ");
         String descricao = InputUtils.lerString(sc, "| Descricao do Servico: ");
-        String data = InputUtils.lerData(sc, "| Data Agendada (DD/MM/AAAA): ");
+        String dataString = InputUtils.lerData(sc, "| Data Agendada (DD/MM/AAAA): ");
+        // Converter data no formato dd/MM/yyyy para LocalDate
+        String[] dateParts = dataString.split("/");
+        LocalDate data = LocalDate.of(Integer.parseInt(dateParts[2]), Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[0]));
         double valor = InputUtils.lerDouble(sc, "| Valor do Servico: R$ ");
 
         System.out.println("| Clientes disponiveis ----------------|");
         for (Cliente c : clientes) {
             System.out.println("| ID: " + c.getId() + " - Nome: " + c.getNomeEmpresa());
         }
-        int clienteID;
+        Cliente cliente;
         while (true) {
-            clienteID = InputUtils.lerInt(sc, "| ID do Cliente: ");
-            if (clienteService.buscarPorId(clienteID) != null) {
+            int clienteID = InputUtils.lerInt(sc, "| ID do Cliente: ");
+            cliente = clienteService.buscarPorId(clienteID);
+            if (cliente != null) {
                 break; // Cliente encontrado, sai do loop
             } else {
                 System.out.println("| Cliente nao encontrado. Tente novamente.");
@@ -113,7 +118,7 @@ public class ServicoMenu {
         }
 
         // Cria o objeto Servico utilizando o ServicoService e o metodo cadastrar, passando os dados informados pelo usuario
-        Servico servico = servicoService.cadastrar(nomeServico, descricao, data, valor, clienteID, status);
+        Servico servico = servicoService.cadastrar(nomeServico, descricao, data, valor, cliente, status);
 
         System.out.println("\n|---------------------------------------|");
         System.out.println("| Servico cadastrado com sucesso!       |");
@@ -146,7 +151,7 @@ public class ServicoMenu {
             System.out.println("| Descricao: " + c.getDescricao());
             System.out.println("| Data: " + c.getData());
             System.out.println("| Valor: R$ " + c.getValor());
-            System.out.println("| ID do Cliente: " + c.getClienteID());
+            System.out.println("| ID do Cliente: " + c.getCliente().getId());
             System.out.println("| Status: " + c.getStatus());
             System.out.println("|--------------------------------------|");
         }
@@ -251,9 +256,11 @@ public class ServicoMenu {
             servico.setNomeServico(nomeServico);
         }
 
-        System.out.println("| Data atual: " + InputUtils.formatarData(servico.getData()));
-        String data = InputUtils.lerDataOpcional(sc, "| Nova data (ENTER para manter): ");
-        if (!data.isEmpty()) {
+        System.out.println("| Data atual: " + servico.getData().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        String dataString = InputUtils.lerDataOpcional(sc, "| Nova data (ENTER para manter): ");
+        if (!dataString.isEmpty()) {
+            String[] dateParts = dataString.split("/");
+            LocalDate data = LocalDate.of(Integer.parseInt(dateParts[2]), Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[0]));
             servico.setData(data);
         }
 

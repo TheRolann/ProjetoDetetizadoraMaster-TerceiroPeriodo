@@ -141,7 +141,7 @@ Implementações:
 ### Critério I — SQL Puro ✅ (95% feito)
 **Objetivo:** Demonstrar conhecimento de SQL com tabelas, CRUD, JOINs e triggers.
 
-**Localização:** `banco/script.sql` e `src/main/resources/db/migration/V1_criar_tabelas.sql`
+**Localização:** `banco/script.sql` e `src/main/resources/db/migration/V1__criar_tabelas.sql`
 
 #### Tabelas criadas:
 ```

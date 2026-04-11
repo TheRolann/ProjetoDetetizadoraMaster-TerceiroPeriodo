@@ -9,8 +9,8 @@ public class MenuPrincipal {
 
     ClienteMenu clienteMenu = new ClienteMenu();
     FuncionarioMenu funcionarioMenu = new FuncionarioMenu();
-    RelatorioMenu relatorioMenu = new RelatorioMenu();
     ServicoMenu servicoMenu = new ServicoMenu();
+    RelatorioMenu relatorioMenu = new RelatorioMenu();
 
     public void iniciar() {
         int opcao;
@@ -42,10 +42,10 @@ public class MenuPrincipal {
                     relatorioMenu.iniciar();
                     break;
                 case 0:
-                    System.out.println("Saindo do sistema...");
+                    System.out.println("Saindo do sistema.");
                     break;
                 default:
-                    System.out.println("Opção inválida. Tente novamente.");
+                    System.out.println("Opcao invalida. Tente novamente.");
             }
 
         } while (opcao != 0);

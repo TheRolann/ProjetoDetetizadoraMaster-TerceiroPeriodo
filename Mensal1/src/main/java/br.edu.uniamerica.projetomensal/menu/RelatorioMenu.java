@@ -16,7 +16,6 @@ public class RelatorioMenu {
     private RelatorioServico relatorioServico = new RelatorioServico();
     private RelatorioFuncionario relatorioFuncionario = new RelatorioFuncionario();
 
-
     public void iniciar() {
         do {
             System.out.println("\n|--------------------------------------|");
@@ -40,6 +39,11 @@ public class RelatorioMenu {
                 case 3:
                     relatorioServico.totalFaturado();
                     break;
+                case 0:
+                    System.out.println("Voltando ao menu principal...");
+                    break;
+                default:
+                    System.out.println("Opcao invalida.");
             }
         } while (opcao != 0);
     }

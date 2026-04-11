@@ -1,5 +1,6 @@
 package br.edu.uniamerica.projetomensal.utils;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 // Classe para ler e validar entradas de usuario, garantindo que os dados sejam do tipo esperado e evitando erros de formato

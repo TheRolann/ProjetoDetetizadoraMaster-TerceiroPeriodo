@@ -6,8 +6,8 @@ import java.util.List;
 // Possibilitado criar apenas uma interface
 public interface Crud<T> {
     void salvar(T objeto);
-    void excluir(int id);
+    void excluir(Long id);
     void editar(T objeto);
-    T buscarPorId(int id);
+    T buscarPorId(Long id);
     List<T> listar();
 }

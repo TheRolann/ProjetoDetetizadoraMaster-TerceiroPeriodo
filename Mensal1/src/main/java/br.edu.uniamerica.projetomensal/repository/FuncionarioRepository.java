@@ -1,49 +1,71 @@
 package br.edu.uniamerica.projetomensal.repository;
 
-import br.edu.uniamerica.projetomensal.interfaces.Crud;
 import br.edu.uniamerica.projetomensal.model.Funcionario;
-import java.util.ArrayList;
+import br.edu.uniamerica.projetomensal.model.enums.Status;
+import jakarta.persistence.EntityManager;
+import br.edu.uniamerica.projetomensal.config.PersistenceManager;
+
 import java.util.List;
 
-// Classe repository, que implementa a interface Crud, e é responsável por realizar as operações de CRUD (Create, Read, Update, Delete) para a entidade Funcionario
-public class FuncionarioRepository implements Crud<Funcionario> {
-    // Crianco o "banco de dados" em memoria
-    // Criando a List do tipo Funcionario
-    private static List<Funcionario> funcionarios  = new ArrayList<>();
+// OBSOLETO - Classe repository, que implementa a interface Crud, e é responsável por realizar as operações de CRUD (Create, Read, Update, Delete) para a entidade Funcionario
+// Classe passa a receber persistencia EntityManager com JPA, sem ser por interface
+public class FuncionarioRepository {
+    private EntityManager em;
 
-    // Sobreescrita dos metodos da interface Crud, para realizar as operacoes
+    public FuncionarioRepository(EntityManager em){
+        this.em = em;
+    }
 
-    @Override
     public void salvar(Funcionario funcionario) {
-        funcionarios.add(funcionario);
+        em.persist(funcionario);
     }
 
-    // Apaga o funcionario da lista, caso o id seja encontrado, pelo numero do id, utilizando o metodo buscarPorId para encontrar
-    @Override
-    public void excluir(int id) {
-        Funcionario funcionario = buscarPorId(id);
-        if (funcionario != null) {
-            funcionarios.remove(funcionario);
-        }
-    } 
+    public Funcionario editar(Funcionario funcionario) {
 
-    // Editar vazio, pois a edicao do funcionario pode ser feita diretamente na lista, utilizando o metodo buscarPorId para encontrar o funcionario e editar seus atributos
-    @Override
-    public void editar(Funcionario funcionario) {}
+        return em.merge(funcionario);
+    }
 
-    // Busca o funcionario na lista por id com for each, caso nao tenha, retorna null
-    @Override
+    // Busca o funcionario na lista por id
     public Funcionario buscarPorId(int id) {
-        for (Funcionario funcionario : funcionarios) {
-            if (funcionario.getId() == id) {
-                return funcionario;
-            }
-        }
-        return null;
+        return em.find(Funcionario.class, id); // Procura na classe Funcionario, o id passado como parametro
     }
 
-    // Lista todos os funcionarios da lista, utilizando o metodo listar para retornar a lista de funcionarios
+    public List<Funcionario> buscarPorNome(String prefoxo) {
+    return em.createQuery("SELECT f FROM Funcionario f WHERE f.nome LIKE :prefixo", Funcionario.class)
+            .setParameter("prefixo", prefoxo + "%")
+            .getResultList();
+    }
+
+    // Lista todos os funcionarios
     public List<Funcionario> listar() {
-        return funcionarios;
+        return em.createQuery("SELECT f FROM Funcionario f", Funcionario.class)
+                .getResultList();
+    }
+
+    // Lista apenas os funcionarios ativos
+    public List<Funcionario> listarAtivos() {
+        return em.createQuery(
+                "SELECT f FROM Funcionario f WHERE f.status = :status", Funcionario.class)
+                .setParameter("status", Status.ATIVO)
+                .getResultList();
+    }
+
+    public Funcionario buscarPorCpf(String cpf) {
+        List<Funcionario> lista = em.createQuery(
+                "SELECT f FROM Funcionario f WHERE f.cpf = :cpf", Funcionario.class)
+                .setParameter("cpf", cpf)
+                .getResultList();
+        if (lista.isEmpty()) {
+            return null;
+        }
+        return lista.get(0);
+    }
+
+    public boolean existePorCpf(String cpf) {
+        Long count = em.createQuery(
+                "SELECT COUNT(f) FROM Funcionario f WHERE f.cpf = :cpf", Long.class)
+                .setParameter("cpf", cpf)
+                .getSingleResult();
+        return count > 0;
     }
 }
