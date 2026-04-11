@@ -80,7 +80,9 @@ public class ServicoMenu {
         String nomeServico = InputUtils.lerString(sc, "| Nome do Servico: ");
         String descricao = InputUtils.lerString(sc, "| Descricao do Servico: ");
         String dataString = InputUtils.lerData(sc, "| Data Agendada (DD/MM/AAAA): ");
-        LocalDate data = InputUtils.converterStringParaLocalDate(dataString);
+        // Converter data no formato dd/MM/yyyy para LocalDate
+        String[] dateParts = dataString.split("/");
+        LocalDate data = LocalDate.of(Integer.parseInt(dateParts[2]), Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[0]));
         double valor = InputUtils.lerDouble(sc, "| Valor do Servico: R$ ");
 
         System.out.println("| Clientes disponiveis ----------------|");
@@ -257,7 +259,8 @@ public class ServicoMenu {
         System.out.println("| Data atual: " + servico.getData().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         String dataString = InputUtils.lerDataOpcional(sc, "| Nova data (ENTER para manter): ");
         if (!dataString.isEmpty()) {
-            LocalDate data = InputUtils.converterStringParaLocalDate(dataString);
+            String[] dateParts = dataString.split("/");
+            LocalDate data = LocalDate.of(Integer.parseInt(dateParts[2]), Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[0]));
             servico.setData(data);
         }
 

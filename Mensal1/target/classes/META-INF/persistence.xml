@@ -27,13 +27,15 @@
             <property name="jakarta.persistence.jdbc.password" value="asdwsad"/>
 
             <!-- Configuracao Hibernate -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <!-- Valida o schema do banco de dados com as entidades mapeadas -->
-            <!-- Valida tabelas, mas nao altera o schema (nao cria, nao atualiza, nao deleta) -->
-            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <!-- Configuracao Hibernate -->
+            <!-- Usa 'update' para criar/atualizar tabelas conforme necessário -->
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <!-- Exibe as consultas SQL geradas pelo Hibernate no console -->
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="false"/>
+
+            <!-- Configuracao Flyway -->
+            <property name="flyway.validateOnMigrate" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>

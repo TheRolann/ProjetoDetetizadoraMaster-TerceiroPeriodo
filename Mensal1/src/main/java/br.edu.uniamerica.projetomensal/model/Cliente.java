@@ -3,6 +3,8 @@ package br.edu.uniamerica.projetomensal.model;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity // Transforma classe em tabela
 @Table(name = "clientes") // Nome da tabela
 public class Cliente {
@@ -17,7 +19,7 @@ public class Cliente {
     @Column(name = "documento", length = 18, nullable = false, unique = true)
     private String documento; // Pode ser CNPJ ou CPF
 
-    @Column(name = "endereco")
+    @Column(name = "endereco", columnDefinition = "text")
     private String endereco;
 
     @Column(name = "telefone", length = 20)
@@ -29,6 +31,10 @@ public class Cliente {
     @Enumerated(EnumType.STRING) // Indica que é um ENUM
     @Column(name = "status", nullable = false)
     private Status status;
+
+    // Relacionamento com Servicos
+    @OneToMany(mappedBy = "cliente")
+    private List<Servico> servicos;
 
     // Construtor vazio para estrutura para o JPA
     public Cliente() {}
@@ -54,13 +60,13 @@ public class Cliente {
     public void setDocumento(String documento) { this.documento = documento; }
 
     public String getEndereco() { return endereco; }
-    public void  setEndereco (String endereco) { this.endereco = endereco; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
 
     public String getTelefone() { return telefone; }
-    public void setTelefone (String telefone) { this.telefone = telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
 
     public String getEmail() { return email; }
-    public void setEmail (String email) { this.email = email; }
+    public void setEmail(String email) { this.email = email; }
 
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }

@@ -3,6 +3,7 @@ package br.edu.uniamerica.projetomensal.model;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "servicos")
@@ -14,33 +15,38 @@ public class Servico {
     private int id;
 
     @Column(name = "nome_servico", length = 100, nullable = false)
-    private String nomeServico = "";
+    private String nomeServico;
 
-    @Column(name = "descricao")
-    private String descricao = "";
+    @Column(name = "descricao", columnDefinition = "text")
+    private String descricao;
 
     @Column(name = "data", nullable = false)
     private LocalDate data;
 
-    @Column(name = "valor", columnDefinition = "numeric(10, 2)")
+    @Column(name = "valor", columnDefinition = "numeric(10,2)")
     private double valor;
 
-    // Com o banco, usamos o objeto inteiro e as anotacoes
-    // private int clienteID;
-
     @ManyToOne // Muitos para um, varios servicos pertencem a um cliente
-    @JoinColumn(name = "cliente_id", nullable = false, referencedColumnName = "id") // Faz a juncao da coluna ID do cliente
+    @JoinColumn(name = "cliente_id", nullable = false, referencedColumnName = "id")
     private Cliente cliente;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 
+    @ManyToMany
+    @JoinTable(
+            name = "funcionario_servico",
+            joinColumns = @JoinColumn(name = "servico_id"),
+            inverseJoinColumns = @JoinColumn(name = "funcionario_id")
+    )
+    private List<Funcionario> funcionarios;
+
     // Construtor vazio para estrutura para o JPA
     public Servico() {}
 
-    // Construtor - Ja atualizado com Cliente cliente
-    public Servico(String nomeServico, String descricao, LocalDate data, double valor, Cliente cliente, Status status){
+    // Construtor
+    public Servico(String nomeServico, String descricao, LocalDate data, double valor, Cliente cliente, Status status) {
         this.nomeServico = nomeServico;
         this.descricao = descricao;
         this.data = data;
@@ -67,11 +73,13 @@ public class Servico {
 
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
-    // Para pegar o ID do cliente
     public int getClienteId() { return cliente.getId(); }
 
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+
+    public List<Funcionario> getFuncionarios() { return funcionarios; }
+    public void setFuncionarios(List<Funcionario> funcionarios) { this.funcionarios = funcionarios; }
 }
 
 

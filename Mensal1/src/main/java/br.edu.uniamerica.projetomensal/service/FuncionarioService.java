@@ -4,80 +4,109 @@ import br.edu.uniamerica.projetomensal.model.Funcionario;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.repository.FuncionarioRepository;
+import jakarta.persistence.EntityManager;
 
-import java.util.ArrayList;
 import java.util.List;
-
-// Classe de servico para gerenciar as operacoes relacionadas aos clientes
 
 public class FuncionarioService {
 
-    // Instancia do repository para acessar os dados dos clientes
-    private FuncionarioRepository repository = new FuncionarioRepository();
+    private EntityManager em;
+    private FuncionarioRepository repository;
 
-    // Construtor
-    public Funcionario cadastrarFuncionario(String nome, String cpf, String telefone, String email, double salario, Cargo cargo, Status status) {
-        Funcionario funcionario = new Funcionario(nome, cpf, telefone, email, salario, cargo, status);
-        salvar(funcionario);
-
-        return funcionario;
+    public FuncionarioService(EntityManager em) {
+        this.em = em;
+        this.repository = new FuncionarioRepository(em);
     }
 
-    // Metodos Crud implementados para realizar as operacoes de salvar, excluir, editar, buscar por ID e listar clientes
+    // Metodos da interface Crud implementados para realizar as operacoes de salvar, excluir, editar, buscar por ID e listar funcionarios
 
     public void salvar(Funcionario funcionario) {
         try {
+            em.getTransaction().begin();
+
+            if (funcionario.getId() != 0) {
+                throw new RuntimeException("Novo funcionário não pode ter ID");
+            }
+
+            if (repository.existePorCpf(funcionario.getCpf())) {
+                throw new RuntimeException("Já existe funcionário com esse CPF");
+            }
+
+            funcionario.setStatus(Status.ATIVO);
+
             repository.salvar(funcionario);
+
+            em.getTransaction().commit();
         } catch (Exception e) {
-            System.out.println("Erro ao salvar funcionario" + e.getMessage());
+            em.getTransaction().rollback();
+            throw e;
+        }
+    }
+
+    public void editar(Funcionario funcionario) {
+        try {
+            em.getTransaction().begin();
+
+            if (funcionario.getId() == 0) {
+                throw new RuntimeException("ID não pode ser zero para edição");
+            }
+
+            Funcionario existente = repository.buscarPorId(funcionario.getId());
+            if (existente == null) {
+                throw new RuntimeException("Funcionario não encontrado");
+            }
+
+            Funcionario outroComMesmoCpf = repository.buscarPorCpf(funcionario.getCpf());
+
+            if (outroComMesmoCpf != null && outroComMesmoCpf.getId() != funcionario.getId()) {
+                throw new RuntimeException("CPF já cadastrado para outro funcionário");
+            }
+
+            existente.setNome(funcionario.getNome());
+            existente.setCpf(funcionario.getCpf());
+            existente.setTelefone(funcionario.getTelefone());
+            existente.setEmail(funcionario.getEmail());
+            existente.setEndereco(funcionario.getEndereco());
+            existente.setSalario(funcionario.getSalario());
+            existente.setCargo(funcionario.getCargo());
+            existente.setStatus(funcionario.getStatus());
+
+            repository.editar(existente);
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
         }
     }
 
     public void excluir(int id) {
         try {
-            repository.excluir(id);
-        } catch (Exception e) {
-            System.out.println("Erro ao remover funcionario" + e.getMessage());
-        }
-    }
+            em.getTransaction().begin();
 
-    // Metodo de edicao que busca o cliente existente por ID e atualiza seus dados com os novos valores fornecidos
-    public void editar(Funcionario funcionario) {
-        try {
-            Funcionario funcionarioExistente = buscarPorId(funcionario.getId());
-
-            if (funcionarioExistente != null) {
-                funcionarioExistente.setNome(funcionario.getNome());
-                funcionarioExistente.setCpf(funcionario.getCpf());
-                funcionarioExistente.setTelefone(funcionario.getTelefone());
-                funcionarioExistente.setEmail(funcionario.getEmail());
-                funcionarioExistente.setSalario(funcionario.getSalario());
-                funcionarioExistente.setCargo(funcionario.getCargo());
-                funcionarioExistente.setStatus(funcionario.getStatus());
-
-                repository.editar(funcionarioExistente); // Salva no banco a edicao do cliente
+            Funcionario funcionario = repository.buscarPorId(id);
+            if (funcionario == null) {
+                throw new RuntimeException("Funcionario não encontrado");
             }
+            if (funcionario.getStatus() == Status.INATIVO) {
+                throw new RuntimeException("Funcionario já está inativo");
+            }
+            funcionario.setStatus(Status.INATIVO);
+
+            repository.editar(funcionario);
+
+            em.getTransaction().commit();
         } catch (Exception e) {
-            System.out.println("Erro ao editar funcionario: " + e.getMessage());
+            em.getTransaction().rollback();
+            throw e;
         }
     }
 
     public Funcionario buscarPorId(int id) {
-        try {
-            return repository.buscarPorId(id);
-        } catch (Exception e) {
-            System.out.println("Erro ao buscar por id funcionario: " + e.getMessage());
-            return null;
-        }
+        return repository.buscarPorId(id);
     }
 
-    // Metodo para listar todos os clientes cadastrados, retornando uma lista de objetos Cliente
     public List<Funcionario> listar() {
-        try {
-            return repository.listar();
-        } catch (Exception e) {
-            System.out.println("Erro ao listar funcionario: " + e.getMessage());
-            return new ArrayList<>(); // Retornando lista vazia para nao crashar no MENU. NullPointerException
-        }
+        return repository.listar();
     }
 }
