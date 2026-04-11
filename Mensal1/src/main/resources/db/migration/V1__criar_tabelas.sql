@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     cpf varchar(14) NOT NULL UNIQUE,
     telefone varchar(20),
     email varchar(100),
+    endereco text,
     salario numeric(10,2),
     cargo varchar(20) NOT NULL DEFAULT 'FUNCIONARIO',
     status varchar(20) NOT NULL DEFAULT 'ATIVO'
@@ -53,4 +54,11 @@ CREATE TABLE IF NOT EXISTS historico_servicos (
     servico_id INTEGER NOT NULL REFERENCES servicos(id),
     data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     observacao TEXT
+);
+
+-- Tabela de relacionamento ManyToMany entre Funcionario e Servico
+CREATE TABLE IF NOT EXISTS funcionario_servico (
+    servico_id integer NOT NULL REFERENCES servicos(id),
+    funcionario_id integer NOT NULL REFERENCES funcionarios(id),
+    PRIMARY KEY (servico_id, funcionario_id)
 );

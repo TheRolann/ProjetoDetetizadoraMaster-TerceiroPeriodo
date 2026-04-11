@@ -4,21 +4,18 @@ import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
 
-    import java.math.BigDecimal;
-    import java.util.List;
+@Entity
+@Table(name = "funcionarios")
+public class Funcionario {
+    // Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @Entity
-    @Table(name = "funcionarios")
-    public class Funcionario {
-        // Atributos
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY) // "IDENTITY" banco responsalvel por gerar
-        private Long id;
-
-    @Column(name = "nome", length = 100,  nullable = false)
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    @Column(name = "cpf", length = 14,  nullable = false, unique = true)
+    @Column(name = "cpf", length = 14, nullable = false, unique = true)
     private String cpf;
 
     @Column(name = "telefone", length = 20)
@@ -27,10 +24,13 @@ import jakarta.persistence.*;
     @Column(name = "email", length = 100)
     private String email;
 
-    @Column(name = "salario", columnDefinition = "numeric(10,2)") // length e para String, aqui definimos uma definicao
+    @Column(name = "endereco", columnDefinition = "text")
+    private String endereco;
+
+    @Column(name = "salario", columnDefinition = "numeric(10,2)") // lenght e para String, aqui definimos com Definition
     private double salario;
 
-    @Enumerated(EnumType.STRING) // "Enumerated": Avisa o hibernate que o atributo e ENUM
+    @Enumerated(EnumType.STRING)
     @Column(name = "cargo", nullable = false)
     private Cargo cargo;
 
@@ -38,36 +38,16 @@ import jakarta.persistence.*;
     @Column(name = "status", nullable = false)
     private Status status;
 
-        @ManyToMany(mappedBy = "servicos")
-        private List<Funcionario> funcionarios;
-
-        @OneToOne(cascade = CascadeType.ALL)
-        @JoinColumn(name = "endereco_id")
-        private Endereco endereco;
-
-
-        // Construtor vazio para estutura para o JPA
-        public Funcionario() {}
-
-         // Construtor
-        public Funcionario(String nome, String cpf, String telefone, String email, BigDecimal salario, Cargo cargo, Status status) {
-            this.nome = nome;
-            this.cpf = cpf;
-            this.telefone = telefone;
-            this.email = email;
-            this.salario = salario;
-            this.cargo = cargo;
-            this.status = status;
-        }
-    // Construtor vazio para estrutura para o JPA
+    // Construtor vazio para JPA
     public Funcionario() {}
 
-     // Construtor
-    public Funcionario(String nome, String cpf, String telefone, String email, double salario, Cargo cargo, Status status) {
+    // Construtor
+    public Funcionario(String nome, String cpf, String telefone, String email, String endereco, double salario, Cargo cargo, Status status) {
         this.nome = nome;
         this.cpf = cpf;
         this.telefone = telefone;
         this.email = email;
+        this.endereco = endereco;
         this.salario = salario;
         this.cargo = cargo;
         this.status = status;
@@ -89,6 +69,9 @@ import jakarta.persistence.*;
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getEndereco() { return endereco; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
 
     public double getSalario() { return salario; }
     public void setSalario(double salario) { this.salario = salario; }

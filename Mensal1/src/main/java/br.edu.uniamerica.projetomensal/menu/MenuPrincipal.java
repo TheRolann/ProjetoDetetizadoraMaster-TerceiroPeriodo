@@ -10,7 +10,6 @@ public class MenuPrincipal {
     ClienteMenu clienteMenu = new ClienteMenu();
     FuncionarioMenu funcionarioMenu = new FuncionarioMenu();
     ServicoMenu servicoMenu = new ServicoMenu();
-    AgendaMenu agendaMenu = new AgendaMenu();
     RelatorioMenu relatorioMenu = new RelatorioMenu();
 
     public void iniciar() {
@@ -24,8 +23,7 @@ public class MenuPrincipal {
             System.out.println("| 1 - Clientes                         |");
             System.out.println("| 2 - Funcionarios                     |");
             System.out.println("| 3 - Servicos                         |");
-            System.out.println("| 4 - Agendamentos                     |");
-            System.out.println("| 5 - Relatorios                       |");
+            System.out.println("| 4 - Relatorios                       |");
             System.out.println("| 0 - Sair                             |");
             System.out.println("|--------------------------------------|");
             opcao = InputUtils.lerInt(sc, "Opcao: ");
@@ -41,9 +39,6 @@ public class MenuPrincipal {
                     servicoMenu.iniciar();
                     break;
                 case 4:
-                    agendaMenu.iniciar();
-                    break;
-                case 5:
                     relatorioMenu.iniciar();
                     break;
                 case 0:

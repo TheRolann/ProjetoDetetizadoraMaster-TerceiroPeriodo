@@ -26,7 +26,7 @@ public class FuncionarioRepository {
     }
 
     // Busca o funcionario na lista por id
-    public Funcionario buscarPorId(Long id) {
+    public Funcionario buscarPorId(int id) {
         return em.find(Funcionario.class, id); // Procura na classe Funcionario, o id passado como parametro
     }
 
@@ -36,7 +36,13 @@ public class FuncionarioRepository {
             .getResultList();
     }
 
-    // Lista todos os funcionarios da lista, utilizando o metodo listar para retornar a lista de funcionarios
+    // Lista todos os funcionarios
+    public List<Funcionario> listar() {
+        return em.createQuery("SELECT f FROM Funcionario f", Funcionario.class)
+                .getResultList();
+    }
+
+    // Lista apenas os funcionarios ativos
     public List<Funcionario> listarAtivos() {
         return em.createQuery(
                 "SELECT f FROM Funcionario f WHERE f.status = :status", Funcionario.class)

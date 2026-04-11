@@ -8,7 +8,6 @@ import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
 import jakarta.persistence.EntityManager;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Scanner;
 
@@ -73,19 +72,18 @@ public class FuncionarioMenu {
             String cpf = InputUtils.lerDocumento(sc,"| CPF/CNPJ: ");
             String telefone = InputUtils.lerTelefone(sc,"| Telefone: ");
             String email = InputUtils.lerEmail(sc,"| Email: ");
-            BigDecimal salario = InputUtils.lerBigDecimal(sc,"| Salario: R$ ");
+            String endereco = InputUtils.lerStringOpcional(sc,"| Endereco (opcional): ");
+            double salario = InputUtils.lerDouble(sc,"| Salario: R$ ");
 
             System.out.println("| Cargo:");
             System.out.println("| 1 - GERENTE");
-            System.out.println("| 2 - DEV");
-            System.out.println("| 3 - FUNCIONARIO");
+            System.out.println("| 2 - FUNCIONARIO");
 
             int cargoInput = InputUtils.lerInt(sc,"| Informe o numero do cargo: ");
 
-            // Transforma o Enum em um valor do tipo Cargo, tipo uma lista onde converte o numero pela posicao
-            // ex: [ATIVO, INATIVO, AGENDADO, EM_ANDAMENTO, CONCLUIDO]
+            // Transforma o Enum em um valor do tipo Cargo
             Cargo cargo;
-            if (cargoInput >= 1 && cargoInput <= 3) {
+            if (cargoInput >= 1 && cargoInput <= 2) {
                 cargo = Cargo.values()[cargoInput - 1];
             } else {
                 System.out.println("| Cargo inválido. Definindo como FUNCIONARIO.");
@@ -93,7 +91,8 @@ public class FuncionarioMenu {
             }
 
             // Cria o objeto Funcionario utilizando o servico, que ja gera o ID automaticamente
-            Funcionario funcionario = funcionarioService.cadastrarFuncionario(nome, cpf, telefone, email, salario, cargo);
+            Funcionario funcionario = new Funcionario(nome, cpf, telefone, email, endereco, salario, cargo, Status.ATIVO);
+            funcionarioService.salvar(funcionario);
 
             System.out.println("|--------------------------------------|");
             System.out.println("| Funcionario cadastrado com sucesso!  |");
@@ -165,14 +164,14 @@ public class FuncionarioMenu {
                 for (Funcionario f : funcionarios) {
                     System.out.println("| ID: " + f.getId() + " - Nome: " + f.getNome());
                 }
-            }
-            Long id = InputUtils.lerLongOpcional(sc,"| Informe o ID do funcionario: ");
-            if (id == 0L) {
-                System.out.println("| ID inválido.");
-                return;
-            }
-            // Criando o objeto utilizando funcionarioService para buscar o funcionario pelo ID informado, utilizando o metodo buscarPorId()
-            Funcionario funcionario = funcionarioService.buscarPorId(id);
+             }
+             int id = InputUtils.lerInt(sc,"| Informe o ID do funcionario: ");
+             if (id == 0) {
+                 System.out.println("| ID inválido.");
+                 return;
+             }
+             // Criando o objeto utilizando funcionarioService para buscar o funcionario pelo ID informado, utilizando o metodo buscarPorId()
+             Funcionario funcionario = funcionarioService.buscarPorId(id);
 
             if(funcionario == null){
                 System.out.println("|--------------------------------------|");
@@ -219,17 +218,17 @@ public class FuncionarioMenu {
                 System.out.println("| Nenhum funcionario cadastrado.       |");
                 System.out.println("|--------------------------------------|");
                 return;
-            } else {
-                for (Funcionario f : funcionarios) { // Exibe o ID e o nome do funcionario para facilitar a escolha
-                    System.out.println("| ID: " + f.getId() + " - Nome: " + f.getNome());
-                }
-            }
-            Long id = InputUtils.lerLongOpcional(sc,"| Informe o ID do funcionario: ");
-            if (id == 0L) {
-                System.out.println("| ID inválido.");
-                return;
-            }
-            Funcionario funcionario = funcionarioService.buscarPorId(id);
+             } else {
+                 for (Funcionario f : funcionarios) { // Exibe o ID e o nome do funcionario para facilitar a escolha
+                     System.out.println("| ID: " + f.getId() + " - Nome: " + f.getNome());
+                 }
+             }
+             int id = InputUtils.lerInt(sc,"| Informe o ID do funcionario: ");
+             if (id == 0) {
+                 System.out.println("| ID inválido.");
+                 return;
+             }
+             Funcionario funcionario = funcionarioService.buscarPorId(id);
 
             // Verifica se o ID digitado corresponde a um funcionario existente
             if(funcionario == null){
@@ -262,21 +261,21 @@ public class FuncionarioMenu {
             }
 
             System.out.println("| Salario atual: R$ " + funcionario.getSalario());
-            BigDecimal salario = InputUtils.lerBigDecimal(sc,"| Novo salario (0 p/ manter): ");
+            double salario = InputUtils.lerDoubleOpcional(sc,"| Novo salario (0 p/ manter): ");
 
-            if(salario.compareTo(BigDecimal.ZERO) > 0){
+            if(salario > 0){
                 funcionario.setSalario(salario);
             }
 
             System.out.println("| Cargo atual: " + funcionario.getCargo());
-            System.out.println("| 1 - GERENTE\n2 - DEV\n3 - FUNCIONARIO");
+            System.out.println("| 1 - GERENTE\n2 - FUNCIONARIO");
             int cargoInput = InputUtils.lerIntOpcional(sc,"| Informe o numero do cargo (ENTER para manter): ");
 
             // Verifica se o numero do cargo esta dentro do range permitido, se nao estiver, a operacao sera cancelada
             // Caso contrario, converte o numero para o valor do Enum correspondente e atualiza o cargo do funcionario
 
             if(cargoInput != 0) {
-                if (cargoInput >= 1 && cargoInput <= 3) {
+                if (cargoInput >= 1 && cargoInput <= 2) {
                     Cargo cargo = Cargo.values()[cargoInput - 1];
                     funcionario.setCargo(cargo);
                 } else {
