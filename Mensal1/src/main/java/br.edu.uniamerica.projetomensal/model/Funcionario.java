@@ -38,7 +38,7 @@ public class Funcionario {
     @Column(name = "status", nullable = false)
     private Status status;
 
-    // Construtor vazio para JPA
+    // Cria instancia/molde vazio para o JPA/Hibernate
     public Funcionario() {}
 
     // Construtor

@@ -17,8 +17,6 @@ public class FuncionarioService {
         this.repository = new FuncionarioRepository(em);
     }
 
-    // Metodos da interface Crud implementados para realizar as operacoes de salvar, excluir, editar, buscar por ID e listar funcionarios
-
     public void salvar(Funcionario funcionario) {
         try {
             em.getTransaction().begin();

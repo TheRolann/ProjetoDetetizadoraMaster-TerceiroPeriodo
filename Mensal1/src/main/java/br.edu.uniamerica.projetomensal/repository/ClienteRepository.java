@@ -6,17 +6,17 @@ import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
-// Classe repository responsável por realizar as operações de CRUD para a entidade Cliente
+// Classe repository responsavel por acessar o banco e realizar as operacoes de CRUD para a entidade Cliente
 public class ClienteRepository {
 
-    private EntityManager em;
+    private EntityManager em; // Cria o entity manager para conexao
 
-    // Construtor que aceita EntityManager como parâmetro
+    // Construtor que aceita EntityManager como parametro
     public ClienteRepository(EntityManager em) {
         this.em = em;
     }
 
-    // Construtor padrão para compatibilidade
+    // Construtor padrao para compatibilidade
     public ClienteRepository() {
         this.em = PersistenceManager.getEntityManager();
     }
@@ -44,7 +44,7 @@ public class ClienteRepository {
         return em.find(Cliente.class, id);
     }
 
-    // Lista todos os clientes do banco
+    // Lista todos os clientes do banco. Consulta customizada em JPQL (Java Persistence Query Language)
     public List<Cliente> listar() {
         return em.createQuery("SELECT c FROM Cliente c", Cliente.class).getResultList();
     }

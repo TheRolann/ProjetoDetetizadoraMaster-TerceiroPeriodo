@@ -36,7 +36,7 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente")
     private List<Servico> servicos;
 
-    // Construtor vazio para estrutura para o JPA
+    // Cria instancia/molde vazio para o JPA/Hibernate
     public Cliente() {}
 
     // Construtor

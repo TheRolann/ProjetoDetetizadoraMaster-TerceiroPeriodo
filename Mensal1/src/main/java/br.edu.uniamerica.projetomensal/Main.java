@@ -6,13 +6,15 @@ import br.edu.uniamerica.projetomensal.menu.MenuPrincipal;
 
 public class Main {
      public static void main (String[] args){
-        // Inicia o menu principal
-        FlywayConfig.migrar(); // Roda migrations antes
-        PersistenceManager.conectar(); // Conecta ao BD
+
+        FlywayConfig.migrar(); // Roda as migrations antes, atualizando com o banco de dados
+        PersistenceManager.conectar(); // Abre a conexao JPA
 
         MenuPrincipal servicoMenu = new MenuPrincipal();
+
+         // Inicia o menu principal
         servicoMenu.iniciar();
 
-        PersistenceManager.desconectar(); // Fecha o BD
+        PersistenceManager.desconectar(); // Fecha tudo
     }
 }

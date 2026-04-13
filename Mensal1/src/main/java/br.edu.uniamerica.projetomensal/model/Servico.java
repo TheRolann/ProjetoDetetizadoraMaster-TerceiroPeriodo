@@ -42,7 +42,7 @@ public class Servico {
     )
     private List<Funcionario> funcionarios;
 
-    // Construtor vazio para estrutura para o JPA
+    // Cria instancia/molde vazio para o JPA/Hibernate
     public Servico() {}
 
     // Construtor
