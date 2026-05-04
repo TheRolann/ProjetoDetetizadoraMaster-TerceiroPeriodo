@@ -102,12 +102,10 @@ application-prod.properties
 secrets.properties
 credentials.json
 
-Mensal1/src/main/java/br.edu.uniamerica.projetomensal/config/FlywayConfig.java
+
 .idea/dataSources.xml
-Mensal1/src/main/java/br.edu.uniamerica.projetomensal/config/FlywayConfig.java
 Mensal1/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
 Mensal1/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 Mensal1/target/classes/META-INF/persistence.xml
 Mensal1/target/classes/br/edu/uniamerica/projetomensal/config/FlywayConfig.class
-Mensal1/src/main/resources/META-INF/persistence.xml
 Mensal1/src/main/resources/META-INF/persistence.xml
