@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/Mensal1/deprecated/banco/script.sql" value="3db12ef0-5be5-4792-9f24-f61c9a1ac944" />
-    <file url="file://$PROJECT_DIR$/Mensal1/src/main/resources/db/migration/V5__ajustes_jpa.sql" value="3db12ef0-5be5-4792-9f24-f61c9a1ac944" />
-  </component>
-</project>
