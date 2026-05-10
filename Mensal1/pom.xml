@@ -36,18 +36,18 @@
             <version>42.7.3</version>
         </dependency>
 
-        <!-- Flyway -->
+        <!-- Flyway core -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>9.22.3</version>
+            <version>10.10.0</version>
         </dependency>
 
-        <!-- Gson (resolve teu erro) -->
+        <!-- Flyway suporte PostgreSQL (obrigatorio na versao 10+) -->
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.10.0</version>
         </dependency>
 
     </dependencies>
@@ -61,31 +61,26 @@
                 <version>3.11.0</version>
             </plugin>
 
-            <!-- JAR EXECUTÁVEL COM DEPENDÊNCIAS -->
+            <!-- JAR executavel com dependencias -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.2</version>
-
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
-
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>br.edu.uniamerica.projetomensal.Main</mainClass>
                                 </transformer>
-
-                                <!-- ESSENCIAL PRO FLYWAY FUNCIONAR -->
+                                <!-- Essencial pro Flyway funcionar no JAR -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-
                             </transformers>
                         </configuration>
-
                     </execution>
                 </executions>
             </plugin>
