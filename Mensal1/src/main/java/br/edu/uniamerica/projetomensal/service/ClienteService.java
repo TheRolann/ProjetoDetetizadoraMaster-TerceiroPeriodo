@@ -3,66 +3,96 @@ package br.edu.uniamerica.projetomensal.service;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.repository.ClienteRepository;
-
-import java.util.ArrayList;
+import br.edu.uniamerica.projetomensal.utils.NegocioException;
+import jakarta.persistence.EntityManager;
 import java.util.List;
-
-// Classe de servico para gerenciar as operacoes relacionadas aos clientes
 
 public class ClienteService {
 
-    // Instancia do repository para acessar os dados dos clientes
-    private ClienteRepository repository = new ClienteRepository();
+    private EntityManager em;
+    private ClienteRepository repository;
 
-    // Construtor
-    public Cliente cadastrarCliente(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
+    public ClienteService(EntityManager em) {
+        this.em = em;
+        this.repository = new ClienteRepository(em);
+    }
+
+    public Cliente cadastrarCliente(String nomeEmpresa, String documento, String endereco,
+                                    String telefone, String email, Status status) {
         Cliente cliente = new Cliente(nomeEmpresa, documento, endereco, telefone, email, status);
         salvar(cliente);
-
-        return  cliente;
+        return cliente;
     }
 
     public void salvar(Cliente cliente) {
         try {
-            // Validação de documento válido (CPF/CNPJ)
+            em.getTransaction().begin();
+
             if (cliente.getDocumento() == null || cliente.getDocumento().isEmpty()) {
-                throw new RuntimeException("Documento não pode estar vazio");
+                throw new NegocioException("Documento não pode estar vazio");
             }
             if (!cliente.getDocumento().matches("\\d{11}|\\d{14}")) {
-                throw new RuntimeException("Documento deve conter exatamente 11 ou 14 dígitos");
+                throw new NegocioException("Documento deve conter 11 ou 14 dígitos");
             }
 
             repository.salvar(cliente);
+            em.getTransaction().commit();
+
+        } catch (NegocioException e) {
+            em.getTransaction().rollback();
+            throw e;
         } catch (Exception e) {
-            System.out.println("Erro ao salvar: " + e.getMessage());
+            em.getTransaction().rollback();
+            throw new RuntimeException("Erro ao salvar cliente: ", e);
+        }
+    }
+
+    public void editar(Cliente cliente) {
+        try {
+            em.getTransaction().begin();
+
+            Cliente existente = repository.buscarPorId(cliente.getId());
+            if (existente == null) {
+                throw new NegocioException("Cliente não encontrado");
+            }
+
+            existente.setNomeEmpresa(cliente.getNomeEmpresa());
+            existente.setDocumento(cliente.getDocumento());
+            existente.setEndereco(cliente.getEndereco());
+            existente.setTelefone(cliente.getTelefone());
+            existente.setEmail(cliente.getEmail());
+            existente.setStatus(cliente.getStatus());
+
+            repository.editar(existente);
+            em.getTransaction().commit();
+
+        } catch (NegocioException e) {
+            em.getTransaction().rollback();
+            throw e;
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new RuntimeException("Erro ao editar cliente: ", e);
         }
     }
 
     public void excluir(int id) {
         try {
-            repository.excluir(id);
-        } catch (Exception e) {
-            System.out.println("Erro ao remover: " + e.getMessage());
-        }
-    }
+            em.getTransaction().begin();
 
-    // Metodo de edicao que busca o cliente existente por ID e atualiza seus dados com os novos valores fornecidos
-    public void editar(Cliente cliente) {
-        try {
-            Cliente clienteExistente = buscarPorId(cliente.getId());
-
-            if (clienteExistente != null) {
-                clienteExistente.setNomeEmpresa(cliente.getNomeEmpresa());
-                clienteExistente.setDocumento(cliente.getDocumento());
-                clienteExistente.setEndereco(cliente.getEndereco());
-                clienteExistente.setTelefone(cliente.getTelefone());
-                clienteExistente.setEmail(cliente.getEmail());
-                clienteExistente.setStatus(cliente.getStatus());
-
-                repository.editar(clienteExistente); // Salva no banco a edicao do cliente
+            Cliente cliente = repository.buscarPorId(id);
+            if (cliente == null) {
+                throw new NegocioException("Cliente não encontrado");
             }
+
+            repository.excluir(id);
+            em.getTransaction().commit();
+
+        } catch (NegocioException e) {
+            em.getTransaction().rollback();
+            throw e;
         } catch (Exception e) {
-            System.out.println("Erro ao editar: " + e.getMessage());
+            em.getTransaction().rollback();
+            throw new RuntimeException("Erro ao excluir cliente: ", e);
         }
     }
 
@@ -70,18 +100,15 @@ public class ClienteService {
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
-            System.out.println("Erro ao buscar por id: " + e.getMessage());
-            return null;
+            throw new RuntimeException("Erro ao buscar cliente: ", e);
         }
     }
 
-    // Metodo para listar todos os clientes cadastrados, retornando uma lista de Cliente
     public List<Cliente> listar() {
         try {
             return repository.listar();
         } catch (Exception e) {
-            System.out.println("Erro ao listar: " + e.getMessage());
-            return new ArrayList<>(); // Retornando lista vazia para nao crashar no MENU. NullPointerException
+            throw new RuntimeException("Erro ao listar clientes: ", e);
         }
     }
 }
