@@ -3,7 +3,6 @@ package br.edu.uniamerica.projetomensal.view.panels;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
-
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -65,7 +64,7 @@ public class ClientePanel extends JPanel {
         campoDocumento = new JTextField();
         painelCampos.add(campoDocumento);
 
-        painelCampos.add(new JLabel("Endereço"));
+        painelCampos.add(new JLabel("Endereco"));
         campoEndereco = new JTextField();
         painelCampos.add(campoEndereco);
 
@@ -94,7 +93,6 @@ public class ClientePanel extends JPanel {
         painelBotoes.add(botaoEditar);
         painelBotoes.add(botaoExcluir);
         painelBotoes.add(botaoLimpar);
-
         painelEsquerdo.add(painelBotoes, BorderLayout.SOUTH);
 
         // ============ Lado Direito - Tabela ============
@@ -133,7 +131,11 @@ public class ClientePanel extends JPanel {
         // Ao clicar na tabela, preenche o formulario
         tabela.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                preencherFormularioComSelecionado();
+                int linha = tabela.getSelectedRow();
+                if (linha >= 0) {
+                    idSelecionado = (int) modeloTabela.getValueAt(linha, 0);
+                    preencherFormularioComSelecionado();
+                }
             }
         });
     }
@@ -145,17 +147,21 @@ public class ClientePanel extends JPanel {
 
         try {
             String documento = campoDocumento.getText().trim().replaceAll("[./-]", "");
-            clienteService.cadastrarCliente(
+
+            Cliente cliente = new Cliente(
                     campoNome.getText().trim(),
                     documento,
                     campoEndereco.getText().trim(),
                     campoTelefone.getText().trim(),
                     campoEmail.getText().trim(),
-                    (Status) campoStatus.getSelectedItem()
+                    Status.ATIVO
             );
+
+            clienteService.salvar(cliente);
             JOptionPane.showMessageDialog(this, "Cliente salvo com sucesso!");
             limparFormulario();
             carregarTabela();
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Erro ao salvar: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -248,10 +254,13 @@ public class ClientePanel extends JPanel {
     }
 
     private void preencherFormularioComSelecionado() {
-        int linhaSelecionada = tabela.getSelectedRow();
-        if (linhaSelecionada != -1) return;
+//        int linhaSelecionada = tabela.getSelectedRow();
+//        if (linhaSelecionada != -1) return;
+//
+//        idSelecionado = (int) modeloTabela.getValueAt(linhaSelecionada, 0);
+//        Cliente cliente = clienteService.buscarPorId(idSelecionado);
+//        if (cliente == null) return;
 
-        idSelecionado = (int) modeloTabela.getValueAt(linhaSelecionada, 0);
         Cliente cliente = clienteService.buscarPorId(idSelecionado);
         if (cliente == null) return;
 
