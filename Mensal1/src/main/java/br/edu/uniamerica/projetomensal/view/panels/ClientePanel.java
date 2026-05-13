@@ -204,12 +204,14 @@ public class ClientePanel extends JPanel {
 
     private void excluirCliente() {
         if (idSelecionado == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela para excluir.",
+            JOptionPane.showMessageDialog(this,
+                    "Selecione um cliente na tabela para excluir.",
                     "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int confirmacao = JOptionPane.showConfirmDialog(this, "Deseja realmente excluir este cliente?",
+        int confirmacao = JOptionPane.showConfirmDialog(this,
+                "Deseja realmente excluir este cliente?",
                 "Confirmar exclusao", JOptionPane.YES_NO_OPTION);
 
         if (confirmacao == JOptionPane.YES_OPTION) {
@@ -220,10 +222,38 @@ public class ClientePanel extends JPanel {
                 carregarTabela();
 
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro ao excluir: " + ex.getMessage(),
-                        "Erro", JOptionPane.ERROR_MESSAGE);
+                // Busca a mensagem em toda a cadeia de causas
+                String mensagemCompleta = getMensagemCompleta(ex);
+
+                if (mensagemCompleta.contains("foreign key") ||
+                        mensagemCompleta.contains("violates") ||
+                        mensagemCompleta.contains("fkey")) {
+
+                    JOptionPane.showMessageDialog(this,
+                            "Nao e possivel excluir este cliente.\n" +
+                                    "Ele possui servicos vinculados.\n" +
+                                    "Exclua os servicos primeiro.",
+                            "Erro ao excluir", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Erro ao excluir: " + mensagemCompleta,
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
+    }
+
+    // Percorre toda a cadeia de causas para achar a mensagem real
+    private String getMensagemCompleta(Throwable ex) {
+        StringBuilder sb = new StringBuilder();
+        Throwable atual = ex;
+        while (atual != null) {
+            if (atual.getMessage() != null) {
+                sb.append(atual.getMessage()).append(" ");
+            }
+            atual = atual.getCause();
+        }
+        return sb.toString();
     }
 
     private void limparFormulario() {

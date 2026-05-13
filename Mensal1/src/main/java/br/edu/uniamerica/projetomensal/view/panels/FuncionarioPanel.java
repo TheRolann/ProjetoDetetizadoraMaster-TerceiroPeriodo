@@ -114,7 +114,7 @@ public class FuncionarioPanel extends JPanel {
         // === Colunas da tabela ======================
         String[] colunas = {"ID", "Nome", "CPF", "Cargo", "Salario", "Status"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
-            @Override
+            @Override // Metodo da classe DefaultTableModel. Controla se uma celula da tabela pode ser editada diretamente
             public boolean isCellEditable(int row, int column) {
                 return false; // Tabela nao editavel diretamente
             }
