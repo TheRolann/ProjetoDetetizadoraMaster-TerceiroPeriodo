@@ -20,14 +20,12 @@ public class ClienteService {
         this.repository = new ClienteRepository(em);
     }
 
-    // Metodo para cadastrar cliente
-    public Cliente cadastrarCliente(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
+    public Cliente cadastrarCliente(String nomeEmpresa, String documento, String endereco,
+                                    String telefone, String email, Status status) {
         Cliente cliente = new Cliente(nomeEmpresa, documento, endereco, telefone, email, status);
         salvar(cliente);
         return cliente;
     }
-
-    // Metodos CRUD com transações
 
     public void salvar(Cliente cliente) {
         try {
@@ -38,7 +36,7 @@ public class ClienteService {
                 throw new NegocioException("Documento não pode estar vazio");
             }
             if (!cliente.getDocumento().matches("\\d{11}|\\d{14}")) {
-                throw new NegocioException("Documento deve conter exatamente 11 ou 14 dígitos");
+                throw new NegocioException("Documento deve conter 11 ou 14 dígitos");
             }
 
             repository.salvar(cliente);
@@ -56,10 +54,6 @@ public class ClienteService {
     public void editar(Cliente cliente) {
         try {
             em.getTransaction().begin();
-
-            if (cliente.getId() == 0) {
-                throw new NegocioException("ID não pode ser zero para edição");
-            }
 
             Cliente existente = repository.buscarPorId(cliente.getId());
             if (existente == null) {
@@ -110,7 +104,7 @@ public class ClienteService {
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar cliente por ID: ", e);
+            throw new RuntimeException("Erro ao buscar cliente: ", e);
         }
     }
 
@@ -118,7 +112,7 @@ public class ClienteService {
         try {
             return repository.listar();
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao listar cliente: ", e);
+            throw new RuntimeException("Erro ao listar clientes: ", e);
         }
     }
 }

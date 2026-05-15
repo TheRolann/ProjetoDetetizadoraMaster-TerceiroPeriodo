@@ -18,6 +18,9 @@ public class Funcionario {
     @Column(name = "cpf", length = 14, nullable = false, unique = true)
     private String cpf;
 
+    @Column(name = "senha", length = 100)
+    private String senha;
+
     @Column(name = "telefone", length = 20)
     private String telefone;
 
@@ -63,6 +66,11 @@ public class Funcionario {
 
     public String getCpf() { return cpf; }
     public void setCpf(String cpf) { this.cpf = cpf; }
+
+    public void setSenha(String senha) { this.senha = senha; }
+    public boolean senhaCorreta(String senhaInformada) { // Metodo para verificacao sem expor. Sem hash
+        return this.senha != null && this.senha.equals(senhaInformada);
+    }
 
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }

@@ -124,4 +124,13 @@ public class FuncionarioService {
             throw new RuntimeException("Erro inesperado ao listar funcionarios: ", e);
         }
     }
+
+    public Funcionario autenticar(String nome, String senha) {
+        try {
+            return repository.autenticar(nome, senha);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao autenticar: ", e);
+        }
+    }
+
 }

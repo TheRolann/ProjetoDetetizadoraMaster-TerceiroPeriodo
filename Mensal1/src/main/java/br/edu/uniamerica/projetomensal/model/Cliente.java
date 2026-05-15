@@ -70,5 +70,11 @@ public class Cliente {
 
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+
+    // ComboBox de clientes mostra o toString() do objeto Cliente. Metodo para reverter isso
+    @Override
+    public String toString() {
+        return nomeEmpresa;
+    }
 }
 

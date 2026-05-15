@@ -2,8 +2,8 @@ package br.edu.uniamerica.projetomensal.service;
 
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.Servico;
-import br.edu.uniamerica.projetomensal.repository.ServicoRepository;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
+import br.edu.uniamerica.projetomensal.repository.ServicoRepository;
 import br.edu.uniamerica.projetomensal.utils.NegocioException;
 import jakarta.persistence.EntityManager;
 
@@ -22,30 +22,23 @@ public class ServicoService {
         this.repository = new ServicoRepository(em);
     }
 
-    // Metodo para cadastrar servico
-    public Servico cadastrar(String nomeServico, String descricao, LocalDate data, double valor, Cliente cliente, Status status) {
+    public Servico cadastrar(String nomeServico, String descricao, LocalDate data,
+                             double valor, Cliente cliente, Status status) {
         Servico servico = new Servico(nomeServico, descricao, data, valor, cliente, status);
         salvar(servico);
         return servico;
     }
 
-    // Metodos CRUD com transações
-
     public void salvar(Servico servico) {
         try {
             em.getTransaction().begin();
 
-            // Validação do valor do serviço
             if (servico.getValor() <= 0) {
-                throw new NegocioException("O valor do serviço deve ser maior que 0");
+                throw new NegocioException("Valor do serviço deve ser maior que 0");
             }
-
-            // Validação de cliente
             if (servico.getCliente() == null) {
                 throw new NegocioException("Serviço deve ter um cliente vinculado");
             }
-
-            // Validação de data
             if (servico.getData() == null) {
                 throw new NegocioException("Data do serviço não pode estar vazia");
             }
@@ -58,7 +51,7 @@ public class ServicoService {
             throw e;
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro inesperado ao salvar servico ", e);
+            throw new RuntimeException("Erro ao salvar serviço: ", e);
         }
     }
 
@@ -66,23 +59,12 @@ public class ServicoService {
         try {
             em.getTransaction().begin();
 
-            if (servico.getId() == 0) {
-                throw new NegocioException("ID não pode ser zero para edição");
-            }
-
             Servico existente = repository.buscarPorId(servico.getId());
             if (existente == null) {
                 throw new NegocioException("Serviço não encontrado");
             }
-
-            // Validação do valor
             if (servico.getValor() <= 0) {
-                throw new NegocioException("O valor do serviço deve ser maior que 0");
-            }
-
-            // Validação de cliente
-            if (servico.getCliente() == null) {
-                throw new NegocioException("Serviço deve ter um cliente vinculado");
+                throw new NegocioException("Valor do serviço deve ser maior que 0");
             }
 
             existente.setNomeServico(servico.getNomeServico());
@@ -100,7 +82,7 @@ public class ServicoService {
             throw e;
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro inesperado ao editar servico ", e);
+            throw new RuntimeException("Erro ao editar serviço: ", e);
         }
     }
 
@@ -121,7 +103,7 @@ public class ServicoService {
             throw e;
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro inesperado ao excluir servico ", e);
+            throw new RuntimeException("Erro ao excluir serviço: ", e);
         }
     }
 
@@ -129,7 +111,7 @@ public class ServicoService {
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
-            throw new RuntimeException("Erro inesperado ao buscar servico por ID ", e);
+            throw new RuntimeException("Erro ao buscar serviço: ", e);
         }
     }
 
@@ -137,7 +119,7 @@ public class ServicoService {
         try {
             return repository.listar();
         } catch (Exception e) {
-            throw new RuntimeException("Erro inesperado ao listar servico ", e);
+            throw new RuntimeException("Erro ao listar serviços: ", e);
         }
     }
 }

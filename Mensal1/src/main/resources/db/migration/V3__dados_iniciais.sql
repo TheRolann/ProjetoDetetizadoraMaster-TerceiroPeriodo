@@ -3,12 +3,12 @@
 -- =====================
 
 INSERT INTO clientes (nome_empresa, documento, endereco, telefone, email, status) VALUES
-    ('Empresa A', '123233210000102', 'Rua A, 123 - Foz do Iguacu', '(45) 99999-9999', 'aaaaaaaaaa@gmail.com', 'ATIVO'),
-    ('Empresa B', '987654320000109', 'Rua B, 456 - Foz do Iguacu', '(45) 98888-8888', 'asdasdasda@hotmail.com', 'ATIVO');
+    ('Empresa A', '123233210000102', 'Rua A, 123 - Foz do Iguacu', '999999999', 'aaaaaaaaaa@gmail.com', 'ATIVO'),
+    ('Empresa B', '987654320000109', 'Rua B, 456 - Foz do Iguacu', '988888888', 'asdasdasda@hotmail.com', 'ATIVO');
 
 INSERT INTO funcionarios (nome, cpf, telefone, email, salario, cargo, status) VALUES
-    ('João Silva', '123.456.789-00', '(45) 97777-7777', 'banana@gmail.com', 2500.00, 'FUNCIONARIO', 'ATIVO'),
-    ('Maria Souza', '987.654.321-00', '(45) 96666-6666', 'mamao@outlook.com', 3000.00, 'GERENTE', 'ATIVO');
+    ('João Silva', '12345678900', '977777777', 'banana@gmail.com', 2500.00, 'FUNCIONARIO', 'ATIVO'),
+    ('Maria Souza', '98765432100', '966666666', 'mamao@outlook.com', 3000.00, 'GERENTE', 'ATIVO');
 
 INSERT INTO servicos (nome_servico, descricao, data, valor, status, cliente_id) VALUES
     ('Descupinização', 'Controle de cupins em madeira', '2025-04-11', 500.00, 'CONCLUIDO', 1),

@@ -1,50 +1,48 @@
 package br.edu.uniamerica.projetomensal.repository;
 
-import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
-// Classe repository responsavel por acessar o banco e realizar as operacoes de CRUD para a entidade Cliente
+// Classe responsavel por acessar e manipular os dados de Cliente no banco
+// Aqui ficam as operacoes basicas de persistencia usando JPA
 public class ClienteRepository {
 
-    private EntityManager em; // Cria o entity manager para conexao
+    // EntityManager responsavel por conversar com o banco de dados
+    private final EntityManager em;
 
-    // Construtor que aceita EntityManager como parametro
+    // Recebe o EntityManager no construtor para reutilizar nas operacoes
     public ClienteRepository(EntityManager em) {
         this.em = em;
     }
 
-    // Construtor padrao para compatibilidade
-    public ClienteRepository() {
-        this.em = PersistenceManager.getEntityManager();
-    }
-
-    // Salva o cliente no banco
+    // Salva um novo cliente no banco
     public void salvar(Cliente cliente) {
-        em.persist(cliente);
+        em.persist(cliente); // persist adiciona a entidade no contexto de persistencia
     }
 
-    // Apaga o cliente do banco caso o id seja encontrado
+    // Exclui um cliente pelo id
+    // Primeiro busca o registro, depois remove se ele existir
     public void excluir(int id) {
-        Cliente cliente = buscarPorId(id);
+        Cliente cliente = buscarPorId(id); // Busca o cliente pela chave primaria
         if (cliente != null) {
-            em.remove(cliente);
+            em.remove(cliente); // remove apaga a entidade do banco
         }
     }
 
-    // Atualiza o cliente no banco
+    // Atualiza os dados de um cliente ja existente
     public void editar(Cliente cliente) {
-        em.merge(cliente);
+        em.merge(cliente); // merge sincroniza as alteracoes com o banco
     }
 
-    // Busca o cliente no banco por id
+    // Busca um cliente pelo id
+    // Retorna null se nao encontrar
     public Cliente buscarPorId(int id) {
-        return em.find(Cliente.class, id);
+        return em.find(Cliente.class, id); // find procura pela chave primaria
     }
 
-    // Lista todos os clientes do banco. Consulta customizada em JPQL (Java Persistence Query Language)
+    // Lista todos os clientes cadastrados
     public List<Cliente> listar() {
         return em.createQuery("SELECT c FROM Cliente c", Cliente.class).getResultList();
     }

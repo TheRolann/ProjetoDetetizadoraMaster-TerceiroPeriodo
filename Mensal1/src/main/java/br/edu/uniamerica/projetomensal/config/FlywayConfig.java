@@ -10,6 +10,11 @@ public class FlywayConfig {
         String user = System.getenv("DB_USER");
         String password = System.getenv("DB_PASSWORD");
 
+        // Fallback se variavel de ambiente nao estiver definida
+        // if (url == null) url = "jdbc:postgresql://localhost:5432/detetizadora_master";
+        // if (user == null) user = "postgres";
+        // if (password == null) password = "";
+
         Flyway flyway = Flyway.configure()
                 .dataSource(url, user, password)
                 .validateOnMigrate(false)

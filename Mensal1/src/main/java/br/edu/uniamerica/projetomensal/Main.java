@@ -1,20 +1,29 @@
 package br.edu.uniamerica.projetomensal;
 
-import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.config.FlywayConfig;
-import br.edu.uniamerica.projetomensal.menu.MenuPrincipal;
+import br.edu.uniamerica.projetomensal.config.PersistenceManager;
+import br.edu.uniamerica.projetomensal.view.LoginFrame;
+import br.edu.uniamerica.projetomensal.view.MainFrame;
+import br.edu.uniamerica.projetomensal.view.Tema;
+
+import javax.swing.*;
 
 public class Main {
-     public static void main (String[] args){
+    public static void main(String[] args) {
 
-        FlywayConfig.migrar(); // Roda as migrations antes, atualizando com o banco de dados
-        PersistenceManager.conectar(); // Abre a conexao JPA
+        // Aplica o tema antes de qualquer componente Swing ser criado
+        Tema.aplicar();
 
-        MenuPrincipal servicoMenu = new MenuPrincipal();
+        // 1 - Roda as migrations antes de tudo
+        FlywayConfig.migrar();
 
-         // Inicia o menu principal
-        servicoMenu.iniciar();
+        // 2 - Abre a conexao JPA
+        PersistenceManager.conectar();
 
-        PersistenceManager.desconectar(); // Fecha tudo
+        // 3 - Inicia a janela Swing na thread correta
+        SwingUtilities.invokeLater(() -> {
+            LoginFrame login = new LoginFrame();
+            login.setVisible(true);
+        });
     }
 }
