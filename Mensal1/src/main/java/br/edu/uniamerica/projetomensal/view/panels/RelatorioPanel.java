@@ -8,6 +8,8 @@ import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
 import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
+import br.edu.uniamerica.projetomensal.view.EstiloUtils;
+import br.edu.uniamerica.projetomensal.view.Tema;
 import jakarta.persistence.EntityManager;
 
 import javax.swing.*;
@@ -83,6 +85,7 @@ public class RelatorioPanel extends JPanel {
         divisor.setDividerLocation(130);
         divisor.setResizeWeight(0.0);
         add(divisor, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         // ========== EVENTOS ==========
         botaoClientes.addActionListener(e     -> mostrarRelatorioClientes());
@@ -95,8 +98,17 @@ public class RelatorioPanel extends JPanel {
     // Limpa e atualiza o painel de conteudo
     private void atualizarConteudo(JComponent componente, String tituloBorda) {
         painelConteudo.removeAll();
-        painelConteudo.setBorder(BorderFactory.createTitledBorder(tituloBorda));
+        painelConteudo.setBackground(Tema.COR_FUNDO);  // adiciona isso
+        painelConteudo.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Tema.COR_DESTAQUE, 1),
+                tituloBorda,
+                javax.swing.border.TitledBorder.LEFT,
+                javax.swing.border.TitledBorder.TOP,
+                Tema.FONTE_BOLD,
+                Tema.COR_DESTAQUE
+        ));
         painelConteudo.add(componente, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(painelConteudo));
         painelConteudo.revalidate();
         painelConteudo.repaint();
     }
@@ -135,6 +147,7 @@ public class RelatorioPanel extends JPanel {
         }
         JTable tabela = criarTabelaReadOnly(colunas, dados);
         painel.add(new JScrollPane(tabela), BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         atualizarConteudo(painel, "Relatório de Clientes");
     }
@@ -173,6 +186,7 @@ public class RelatorioPanel extends JPanel {
         }
         JTable tabela = criarTabelaReadOnly(colunas, dados);
         painel.add(new JScrollPane(tabela), BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         atualizarConteudo(painel, "Relatório de Funcionários");
     }
@@ -233,6 +247,7 @@ public class RelatorioPanel extends JPanel {
         }
         JTable tabela = criarTabelaReadOnly(colunas, dados);
         painel.add(new JScrollPane(tabela), BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         atualizarConteudo(painel, "Relatório de Serviços");
     }
@@ -281,6 +296,7 @@ public class RelatorioPanel extends JPanel {
         }
         JTable tabela = criarTabelaReadOnly(colunas, dados);
         painel.add(new JScrollPane(tabela), BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         atualizarConteudo(painel, "Agenda — Próximos 3 Meses");
     }

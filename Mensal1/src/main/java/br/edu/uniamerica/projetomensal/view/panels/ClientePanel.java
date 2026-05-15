@@ -3,6 +3,7 @@ package br.edu.uniamerica.projetomensal.view.panels;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
+import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -121,6 +122,7 @@ public class ClientePanel extends JPanel {
         divisor.setResizeWeight(0.45);
 
         add(divisor, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         // ============ Eventos ============
         botaoSalvar.addActionListener(e -> salvarCliente());

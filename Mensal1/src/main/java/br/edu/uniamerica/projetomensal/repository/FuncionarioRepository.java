@@ -68,4 +68,17 @@ public class FuncionarioRepository {
                 .getSingleResult();
         return count > 0;
     }
+
+    public Funcionario buscarPorNomeESenha(String nome, String senha) {
+        List<Funcionario> lista = em.createQuery(
+                        "SELECT f FROM Funcionario f WHERE f.nome = :nome AND f.senha = :senha AND f.status = :status",
+                        Funcionario.class)
+                .setParameter("nome", nome)
+                .setParameter("senha", senha)
+                .setParameter("status", Status.ATIVO)
+                .getResultList();
+        return lista.isEmpty() ? null : lista.get(0);
+    }
+
 }
+

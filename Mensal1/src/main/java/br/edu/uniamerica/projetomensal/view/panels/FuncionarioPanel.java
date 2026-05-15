@@ -4,6 +4,7 @@ import br.edu.uniamerica.projetomensal.model.Funcionario;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import jakarta.persistence.EntityManager;
 
 import javax.swing.*;
@@ -133,6 +134,7 @@ public class FuncionarioPanel extends JPanel {
         divisor.setResizeWeight(0.45);
 
         add(divisor, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         // ========== Eventos ==========
         botaoSalvar.addActionListener(e  -> salvarFuncionario());

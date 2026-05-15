@@ -5,6 +5,7 @@ import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
 import br.edu.uniamerica.projetomensal.service.ServicoService;
+import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import jakarta.persistence.EntityManager;
 
 import javax.swing.*;
@@ -127,6 +128,7 @@ public class ServicoPanel extends JPanel {
         divisor.setDividerLocation(420);
         divisor.setResizeWeight(0.45);
         add(divisor, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         // ========== Eventos ==========
         botaoSalvar.addActionListener(e  -> salvarServico());
