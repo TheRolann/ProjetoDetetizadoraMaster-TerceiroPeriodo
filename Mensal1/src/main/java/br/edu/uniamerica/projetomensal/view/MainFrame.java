@@ -2,7 +2,6 @@ package br.edu.uniamerica.projetomensal.view;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.view.panels.ClientePanel;
-import br.edu.uniamerica.projetomensal.view.panels.FuncionarioPanel;
 import br.edu.uniamerica.projetomensal.view.panels.RelatorioPanel;
 import br.edu.uniamerica.projetomensal.view.panels.ServicoPanel;
 
@@ -31,7 +30,7 @@ public class MainFrame extends JFrame {
 
         // Passa o EntityManager para cada painel via PersistenceManager
         abas.addTab("Clientes",    new ClientePanel(PersistenceManager.getEntityManager()));
-        abas.addTab("Funcionários", new FuncionarioPanel(PersistenceManager.getEntityManager()));
+//        abas.addTab("Funcionários", new FuncionarioPanel(PersistenceManager.getEntityManager()));
         abas.addTab("Serviços",    new ServicoPanel(PersistenceManager.getEntityManager()));
         abas.addTab("Relatórios",  new RelatorioPanel(PersistenceManager.getEntityManager()));
 
