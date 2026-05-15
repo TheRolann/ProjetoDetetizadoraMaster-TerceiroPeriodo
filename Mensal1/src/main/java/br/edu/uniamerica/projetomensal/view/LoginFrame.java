@@ -23,7 +23,7 @@ public class LoginFrame extends JFrame {
 
     private void configurarJanela() {
         setTitle("Login - Detetizadora Master");
-        setSize(380, 280);
+        setSize(380, 320);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
