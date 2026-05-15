@@ -5,14 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
 
-public class LoginPanel extends JFrame {
+public class PreviewLoginPanel extends JFrame {
     private JTextField campoUsuario;
     private JPasswordField campoSenha;
     private JLabel mensagemLabel;
     private HashMap<String, String> usuarios;
     private JCheckBox mostrarSenhaCheckBox;
 
-    public LoginPanel() {
+    public PreviewLoginPanel() {
         // Inicializar banco de dados de usuários
         usuarios = new HashMap<>();
         usuarios.put("admin", "123");
@@ -329,7 +329,7 @@ public class LoginPanel extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new LoginPanel().setVisible(true);
+                new PreviewLoginPanel().setVisible(true);
             }
         });
     }
