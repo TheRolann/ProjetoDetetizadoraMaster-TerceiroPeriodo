@@ -109,4 +109,13 @@ public class FuncionarioService {
     public List<Funcionario> listar() {
         return repository.listar();
     }
+
+    public Funcionario autenticar(String nome, String senha) {
+        try {
+            return repository.autenticar(nome, senha);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao autenticar: ", e);
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package br.edu.uniamerica.projetomensal;
 
 import br.edu.uniamerica.projetomensal.config.FlywayConfig;
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
+import br.edu.uniamerica.projetomensal.view.LoginFrame;
 import br.edu.uniamerica.projetomensal.view.MainFrame;
 import br.edu.uniamerica.projetomensal.view.Tema;
 
@@ -21,8 +22,8 @@ public class Main {
 
         // 3 - Inicia a janela Swing na thread correta
         SwingUtilities.invokeLater(() -> {
-            MainFrame frame = new MainFrame();
-            frame.setVisible(true);
+            LoginFrame login = new LoginFrame();
+            login.setVisible(true);
         });
     }
 }
