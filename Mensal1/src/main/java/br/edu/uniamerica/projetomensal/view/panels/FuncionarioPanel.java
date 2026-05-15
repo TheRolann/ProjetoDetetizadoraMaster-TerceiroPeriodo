@@ -5,6 +5,7 @@ import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
+import br.edu.uniamerica.projetomensal.view.Tema;
 import jakarta.persistence.EntityManager;
 
 import javax.swing.*;
@@ -25,6 +26,7 @@ public class FuncionarioPanel extends JPanel {
     private JTextField campoSalario;
     private JComboBox<Cargo> campoCargo;
     private JComboBox<Status> campoStatus;
+    private JPasswordField campoSenha;
 
     // === Tabela ======================
     private JTable tabela;
@@ -59,7 +61,7 @@ public class FuncionarioPanel extends JPanel {
         painelEsquerdo.add(titulo, BorderLayout.NORTH);
 
         // === Campos ======================
-        JPanel painelCampos = new JPanel(new GridLayout(8, 2, 5, 8));
+        JPanel painelCampos = new JPanel(new GridLayout(9, 2, 5, 8));
 
         painelCampos.add(new JLabel("Nome:"));
         campoNome = new JTextField();
@@ -92,6 +94,18 @@ public class FuncionarioPanel extends JPanel {
         painelCampos.add(new JLabel("Status:"));
         campoStatus = new JComboBox<>(new Status[]{Status.ATIVO, Status.INATIVO});
         painelCampos.add(campoStatus);
+
+        painelCampos.add(new JLabel("Senha:"));
+        campoSenha = new JPasswordField();
+        campoSenha.setBackground(Tema.COR_FUNDO_CAMPO);
+        campoSenha.setForeground(Tema.COR_TEXTO);
+        campoSenha.setCaretColor(Tema.COR_TEXTO);
+        campoSenha.setFont(Tema.FONTE_REGULAR);
+        campoSenha.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Tema.COR_DESTAQUE, 1),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)
+        ));
+        painelCampos.add(campoSenha);
 
         painelEsquerdo.add(painelCampos, BorderLayout.CENTER);
 
@@ -163,6 +177,12 @@ public class FuncionarioPanel extends JPanel {
             String cpf = campoCpf.getText().trim().replaceAll("[./-]", "");
             double salario = Double.parseDouble(campoSalario.getText().trim().replace(",", "."));
 
+            String senha = new String(campoSenha.getPassword()).trim();
+            if (senha.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Senha é obrigatória.");
+                return;
+            }
+
             Funcionario funcionario = new Funcionario(
                     campoNome.getText().trim(),
                     cpf,
@@ -173,6 +193,8 @@ public class FuncionarioPanel extends JPanel {
                     (Cargo) campoCargo.getSelectedItem(),
                     Status.ATIVO
             );
+
+            funcionario.setSenha(senha);
 
             funcionarioService.salvar(funcionario);
             JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
@@ -217,6 +239,11 @@ public class FuncionarioPanel extends JPanel {
             funcionario.setSalario(salario);
             funcionario.setCargo((Cargo) campoCargo.getSelectedItem());
             funcionario.setStatus((Status) campoStatus.getSelectedItem());
+
+            String senha = new String(campoSenha.getPassword()).trim();
+            if (!senha.isEmpty()) {
+                funcionario.setSenha(senha);
+            } // Se o campo estiver vazio, mantem a atual
 
             funcionarioService.editar(funcionario);
             JOptionPane.showMessageDialog(this, "Funcionário atualizado com sucesso!");
@@ -271,6 +298,7 @@ public class FuncionarioPanel extends JPanel {
         campoSalario.setText("");
         campoCargo.setSelectedIndex(0);
         campoStatus.setSelectedIndex(0);
+        campoSenha.setText("");
         idSelecionado = -1;
         tabela.clearSelection();
     }
@@ -303,6 +331,7 @@ public class FuncionarioPanel extends JPanel {
         campoSalario.setText(String.valueOf(funcionario.getSalario()));
         campoCargo.setSelectedItem(funcionario.getCargo());
         campoStatus.setSelectedItem(funcionario.getStatus());
+        campoSenha.setText("");
     }
 
     private boolean validarCampos() {
