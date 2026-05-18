@@ -9,27 +9,29 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 public class FuncionarioService {
-
-    private EntityManager em;
-    private FuncionarioRepository repository;
+    // Gerencia a transacao com o banco
+    private final EntityManager em;
+    // Repository que acessa os funcionarios no banco
+    private final FuncionarioRepository repository;
 
     public FuncionarioService(EntityManager em) {
         this.em = em;
         this.repository = new FuncionarioRepository(em);
     }
 
-    // Metodos da interface Crud implementados para realizar as operacoes de salvar, excluir, editar, buscar por ID e listar funcionarios
-
+    // Salva um novo funcionario
+    // Verifica regras basicas: id deve ser zero (novo), CPF deve ser unico
+    // Usa transacao para garantir atomicidade
     public void salvar(Funcionario funcionario) {
         try {
             em.getTransaction().begin();
 
             if (funcionario.getId() != 0) {
-                throw new RuntimeException("Novo funcionário não pode ter ID");
+                throw new RuntimeException("Novo funcionario nao pode ter ID");
             }
 
             if (repository.existePorCpf(funcionario.getCpf())) {
-                throw new RuntimeException("Já existe funcionário com esse CPF");
+                throw new RuntimeException("Ja existe funcionario com esse CPF");
             }
 
             funcionario.setStatus(Status.ATIVO);
@@ -43,12 +45,14 @@ public class FuncionarioService {
         }
     }
 
+    // Edita um funcionario existente
+    // Verifica que o id existe e que o CPF nao esta duplicado para outro registro
     public void editar(Funcionario funcionario) {
         try {
             em.getTransaction().begin();
 
             if (funcionario.getId() == 0) {
-                throw new RuntimeException("ID não pode ser zero para edição");
+                throw new RuntimeException("ID nao pode ser zero para edicao");
             }
 
             Funcionario existente = repository.buscarPorId(funcionario.getId());
@@ -59,7 +63,7 @@ public class FuncionarioService {
             Funcionario outroComMesmoCpf = repository.buscarPorCpf(funcionario.getCpf());
 
             if (outroComMesmoCpf != null && outroComMesmoCpf.getId() != funcionario.getId()) {
-                throw new RuntimeException("CPF já cadastrado para outro funcionário");
+                throw new RuntimeException("CPF ja cadastrado para outro funcionario");
             }
 
             existente.setNome(funcionario.getNome());
@@ -80,16 +84,18 @@ public class FuncionarioService {
         }
     }
 
+    // Marca o funcionario como inativo em vez de apagar
+    // Valida se o funcionario existe e se ja nao esta inativo
     public void excluir(int id) {
         try {
             em.getTransaction().begin();
 
             Funcionario funcionario = repository.buscarPorId(id);
             if (funcionario == null) {
-                throw new RuntimeException("Funcionario não encontrado");
+                throw new RuntimeException("Funcionario nao encontrado");
             }
             if (funcionario.getStatus() == Status.INATIVO) {
-                throw new RuntimeException("Funcionario já está inativo");
+                throw new RuntimeException("Funcionario ja esta inativo");
             }
             funcionario.setStatus(Status.INATIVO);
 
@@ -110,6 +116,8 @@ public class FuncionarioService {
         return repository.listar();
     }
 
+    // Autentica funcionario por nome e senha
+    // Retorna o funcionario ativo correspondente ou null
     public Funcionario autenticar(String nome, String senha) {
         try {
             return repository.autenticar(nome, senha);

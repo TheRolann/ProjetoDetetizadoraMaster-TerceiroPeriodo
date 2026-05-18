@@ -3,6 +3,7 @@ package br.edu.uniamerica.projetomensal.view.panels;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.ClienteService;
+import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import jakarta.persistence.EntityManager;
 
@@ -11,8 +12,11 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+// Painel responsavel por gerenciar a tela de clientes
+// Contem o formulario para criar/editar clientes e uma tabela para listar
 public class ClientePanel extends JPanel {
 
+    // Service que executa as regras de negocio (salvar, editar, excluir, listar)
     private ClienteService clienteService;
 
     // === Campos do formulario ======================
@@ -36,6 +40,8 @@ public class ClientePanel extends JPanel {
     // Guarda o ID do cliente selecionado para editar/excluir
     private int idSelecionado = -1;
 
+    // Construtor recebe um EntityManager e cria o service usado pelo painel
+    // Tambem monta a interface e carrega os dados iniciais
     public ClientePanel(EntityManager em) {
         this.clienteService = new ClienteService(em);
         setLayout(new BorderLayout());
@@ -43,6 +49,8 @@ public class ClientePanel extends JPanel {
         carregarTabela();
     }
 
+    // Metodo que monta e configura todos os componentes visuais do painel
+    // Divide a tela em formulario (esquerda) e tabela (direita)
     private void inicializarComponentes() {
         // ============ Lado Esquerdo - Formulario ============
         JPanel painelEsquerdo = new JPanel(new BorderLayout());
@@ -144,6 +152,7 @@ public class ClientePanel extends JPanel {
 
     // ============ Metodos de Acao ============
 
+    // Acao do botao Salvar: valida campos e solicita ao service salvar o cliente
     private void salvarCliente() {
         if (!validarCampos()) return;
 
@@ -170,6 +179,7 @@ public class ClientePanel extends JPanel {
         }
     }
 
+    // Acao do botao Editar: atualiza o cliente selecionado
     private void editarCliente() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela para editar.",
@@ -204,6 +214,7 @@ public class ClientePanel extends JPanel {
         }
     }
 
+    // Acao do botao Excluir: confirma e solicita exclusao via service
     private void excluirCliente() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -245,7 +256,8 @@ public class ClientePanel extends JPanel {
         }
     }
 
-    // Percorre toda a cadeia de causas para achar a mensagem real
+    // Percorre a cadeia de excecoes (causes) e concatena as mensagens
+    // Util para extrair a causa real de erros de banco, por exemplo
     private String getMensagemCompleta(Throwable ex) {
         StringBuilder sb = new StringBuilder();
         Throwable atual = ex;
@@ -258,6 +270,7 @@ public class ClientePanel extends JPanel {
         return sb.toString();
     }
 
+    // Reseta os campos do formulario para o estado inicial
     private void limparFormulario() {
         campoNome.setText("");
         campoDocumento.setText("");
@@ -269,6 +282,7 @@ public class ClientePanel extends JPanel {
         tabela.clearSelection();
     }
 
+    // Busca os clientes no service e atualiza o conteudo da tabela
     private void carregarTabela() {
         modeloTabela.setRowCount(0); // Limpa a tabela
 
@@ -285,6 +299,7 @@ public class ClientePanel extends JPanel {
         }
     }
 
+    // Carrega os dados do cliente selecionado no formulario para edicao
     private void preencherFormularioComSelecionado() {
 //        int linhaSelecionada = tabela.getSelectedRow();
 //        if (linhaSelecionada != -1) return;
@@ -304,6 +319,7 @@ public class ClientePanel extends JPanel {
         campoStatus.setSelectedItem(cliente.getStatus());
     }
 
+    // Valida os campos do formulario antes de salvar ou editar
     private boolean validarCampos() {
         if (campoNome.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nome e obrigatorio.");
@@ -313,6 +329,10 @@ public class ClientePanel extends JPanel {
         String documento = campoDocumento.getText().trim().replaceAll("[./-]", "");
         if(!documento.matches("\\d{11}|\\d{14}")) {
             JOptionPane.showMessageDialog(this, "Documento deve ter 11 (CPF) ou 14 (CNPJ) digitos.");
+            return false;
+        }
+        if (!ValidacaoDocumentos.validar(documento)) {
+            JOptionPane.showMessageDialog(this, documento.length() == 11 ? "CPF invalido. Verifique os digitos" : "CNPJ invalido. Verifique os digitos.");
             return false;
         }
 

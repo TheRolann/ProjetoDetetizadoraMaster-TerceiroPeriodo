@@ -4,6 +4,7 @@ import br.edu.uniamerica.projetomensal.model.Funcionario;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import br.edu.uniamerica.projetomensal.view.Tema;
 import jakarta.persistence.EntityManager;
@@ -13,8 +14,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
+// Painel responsavel por gerenciar a tela de funcionarios
+// Contem formulario, tabela e botoes para cadastro, edicao e exclusao
 public class FuncionarioPanel extends JPanel {
 
+    // Service que faz a ligacao com a camada de negocio
     private FuncionarioService funcionarioService;
 
     // === Campos do formulario =====
@@ -38,9 +42,11 @@ public class FuncionarioPanel extends JPanel {
     private JButton botaoExcluir;
     private JButton botaoLimpar;
 
-    // Guarda o ID do cliente selecionado para editar/excluir
+    // Guarda o ID do funcionario selecionado para editar/excluir
     private int idSelecionado = -1;
 
+    // Construtor do painel: recebe o EntityManager, cria o service
+    // e monta a interface inicial com os dados da tabela
     public FuncionarioPanel(EntityManager em) {
         this.funcionarioService = new FuncionarioService(em);
         setLayout(new BorderLayout());
@@ -48,6 +54,8 @@ public class FuncionarioPanel extends JPanel {
         carregarTabela();
     }
 
+    // Monta toda a interface visual do painel
+    // Divide a tela em formulario na esquerda e tabela na direita
     private void inicializarComponentes() {
 
         // ========== Lado Esquerdo - Formulario ==========
@@ -111,10 +119,10 @@ public class FuncionarioPanel extends JPanel {
 
         // === Botoes ======================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        botaoSalvar  = new JButton("Salvar");
-        botaoEditar  = new JButton("Editar");
+        botaoSalvar = new JButton("Salvar");
+        botaoEditar = new JButton("Editar");
         botaoExcluir = new JButton("Excluir");
-        botaoLimpar  = new JButton("Limpar");
+        botaoLimpar = new JButton("Limpar");
 
         painelBotoes.add(botaoSalvar);
         painelBotoes.add(botaoEditar);
@@ -151,10 +159,10 @@ public class FuncionarioPanel extends JPanel {
         SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         // ========== Eventos ==========
-        botaoSalvar.addActionListener(e  -> salvarFuncionario());
-        botaoEditar.addActionListener(e  -> editarFuncionario());
+        botaoSalvar.addActionListener(e -> salvarFuncionario());
+        botaoEditar.addActionListener(e -> editarFuncionario());
         botaoExcluir.addActionListener(e -> excluirFuncionario());
-        botaoLimpar.addActionListener(e  -> limparFormulario());
+        botaoLimpar.addActionListener(e -> limparFormulario());
 
         // Verifica linha valida antes de atualizar idSelecionado
         tabela.getSelectionModel().addListSelectionListener(e -> {
@@ -170,6 +178,7 @@ public class FuncionarioPanel extends JPanel {
 
     // ========== Metodos de Acao ==========
 
+    // Salva um funcionario novo depois de validar os campos
     private void salvarFuncionario() {
         if (!validarCampos()) return;
 
@@ -196,6 +205,7 @@ public class FuncionarioPanel extends JPanel {
 
             funcionario.setSenha(senha);
 
+            // Envia o objeto completo para o service persistir
             funcionarioService.salvar(funcionario);
             JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
             limparFormulario();
@@ -212,6 +222,7 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
+    // Edita o funcionario selecionado na tabela
     private void editarFuncionario() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -245,6 +256,7 @@ public class FuncionarioPanel extends JPanel {
                 funcionario.setSenha(senha);
             } // Se o campo estiver vazio, mantem a atual
 
+            // Envia o objeto atualizado para o service
             funcionarioService.editar(funcionario);
             JOptionPane.showMessageDialog(this, "Funcionário atualizado com sucesso!");
             limparFormulario();
@@ -262,6 +274,7 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
+    // Remove o funcionario selecionado depois de confirmar com o usuario
     private void excluirFuncionario() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -289,6 +302,7 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
+    // Limpa todos os campos e remove a selecao da tabela
     private void limparFormulario() {
         campoNome.setText("");
         campoCpf.setText("");
@@ -303,6 +317,7 @@ public class FuncionarioPanel extends JPanel {
         tabela.clearSelection();
     }
 
+    // Busca os funcionarios no service e atualiza a tabela
     private void carregarTabela() {
         modeloTabela.setRowCount(0);
 
@@ -319,6 +334,7 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
+    // Preenche os campos do formulario com os dados do funcionario selecionado
     private void preencherFormularioComSelecionado() {
         Funcionario funcionario = funcionarioService.buscarPorId(idSelecionado);
         if (funcionario == null) return;
@@ -334,6 +350,7 @@ public class FuncionarioPanel extends JPanel {
         campoSenha.setText("");
     }
 
+    // Valida os campos antes de salvar ou editar
     private boolean validarCampos() {
         if (campoNome.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nome é obrigatório.");
@@ -343,6 +360,10 @@ public class FuncionarioPanel extends JPanel {
         String cpf = campoCpf.getText().trim().replaceAll("[./-]", "");
         if (!cpf.matches("\\d{11}|\\d{14}")) {
             JOptionPane.showMessageDialog(this, "CPF deve ter 11 dígitos ou CNPJ 14 dígitos.");
+            return false;
+        }
+        if (!ValidacaoDocumentos.validar(cpf)) {
+            JOptionPane.showMessageDialog(this, cpf.length() == 11 ? "CPF invalido. Verifique os digitos" : "CNPJ invalido. Verifique os digitos.");
             return false;
         }
 

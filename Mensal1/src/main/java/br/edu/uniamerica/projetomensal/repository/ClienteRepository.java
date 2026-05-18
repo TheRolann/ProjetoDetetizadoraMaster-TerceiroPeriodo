@@ -8,7 +8,7 @@ import java.util.List;
 // Aqui ficam as operacoes basicas de persistencia usando JPA
 public class ClienteRepository {
 
-    // EntityManager responsavel por conversar com o banco de dados
+    // Objeto que faz a comunicacao com o banco de dados
     private final EntityManager em;
 
     // Recebe o EntityManager no construtor para reutilizar nas operacoes
@@ -18,7 +18,7 @@ public class ClienteRepository {
 
     // Salva um novo cliente no banco
     public void salvar(Cliente cliente) {
-        em.persist(cliente); // persist adiciona a entidade no contexto de persistencia
+        em.persist(cliente); // Adiciona o objeto no contexto de persistencia
     }
 
     // Exclui um cliente pelo id
@@ -26,19 +26,19 @@ public class ClienteRepository {
     public void excluir(int id) {
         Cliente cliente = buscarPorId(id); // Busca o cliente pela chave primaria
         if (cliente != null) {
-            em.remove(cliente); // remove apaga a entidade do banco
+            em.remove(cliente); // Remove o registro do banco
         }
     }
 
     // Atualiza os dados de um cliente ja existente
     public void editar(Cliente cliente) {
-        em.merge(cliente); // merge sincroniza as alteracoes com o banco
+        em.merge(cliente); // Atualiza o objeto no banco
     }
 
     // Busca um cliente pelo id
     // Retorna null se nao encontrar
     public Cliente buscarPorId(int id) {
-        return em.find(Cliente.class, id); // find procura pela chave primaria
+        return em.find(Cliente.class, id); // Procura pela chave primaria
     }
 
     // Lista todos os clientes cadastrados
