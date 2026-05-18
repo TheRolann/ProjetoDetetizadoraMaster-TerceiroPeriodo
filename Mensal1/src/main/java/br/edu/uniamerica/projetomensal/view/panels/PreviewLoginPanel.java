@@ -1,4 +1,4 @@
-package br.edu.uniamerica.projetomensal.view.panels;
+package br.edu.uniamerica.projetomensal.view.panels.preview;
 
 import javax.swing.*;
 import java.awt.*;

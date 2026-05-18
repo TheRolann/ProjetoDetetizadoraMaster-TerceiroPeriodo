@@ -2,29 +2,31 @@ package br.edu.uniamerica.projetomensal.config;
 
 import org.flywaydb.core.Flyway;
 
+// Classe responsavel por configurar e executar as migracoes do banco
 public class FlywayConfig {
 
-    // Migrar = vai rodar as migrations, depois fecha tudo no final
     public static void migrar() {
+        // Pega os dados de conexao que estao nas variaveis de ambiente
         String url = System.getenv("DB_URL");
         String user = System.getenv("DB_USER");
         String password = System.getenv("DB_PASSWORD");
 
-        // Fallback se variavel de ambiente nao estiver definida
+        // Fallback se a variavel de ambiente nao estiver definida
         // if (url == null) url = "jdbc:postgresql://localhost:5432/detetizadora_master";
         // if (user == null) user = "postgres";
         // if (password == null) password = "";
 
+        // Cria o objeto Flyway com os dados do banco
         Flyway flyway = Flyway.configure()
                 .dataSource(url, user, password)
                 .validateOnMigrate(false)
                 .outOfOrder(true)
                 .load();
 
-        // Faz repair para atualizar checksums das migrations alteradas
+        // Corrige o historico antes de aplicar novas migracoes
         flyway.repair();
 
-        // Roda as migrations
+        // Executa as migracoes pendentes do banco
         flyway.migrate();
     }
 }

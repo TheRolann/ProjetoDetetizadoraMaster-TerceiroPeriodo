@@ -5,41 +5,48 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-@Entity // Transforma classe em tabela
-@Table(name = "clientes") // Nome da tabela
+// Classe que representa um cliente no banco de dados
+@Entity // Transforma a classe em tabela
+@Table(name = "clientes") // Define o nome da tabela
 public class Cliente {
-    // Atributos
-    @Id // Novo ID
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID com novo auto-incremento
+    // Identificador unico do cliente
+    @Id // Campo chave primaria
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID gerado automaticamente
     private int id;
 
+    // Nome da empresa do cliente
     @Column(name = "nome_empresa", length = 150, nullable = false)
     private String nomeEmpresa;
 
+    // Documento do cliente, pode ser CNPJ ou CPF
     @Column(name = "documento", length = 18, nullable = false, unique = true)
-    private String documento; // Pode ser CNPJ ou CPF
+    private String documento;
 
+    // Endereco completo do cliente
     @Column(name = "endereco", columnDefinition = "text")
     private String endereco;
 
+    // Telefone de contato
     @Column(name = "telefone", length = 20)
     private String telefone;
 
+    // Email de contato
     @Column(name = "email", length = 100)
     private String email;
 
-    @Enumerated(EnumType.STRING) // Indica que é um ENUM
+    // Status do cliente guardado como texto no banco
+    @Enumerated(EnumType.STRING) // Indica que o valor vem de um enum
     @Column(name = "status", nullable = false)
     private Status status;
 
-    // Relacionamento com Servicos
+    // Um cliente pode ter varios servicos ligados a ele
     @OneToMany(mappedBy = "cliente")
     private List<Servico> servicos;
 
-    // Cria instancia/molde vazio para o JPA/Hibernate
+    // Construtor vazio exigido pelo JPA
     public Cliente() {}
 
-    // Construtor
+    // Construtor para criar um cliente com os dados principais
     public Cliente(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
         this.nomeEmpresa = nomeEmpresa;
         this.documento = documento;
@@ -49,7 +56,7 @@ public class Cliente {
         this.status = status;
     }
 
-    // Getters e Setters
+    // Getters e setters para acessar e alterar os dados
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -71,7 +78,7 @@ public class Cliente {
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
 
-    // ComboBox de clientes mostra o toString() do objeto Cliente. Metodo para reverter isso
+    // Faz o ComboBox mostrar o nome da empresa ao inves do endereco do objeto
     @Override
     public String toString() {
         return nomeEmpresa;

@@ -19,6 +19,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+// Painel responsavel por exibir diversos relatorios da aplicacao
+// Comentarios neste arquivo explicam o funcionamento da interface
+// e como os dados sao obtidos dos services
 public class RelatorioPanel extends JPanel {
 
     private ClienteService clienteService;
@@ -29,12 +32,18 @@ public class RelatorioPanel extends JPanel {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public RelatorioPanel(EntityManager em) {
-        this.clienteService    = new ClienteService(em);
+        // Cria os services que vao buscar os dados no banco
+        this.clienteService = new ClienteService(em);
         this.funcionarioService = new FuncionarioService(em);
-        this.servicoService    = new ServicoService(em);
+        this.servicoService = new ServicoService(em);
 
         setLayout(new BorderLayout());
         inicializarComponentes();
+
+        // Metodo que monta toda a interface deste painel
+        // Divide a area em duas colunas: botoes (lado esquerdo) e conteudo (lado direito)
+        // Cada botao carrega um relatorio diferente no painel de conteudo
+
     }
 
     private void inicializarComponentes() {
@@ -45,10 +54,10 @@ public class RelatorioPanel extends JPanel {
         painelBotoes.setBorder(new EmptyBorder(20, 10, 20, 10));
         painelBotoes.setPreferredSize(new Dimension(130, 0));
 
-        JButton botaoClientes     = new JButton("Clientes");
+        JButton botaoClientes = new JButton("Clientes");
         JButton botaoFuncionarios = new JButton("Funcionários");
-        JButton botaoServicos     = new JButton("Serviços");
-        JButton botaoAgenda       = new JButton("Agenda");
+        JButton botaoServicos = new JButton("Serviços");
+        JButton botaoAgenda = new JButton("Agenda");
 
         // Tamanho uniforme dos botoes
         Dimension tamanhoBotao = new Dimension(110, 35);
@@ -88,10 +97,11 @@ public class RelatorioPanel extends JPanel {
         SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
         // ========== EVENTOS ==========
-        botaoClientes.addActionListener(e     -> mostrarRelatorioClientes());
+        // Cada botao dispara a geracao do relatorio correspondente
+        botaoClientes.addActionListener(e -> mostrarRelatorioClientes());
         botaoFuncionarios.addActionListener(e -> mostrarRelatorioFuncionarios());
-        botaoServicos.addActionListener(e     -> mostrarRelatorioServicos());
-        botaoAgenda.addActionListener(e       -> mostrarRelatorioAgenda());
+        botaoServicos.addActionListener(e -> mostrarRelatorioServicos());
+        botaoAgenda.addActionListener(e -> mostrarRelatorioAgenda());
     }
 
     // ========== METODO AUXILIAR ==========
@@ -115,9 +125,10 @@ public class RelatorioPanel extends JPanel {
 
     // ========== RELATORIO CLIENTES ==========
     private void mostrarRelatorioClientes() {
+        // Pega todos os clientes via service
         List<Cliente> clientes = clienteService.listar();
 
-        long ativos   = clientes.stream().filter(c -> c.getStatus() == Status.ATIVO).count();
+        long ativos = clientes.stream().filter(c -> c.getStatus() == Status.ATIVO).count();
         long inativos = clientes.stream().filter(c -> c.getStatus() == Status.INATIVO).count();
 
         // Painel principal
@@ -154,9 +165,10 @@ public class RelatorioPanel extends JPanel {
 
     // ========== RELATORIO FUNCIONARIOS ==========
     private void mostrarRelatorioFuncionarios() {
+        // Pega todos os funcionarios via service
         List<Funcionario> funcionarios = funcionarioService.listar();
 
-        long gerentes      = funcionarios.stream().filter(f -> f.getCargo() == Cargo.GERENTE).count();
+        long gerentes = funcionarios.stream().filter(f -> f.getCargo() == Cargo.GERENTE).count();
         long qtdFuncionarios = funcionarios.stream().filter(f -> f.getCargo() == Cargo.FUNCIONARIO).count();
         double totalSalarios = funcionarios.stream().mapToDouble(Funcionario::getSalario).sum();
 
@@ -193,6 +205,7 @@ public class RelatorioPanel extends JPanel {
 
     // ========== RELATORIO SERVICOS ==========
     private void mostrarRelatorioServicos() {
+        // Pega todos os servicos via service
         List<Servico> servicos = servicoService.listar();
 
         double totalFaturado = servicos.stream()
@@ -208,9 +221,9 @@ public class RelatorioPanel extends JPanel {
                 .max((a, b) -> Double.compare(a.getValor(), b.getValor()))
                 .orElse(null);
 
-        long concluidos   = servicos.stream().filter(s -> s.getStatus() == Status.CONCLUIDO).count();
-        long emAndamento  = servicos.stream().filter(s -> s.getStatus() == Status.EM_ANDAMENTO).count();
-        long agendados    = servicos.stream().filter(s -> s.getStatus() == Status.AGENDADO).count();
+        long concluidos = servicos.stream().filter(s -> s.getStatus() == Status.CONCLUIDO).count();
+        long emAndamento = servicos.stream().filter(s -> s.getStatus() == Status.EM_ANDAMENTO).count();
+        long agendados = servicos.stream().filter(s -> s.getStatus() == Status.AGENDADO).count();
 
         JPanel painel = new JPanel(new BorderLayout(0, 10));
         painel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -254,6 +267,7 @@ public class RelatorioPanel extends JPanel {
 
     // ========== RELATORIO AGENDA ==========
     private void mostrarRelatorioAgenda() {
+        // Pega todos os servicos e filtra os proximos 3 meses
         List<Servico> servicos = servicoService.listar();
 
         LocalDate hoje  = LocalDate.now();
@@ -309,6 +323,7 @@ public class RelatorioPanel extends JPanel {
                 return false;
             }
         };
+        // Configura a tabela para ser somente leitura e limita a largura da coluna ID
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabela.getColumnModel().getColumn(0).setMaxWidth(40);
         return tabela;
