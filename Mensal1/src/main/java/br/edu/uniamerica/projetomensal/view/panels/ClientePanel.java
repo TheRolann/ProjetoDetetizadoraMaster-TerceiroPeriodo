@@ -1,8 +1,8 @@
 package br.edu.uniamerica.projetomensal.view.panels;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
+import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.ClienteService;
+import br.edu.uniamerica.projetomensal.model.service.ClienteService;
 import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import jakarta.persistence.EntityManager;
@@ -159,7 +159,7 @@ public class ClientePanel extends JPanel {
         try {
             String documento = campoDocumento.getText().trim().replaceAll("[./-]", "");
 
-            Cliente cliente = new Cliente(
+            ClienteEntity clienteEntity = new ClienteEntity(
                     campoNome.getText().trim(),
                     documento,
                     campoEndereco.getText().trim(),
@@ -168,7 +168,7 @@ public class ClientePanel extends JPanel {
                     Status.ATIVO
             );
 
-            clienteService.salvar(cliente);
+            clienteService.salvar(clienteEntity);
             JOptionPane.showMessageDialog(this, "Cliente salvo com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -189,21 +189,21 @@ public class ClientePanel extends JPanel {
         if (!validarCampos()) return;
 
         try {
-            Cliente cliente = clienteService.buscarPorId(idSelecionado);
-            if (cliente == null) {
+            ClienteEntity clienteEntity = clienteService.buscarPorId(idSelecionado);
+            if (clienteEntity == null) {
                 JOptionPane.showMessageDialog(this, "Cliente nao encontrado!");
                 return;
             }
 
             String documento = campoDocumento.getText().trim().replaceAll("[./-]", "");
-            cliente.setNomeEmpresa(campoNome.getText().trim());
-            cliente.setDocumento(documento);
-            cliente.setEndereco(campoEndereco.getText().trim());
-            cliente.setTelefone(campoTelefone.getText().trim());
-            cliente.setEmail(campoEmail.getText().trim());
-            cliente.setStatus((Status) campoStatus.getSelectedItem());
+            clienteEntity.setNomeEmpresa(campoNome.getText().trim());
+            clienteEntity.setDocumento(documento);
+            clienteEntity.setEndereco(campoEndereco.getText().trim());
+            clienteEntity.setTelefone(campoTelefone.getText().trim());
+            clienteEntity.setEmail(campoEmail.getText().trim());
+            clienteEntity.setStatus((Status) campoStatus.getSelectedItem());
 
-            clienteService.editar(cliente);
+            clienteService.editar(clienteEntity);
             JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -286,8 +286,8 @@ public class ClientePanel extends JPanel {
     private void carregarTabela() {
         modeloTabela.setRowCount(0); // Limpa a tabela
 
-        List<Cliente> clientes = clienteService.listar();
-        for (Cliente c : clientes) {
+        List<ClienteEntity> clienteEntities = clienteService.listar();
+        for (ClienteEntity c : clienteEntities) {
             modeloTabela.addRow(new Object[]{
                     c.getId(),
                     c.getNomeEmpresa(),
@@ -308,15 +308,15 @@ public class ClientePanel extends JPanel {
 //        Cliente cliente = clienteService.buscarPorId(idSelecionado);
 //        if (cliente == null) return;
 
-        Cliente cliente = clienteService.buscarPorId(idSelecionado);
-        if (cliente == null) return;
+        ClienteEntity clienteEntity = clienteService.buscarPorId(idSelecionado);
+        if (clienteEntity == null) return;
 
-        campoNome.setText(cliente.getNomeEmpresa());
-        campoDocumento.setText(cliente.getDocumento());
-        campoEndereco.setText(cliente.getEndereco());
-        campoTelefone.setText(cliente.getTelefone());
-        campoEmail.setText(cliente.getEmail());
-        campoStatus.setSelectedItem(cliente.getStatus());
+        campoNome.setText(clienteEntity.getNomeEmpresa());
+        campoDocumento.setText(clienteEntity.getDocumento());
+        campoEndereco.setText(clienteEntity.getEndereco());
+        campoTelefone.setText(clienteEntity.getTelefone());
+        campoEmail.setText(clienteEntity.getEmail());
+        campoStatus.setSelectedItem(clienteEntity.getStatus());
     }
 
     // Valida os campos do formulario antes de salvar ou editar

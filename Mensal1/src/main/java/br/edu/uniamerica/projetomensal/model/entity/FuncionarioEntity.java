@@ -1,4 +1,4 @@
-package br.edu.uniamerica.projetomensal.model;
+package br.edu.uniamerica.projetomensal.model.entity;
 
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 // Classe que representa um funcionario no banco de dados
 @Entity
 @Table(name = "funcionarios") // Nome da tabela no banco
-public class Funcionario {
+public class FuncionarioEntity {
     // Identificador unico do funcionario
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ID gerado automaticamente
@@ -52,12 +52,13 @@ public class Funcionario {
     private Status status;
 
     // Construtor vazio exigido pelo JPA
-    public Funcionario() {}
+    public FuncionarioEntity() {}
 
     // Construtor para criar um funcionario com os dados principais
-    public Funcionario(String nome, String cpf, String telefone, String email, String endereco, double salario, Cargo cargo, Status status) {
+    public FuncionarioEntity(String nome, String cpf, String senha,String telefone, String email, String endereco, double salario, Cargo cargo, Status status) {
         this.nome = nome;
         this.cpf = cpf;
+        this.senha = senha;
         this.telefone = telefone;
         this.email = email;
         this.endereco = endereco;

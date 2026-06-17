@@ -2,15 +2,15 @@
 -- DADOS
 -- =====================
 
-INSERT INTO clientes (nome_empresa, documento, endereco, telefone, email, status) VALUES
+INSERT INTO clienteEntities (nome_empresa, documento, endereco, telefone, email, status) VALUES
     ('Empresa A', '123233210000102', 'Rua A, 123 - Foz do Iguacu', '999999999', 'aaaaaaaaaa@gmail.com', 'ATIVO'),
     ('Empresa B', '987654320000109', 'Rua B, 456 - Foz do Iguacu', '988888888', 'asdasdasda@hotmail.com', 'ATIVO');
 
-INSERT INTO funcionarios (nome, cpf, telefone, email, salario, cargo, status) VALUES
+INSERT INTO funcionarioEntities (nome, cpf, telefone, email, salario, cargo, status) VALUES
     ('João Silva', '12345678900', '977777777', 'banana@gmail.com', 2500.00, 'FUNCIONARIO', 'ATIVO'),
     ('Maria Souza', '98765432100', '966666666', 'mamao@outlook.com', 3000.00, 'GERENTE', 'ATIVO');
 
-INSERT INTO servicos (nome_servico, descricao, data, valor, status, cliente_id) VALUES
+INSERT INTO servicoEntities (nome_servico, descricao, data, valor, status, cliente_id) VALUES
     ('Descupinização', 'Controle de cupins em madeira', '2025-04-11', 500.00, 'CONCLUIDO', 1),
     ('Dedetização comercial', 'Controle geral de pragas', '2025-04-15', 800.00, 'EM_ANDAMENTO', 2);
 

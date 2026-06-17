@@ -1,9 +1,10 @@
 package br.edu.uniamerica.projetomensal.view.panels;
 
-import br.edu.uniamerica.projetomensal.model.Funcionario;
+import br.edu.uniamerica.projetomensal.controller.funcionario.FuncionarioController;
+import br.edu.uniamerica.projetomensal.controller.funcionario.FuncionarioRequest;
+import br.edu.uniamerica.projetomensal.controller.funcionario.FuncionarioResponse;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import br.edu.uniamerica.projetomensal.view.Tema;
@@ -19,7 +20,7 @@ import java.util.List;
 public class FuncionarioPanel extends JPanel {
 
     // Service que faz a ligacao com a camada de negocio
-    private FuncionarioService funcionarioService;
+    private FuncionarioController funcionarioController;
 
     // === Campos do formulario =====
     private JTextField campoNome;
@@ -48,7 +49,7 @@ public class FuncionarioPanel extends JPanel {
     // Construtor do painel: recebe o EntityManager, cria o service
     // e monta a interface inicial com os dados da tabela
     public FuncionarioPanel(EntityManager em) {
-        this.funcionarioService = new FuncionarioService(em);
+        this.funcionarioController = new FuncionarioController(em);
         setLayout(new BorderLayout());
         inicializarComponentes();
         carregarTabela();
@@ -185,28 +186,28 @@ public class FuncionarioPanel extends JPanel {
         try {
             String cpf = campoCpf.getText().trim().replaceAll("[./-]", "");
             double salario = Double.parseDouble(campoSalario.getText().trim().replace(",", "."));
-
             String senha = new String(campoSenha.getPassword()).trim();
             if (senha.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Senha é obrigatória.");
                 return;
             }
 
-            Funcionario funcionario = new Funcionario(
+            FuncionarioRequest req = new FuncionarioRequest(
+
                     campoNome.getText().trim(),
                     cpf,
+                    senha,
                     campoTelefone.getText().trim(),
                     campoEmail.getText().trim(),
                     campoEndereco.getText().trim(),
                     salario,
                     (Cargo) campoCargo.getSelectedItem(),
                     Status.ATIVO
-            );
+                    );
 
-            funcionario.setSenha(senha);
 
             // Envia o objeto completo para o service persistir
-            funcionarioService.salvar(funcionario);
+            funcionarioController.salvarFuncionario(req);
             JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -224,6 +225,7 @@ public class FuncionarioPanel extends JPanel {
 
     // Edita o funcionario selecionado na tabela
     private void editarFuncionario() {
+
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
                     "Selecione um funcionario na tabela para editar.",
@@ -233,31 +235,23 @@ public class FuncionarioPanel extends JPanel {
         if (!validarCampos()) return;
 
         try {
-            Funcionario funcionario = funcionarioService.buscarPorId(idSelecionado);
-            if (funcionario == null) {
-                JOptionPane.showMessageDialog(this, "Funcionário não encontrado.");
-                return;
-            }
-
             String cpf = campoCpf.getText().trim().replaceAll("[./-]", "");
             double salario = Double.parseDouble(campoSalario.getText().trim().replace(",", "."));
-
-            funcionario.setNome(campoNome.getText().trim());
-            funcionario.setCpf(cpf);
-            funcionario.setTelefone(campoTelefone.getText().trim());
-            funcionario.setEmail(campoEmail.getText().trim());
-            funcionario.setEndereco(campoEndereco.getText().trim());
-            funcionario.setSalario(salario);
-            funcionario.setCargo((Cargo) campoCargo.getSelectedItem());
-            funcionario.setStatus((Status) campoStatus.getSelectedItem());
-
             String senha = new String(campoSenha.getPassword()).trim();
-            if (!senha.isEmpty()) {
-                funcionario.setSenha(senha);
-            } // Se o campo estiver vazio, mantem a atual
 
-            // Envia o objeto atualizado para o service
-            funcionarioService.editar(funcionario);
+            FuncionarioRequest req = new FuncionarioRequest(
+                    campoNome.getText().trim(),
+                    cpf,
+                    senha,
+                    campoTelefone.getText().trim(),
+                    campoEmail.getText().trim(),
+                    campoEndereco.getText().trim(),
+                    salario,
+                    (Cargo) campoCargo.getSelectedItem(),
+                    (Status) campoStatus.getSelectedItem()
+            );
+
+            funcionarioController.editarFuncionario(idSelecionado, req);
             JOptionPane.showMessageDialog(this, "Funcionário atualizado com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -289,7 +283,7 @@ public class FuncionarioPanel extends JPanel {
 
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-                funcionarioService.excluir(idSelecionado);
+                funcionarioController.excluirFuncionario(idSelecionado);
                 JOptionPane.showMessageDialog(this, "Funcionário excluído com sucesso!");
                 limparFormulario();
                 carregarTabela();
@@ -321,32 +315,32 @@ public class FuncionarioPanel extends JPanel {
     private void carregarTabela() {
         modeloTabela.setRowCount(0);
 
-        List<Funcionario> funcionarios = funcionarioService.listar();
-        for (Funcionario f : funcionarios) {
+        List<FuncionarioResponse> lista = funcionarioController.listarFuncionarios();
+        for (FuncionarioResponse f : lista) {
             modeloTabela.addRow(new Object[]{
-                    f.getId(),
-                    f.getNome(),
-                    f.getCpf(),
-                    f.getCargo(),
-                    String.format("R$ %.2f", f.getSalario()),
-                    f.getStatus()
+                    f.id(),
+                    f.nome(),
+                    f.cpf(),
+                    f.cargo(),
+                    String.format("R$ %.2f", f.salario()),
+                    f.status()
             });
         }
     }
 
     // Preenche os campos do formulario com os dados do funcionario selecionado
     private void preencherFormularioComSelecionado() {
-        Funcionario funcionario = funcionarioService.buscarPorId(idSelecionado);
-        if (funcionario == null) return;
+        FuncionarioResponse f = funcionarioController.buscarFuncionarioPorId(idSelecionado);
+        if (f == null) return;
 
-        campoNome.setText(funcionario.getNome());
-        campoCpf.setText(funcionario.getCpf());
-        campoTelefone.setText(funcionario.getTelefone());
-        campoEmail.setText(funcionario.getEmail());
-        campoEndereco.setText(funcionario.getEndereco() != null ? funcionario.getEndereco() : "");
-        campoSalario.setText(String.valueOf(funcionario.getSalario()));
-        campoCargo.setSelectedItem(funcionario.getCargo());
-        campoStatus.setSelectedItem(funcionario.getStatus());
+        campoNome.setText(f.nome());
+        campoCpf.setText(f.cpf());
+        campoTelefone.setText(f.telefone());
+        campoEmail.setText(f.email());
+        campoEndereco.setText(f.endereco() != null ? f.endereco() : "");
+        campoSalario.setText(String.valueOf(f.salario()));
+        campoCargo.setSelectedItem(f.cargo());
+        campoStatus.setSelectedItem(f.status());
         campoSenha.setText("");
     }
 

@@ -2,7 +2,7 @@ package br.edu.uniamerica.projetomensal.relatorio;
 
 import br.edu.uniamerica.projetomensal.model.Servico;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.ServicoService;
+import br.edu.uniamerica.projetomensal.model.service.ServicoService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

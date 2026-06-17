@@ -1,10 +1,10 @@
 package br.edu.uniamerica.projetomensal.view.panels;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
-import br.edu.uniamerica.projetomensal.model.Servico;
+import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
+import br.edu.uniamerica.projetomensal.model.entity.ServicoEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.ClienteService;
-import br.edu.uniamerica.projetomensal.service.ServicoService;
+import br.edu.uniamerica.projetomensal.model.service.ClienteService;
+import br.edu.uniamerica.projetomensal.model.service.ServicoService;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import jakarta.persistence.EntityManager;
 
@@ -30,7 +30,7 @@ public class ServicoPanel extends JPanel {
     private JTextField campoDescricao;
     private JTextField campoData;
     private JTextField campoValor;
-    private JComboBox<Cliente> campoCliente;
+    private JComboBox<ClienteEntity> campoCliente;
     private JComboBox<Status> campoStatus;
 
     // === Tabela ======================
@@ -171,7 +171,7 @@ public class ServicoPanel extends JPanel {
         try {
             LocalDate data = LocalDate.parse(campoData.getText().trim(), formatter);
             double valor = Double.parseDouble(campoValor.getText().trim().replace(",", "."));
-            Cliente cliente = (Cliente) campoCliente.getSelectedItem();
+            ClienteEntity clienteEntity = (ClienteEntity) campoCliente.getSelectedItem();
 
             // Cria e persiste o servico via service
             servicoService.cadastrar(
@@ -179,7 +179,7 @@ public class ServicoPanel extends JPanel {
                     campoDescricao.getText().trim(),
                     data,
                     valor,
-                    cliente,
+                    clienteEntity,
                     (Status) campoStatus.getSelectedItem()
             );
 
@@ -205,8 +205,8 @@ public class ServicoPanel extends JPanel {
         if (!validarCampos()) return;
 
         try {
-            Servico servico = servicoService.buscarPorId(idSelecionado);
-            if (servico == null) {
+            ServicoEntity servicoEntity = servicoService.buscarPorId(idSelecionado);
+            if (servicoEntity == null) {
                 JOptionPane.showMessageDialog(this, "Servico não encontrado.");
                 return;
             }
@@ -214,15 +214,15 @@ public class ServicoPanel extends JPanel {
             LocalDate data = LocalDate.parse(campoData.getText().trim(), formatter);
             double valor = Double.parseDouble(campoValor.getText().trim().replace(",", "."));
 
-            servico.setNomeServico(campoNome.getText().trim());
-            servico.setDescricao(campoDescricao.getText().trim());
-            servico.setData(data);
-            servico.setValor(valor);
-            servico.setCliente((Cliente) campoCliente.getSelectedItem());
-            servico.setStatus((Status) campoStatus.getSelectedItem());
+            servicoEntity.setNomeServico(campoNome.getText().trim());
+            servicoEntity.setDescricao(campoDescricao.getText().trim());
+            servicoEntity.setData(data);
+            servicoEntity.setValor(valor);
+            servicoEntity.setCliente((ClienteEntity) campoCliente.getSelectedItem());
+            servicoEntity.setStatus((Status) campoStatus.getSelectedItem());
 
             // Envia o servico atualizado para o service
-            servicoService.editar(servico);
+            servicoService.editar(servicoEntity);
             JOptionPane.showMessageDialog(this, "Servico atualizado com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -280,8 +280,8 @@ public class ServicoPanel extends JPanel {
     private void carregarTabela() {
         modeloTabela.setRowCount(0);
 
-        List<Servico> servicos = servicoService.listar();
-        for (Servico s : servicos) {
+        List<ServicoEntity> servicoEntities = servicoService.listar();
+        for (ServicoEntity s : servicoEntities) {
             modeloTabela.addRow(new Object[]{
                     s.getId(),
                     s.getNomeServico(),
@@ -296,27 +296,27 @@ public class ServicoPanel extends JPanel {
     // Carrega os clientes cadastrados no combo de clientes
     private void carregarClientes() {
         campoCliente.removeAllItems();
-        List<Cliente> clientes = clienteService.listar();
-        for (Cliente c : clientes) {
+        List<ClienteEntity> clienteEntities = clienteService.listar();
+        for (ClienteEntity c : clienteEntities) {
             campoCliente.addItem(c);
         }
     }
 
     // Preenche o formulario com os dados do servico selecionado
     private void preencherFormularioComSelecionado() {
-        Servico servico = servicoService.buscarPorId(idSelecionado);
-        if (servico == null) return;
+        ServicoEntity servicoEntity = servicoService.buscarPorId(idSelecionado);
+        if (servicoEntity == null) return;
 
-        campoNome.setText(servico.getNomeServico());
-        campoDescricao.setText(servico.getDescricao());
-        campoData.setText(servico.getData().format(formatter));
-        campoValor.setText(String.valueOf(servico.getValor()));
-        campoStatus.setSelectedItem(servico.getStatus());
+        campoNome.setText(servicoEntity.getNomeServico());
+        campoDescricao.setText(servicoEntity.getDescricao());
+        campoData.setText(servicoEntity.getData().format(formatter));
+        campoValor.setText(String.valueOf(servicoEntity.getValor()));
+        campoStatus.setSelectedItem(servicoEntity.getStatus());
 
         // Seleciona o cliente correto no JComboBox
         for (int i = 0; i < campoCliente.getItemCount(); i++) {
-            Cliente c = campoCliente.getItemAt(i);
-            if (c.getId() == servico.getCliente().getId()) {
+            ClienteEntity c = campoCliente.getItemAt(i);
+            if (c.getId() == servicoEntity.getCliente().getId()) {
                 campoCliente.setSelectedIndex(i);
                 break;
             }

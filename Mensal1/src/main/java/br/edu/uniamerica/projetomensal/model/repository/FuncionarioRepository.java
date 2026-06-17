@@ -1,6 +1,6 @@
-package br.edu.uniamerica.projetomensal.repository;
+package br.edu.uniamerica.projetomensal.model.repository;
 
-import br.edu.uniamerica.projetomensal.model.Funcionario;
+import br.edu.uniamerica.projetomensal.model.entity.FuncionarioEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.EntityManager;
 
@@ -18,46 +18,46 @@ public class FuncionarioRepository {
     }
 
     // Salva um novo funcionario no banco
-    public void salvar(Funcionario funcionario) {
-        em.persist(funcionario);
+    public void salvar(FuncionarioEntity funcionarioEntity) {
+        em.persist(funcionarioEntity);
     }
 
     // Atualiza os dados de um funcionario existente
-    public Funcionario editar(Funcionario funcionario) {
+    public FuncionarioEntity editar(FuncionarioEntity funcionarioEntity) {
 
-        return em.merge(funcionario);
+        return em.merge(funcionarioEntity);
     }
 
     // Busca um funcionario pelo id
-    public Funcionario buscarPorId(int id) {
-        return em.find(Funcionario.class, id); // Procura pelo id informado
+    public FuncionarioEntity buscarPorId(int id) {
+        return em.find(FuncionarioEntity.class, id); // Procura pelo id informado
     }
 
     // Busca funcionarios cujo nome comeca com o texto informado
-    public List<Funcionario> buscarPorNome(String prefoxo) {
-    return em.createQuery("SELECT f FROM Funcionario f WHERE f.nome LIKE :prefixo", Funcionario.class)
+    public List<FuncionarioEntity> buscarPorNome(String prefoxo) {
+    return em.createQuery("SELECT f FROM FuncionarioEntity f WHERE f.nome LIKE :prefixo", FuncionarioEntity.class)
             .setParameter("prefixo", prefoxo + "%")
             .getResultList();
     }
 
     // Lista todos os funcionarios cadastrados
-    public List<Funcionario> listar() {
-        return em.createQuery("SELECT f FROM Funcionario f", Funcionario.class)
+    public List<FuncionarioEntity> listar() {
+        return em.createQuery("SELECT f FROM FuncionarioEntity f", FuncionarioEntity.class)
                 .getResultList();
     }
 
     // Lista apenas os funcionarios com status ativo
-    public List<Funcionario> listarAtivos() {
+    public List<FuncionarioEntity> listarAtivos() {
         return em.createQuery(
-                "SELECT f FROM Funcionario f WHERE f.status = :status", Funcionario.class)
+                "SELECT f FROM FuncionarioEntity f WHERE f.status = :status", FuncionarioEntity.class)
                 .setParameter("status", Status.ATIVO)
                 .getResultList();
     }
 
     // Busca um funcionario pelo CPF
-    public Funcionario buscarPorCpf(String cpf) {
-        List<Funcionario> lista = em.createQuery(
-                "SELECT f FROM Funcionario f WHERE f.cpf = :cpf", Funcionario.class)
+    public FuncionarioEntity buscarPorCpf(String cpf) {
+        List<FuncionarioEntity> lista = em.createQuery(
+                "SELECT f FROM FuncionarioEntity f WHERE f.cpf = :cpf", FuncionarioEntity.class)
                 .setParameter("cpf", cpf)
                 .getResultList();
         if (lista.isEmpty()) {
@@ -69,17 +69,17 @@ public class FuncionarioRepository {
     // Verifica se ja existe funcionario com o CPF informado
     public boolean existePorCpf(String cpf) {
         Long count = em.createQuery(
-                "SELECT COUNT(f) FROM Funcionario f WHERE f.cpf = :cpf", Long.class)
+                "SELECT COUNT(f) FROM FuncionarioEntity f WHERE f.cpf = :cpf", Long.class)
                 .setParameter("cpf", cpf)
                 .getSingleResult();
         return count > 0;
     }
 
     // Autentica um funcionario pelo nome e pela senha
-    public Funcionario autenticar(String nome, String senha) {
-        List<Funcionario> lista = em.createQuery(
-                        "SELECT f FROM Funcionario f WHERE f.nome = :nome AND f.senha = :senha AND f.status = :status",
-                        Funcionario.class)
+    public FuncionarioEntity autenticar(String nome, String senha) {
+        List<FuncionarioEntity> lista = em.createQuery(
+                        "SELECT f FROM FuncionarioEntity f WHERE f.nome = :nome AND f.senha = :senha AND f.status = :status",
+                        FuncionarioEntity.class)
                 .setParameter("nome", nome)
                 .setParameter("senha", senha)
                 .setParameter("status", Status.ATIVO)

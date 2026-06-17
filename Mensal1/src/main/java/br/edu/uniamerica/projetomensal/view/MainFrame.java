@@ -1,8 +1,8 @@
 package br.edu.uniamerica.projetomensal.view;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
+import br.edu.uniamerica.projetomensal.model.entity.FuncionarioEntity;
 import br.edu.uniamerica.projetomensal.view.panels.*;
-import br.edu.uniamerica.projetomensal.model.Funcionario;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,10 +15,10 @@ public class MainFrame extends JFrame {
     private JTabbedPane abas;
 
     // Construtor recebe o funcionario logado para mostrar no rodape
-    public MainFrame(Funcionario funcionario) {
+    public MainFrame(FuncionarioEntity funcionarioEntity) {
         configurarJanela();
         inicializarAbas();
-        adicionarRodape(funcionario);
+        adicionarRodape(funcionarioEntity);
     }
 
     // Configura tamanho, titulo e layout da janela principal
@@ -45,7 +45,7 @@ public class MainFrame extends JFrame {
     }
 
     // Adiciona um rodape mostrando quem esta logado
-    private void adicionarRodape(Funcionario funcionario) {
+    private void adicionarRodape(FuncionarioEntity funcionarioEntity) {
         JPanel rodape = new JPanel(new BorderLayout());
         rodape.setBackground(Tema.COR_FUNDO);
         rodape.setBorder(BorderFactory.createCompoundBorder(
@@ -53,7 +53,7 @@ public class MainFrame extends JFrame {
                 BorderFactory.createEmptyBorder(6, 12, 6, 12)
         ));
 
-        JLabel labelUsuario = new JLabel("Logado como: " + funcionario.getNome() + " - " + funcionario.getCargo());
+        JLabel labelUsuario = new JLabel("Logado como: " + funcionarioEntity.getNome() + " - " + funcionarioEntity.getCargo());
 
         // Mostra nome e cargo do usuario autenticado
         labelUsuario.setForeground(Tema.COR_TEXTO_SECUNDARIO);

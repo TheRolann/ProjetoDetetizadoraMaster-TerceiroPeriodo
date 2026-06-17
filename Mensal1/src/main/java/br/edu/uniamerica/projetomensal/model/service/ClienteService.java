@@ -1,8 +1,8 @@
-package br.edu.uniamerica.projetomensal.service;
+package br.edu.uniamerica.projetomensal.model.service;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
+import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.repository.ClienteRepository;
+import br.edu.uniamerica.projetomensal.model.repository.ClienteRepository;
 import br.edu.uniamerica.projetomensal.utils.NegocioException;
 import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import jakarta.persistence.EntityManager;
@@ -24,31 +24,31 @@ public class ClienteService {
     }
 
     // Cria um cliente novo e salva usando os dados recebidos
-    public Cliente cadastrarCliente(String nomeEmpresa, String documento, String endereco,
-                                    String telefone, String email, Status status) {
-        Cliente cliente = new Cliente(nomeEmpresa, documento, endereco, telefone, email, status);
-        salvar(cliente);
-        return cliente;
+    public ClienteEntity cadastrarCliente(String nomeEmpresa, String documento, String endereco,
+                                          String telefone, String email, Status status) {
+        ClienteEntity clienteEntity = new ClienteEntity(nomeEmpresa, documento, endereco, telefone, email, status);
+        salvar(clienteEntity);
+        return clienteEntity;
     }
 
     // Salva um cliente no banco com validacoes basicas
-    public void salvar(Cliente cliente) {
+    public void salvar(ClienteEntity clienteEntity) {
         try {
             em.getTransaction().begin();
 
             // Documento nao pode ficar vazio
-            if (cliente.getDocumento() == null || cliente.getDocumento().isEmpty()) {
+            if (clienteEntity.getDocumento() == null || clienteEntity.getDocumento().isEmpty()) {
                 throw new NegocioException("Documento nao pode estar vazio");
             }
             // Documento precisa ter 11 ou 14 digitos
-            if (!cliente.getDocumento().matches("\\d{11}|\\d{14}")) {
+            if (!clienteEntity.getDocumento().matches("\\d{11}|\\d{14}")) {
                 throw new NegocioException("Documento deve conter 11 ou 14 digitos");
             }
-            if (!ValidacaoDocumentos.validar(cliente.getDocumento())) {
+            if (!ValidacaoDocumentos.validar(clienteEntity.getDocumento())) {
                 throw new NegocioException("CPF ou CNPJ invalido");
             }
 
-            repository.salvar(cliente);
+            repository.salvar(clienteEntity);
             em.getTransaction().commit();
 
         } catch (NegocioException e) {
@@ -63,23 +63,23 @@ public class ClienteService {
     }
 
     // Atualiza um cliente ja existente
-    public void editar(Cliente cliente) {
+    public void editar(ClienteEntity clienteEntity) {
         try {
             em.getTransaction().begin();
 
             // Primeiro verifica se o cliente existe
-            Cliente existente = repository.buscarPorId(cliente.getId());
+            ClienteEntity existente = repository.buscarPorId(clienteEntity.getId());
             if (existente == null) {
                 throw new NegocioException("Cliente não encontrado");
             }
 
             // Copia os novos dados para o objeto encontrado
-            existente.setNomeEmpresa(cliente.getNomeEmpresa());
-            existente.setDocumento(cliente.getDocumento());
-            existente.setEndereco(cliente.getEndereco());
-            existente.setTelefone(cliente.getTelefone());
-            existente.setEmail(cliente.getEmail());
-            existente.setStatus(cliente.getStatus());
+            existente.setNomeEmpresa(clienteEntity.getNomeEmpresa());
+            existente.setDocumento(clienteEntity.getDocumento());
+            existente.setEndereco(clienteEntity.getEndereco());
+            existente.setTelefone(clienteEntity.getTelefone());
+            existente.setEmail(clienteEntity.getEmail());
+            existente.setStatus(clienteEntity.getStatus());
 
             repository.editar(existente);
             em.getTransaction().commit();
@@ -101,8 +101,8 @@ public class ClienteService {
             em.getTransaction().begin();
 
             // Confere se o cliente existe antes de apagar
-            Cliente cliente = repository.buscarPorId(id);
-            if (cliente == null) {
+            ClienteEntity clienteEntity = repository.buscarPorId(id);
+            if (clienteEntity == null) {
                 throw new NegocioException("Cliente não encontrado");
             }
 
@@ -121,7 +121,7 @@ public class ClienteService {
     }
 
     // Busca um cliente pelo id
-    public Cliente buscarPorId(int id) {
+    public ClienteEntity buscarPorId(int id) {
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
@@ -130,7 +130,7 @@ public class ClienteService {
     }
 
     // Lista todos os clientes cadastrados
-    public List<Cliente> listar() {
+    public List<ClienteEntity> listar() {
         try {
             return repository.listar();
         } catch (Exception e) {

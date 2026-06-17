@@ -1,8 +1,8 @@
 package br.edu.uniamerica.projetomensal.view;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
-import br.edu.uniamerica.projetomensal.model.Funcionario;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.model.entity.FuncionarioEntity;
+import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -234,11 +234,11 @@ public class LoginFrame extends JFrame {
             return;
         }
 
-        Funcionario funcionario = funcionarioService.autenticar(nome, senha);
+        FuncionarioEntity funcionarioEntity = funcionarioService.autenticar(nome, senha);
 
-        if (funcionario != null) {
-            mostrarMensagem("Login realizado! Bem-vindo, " + funcionario.getNome() + ".", false);
-            abrirSistema(funcionario);
+        if (funcionarioEntity != null) {
+            mostrarMensagem("Login realizado! Bem-vindo, " + funcionarioEntity.getNome() + ".", false);
+            abrirSistema(funcionarioEntity);
         } else {
             mostrarMensagem("Usuário ou senha incorretos. Tente novamente.", true);
             campoSenha.setText("");
@@ -274,8 +274,8 @@ public class LoginFrame extends JFrame {
     }
 
     // Abre a janela principal do sistema para o funcionario autenticado
-    private void abrirSistema(Funcionario funcionario) {
-        MainFrame mainFrame = new MainFrame(funcionario);
+    private void abrirSistema(FuncionarioEntity funcionarioEntity) {
+        MainFrame mainFrame = new MainFrame(funcionarioEntity);
         mainFrame.setVisible(true);
         dispose();
     }

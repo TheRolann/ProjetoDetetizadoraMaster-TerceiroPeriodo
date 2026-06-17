@@ -2,7 +2,7 @@ package br.edu.uniamerica.projetomensal.view;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Funcionario;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,13 +1,13 @@
 package br.edu.uniamerica.projetomensal.view.panels;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
-import br.edu.uniamerica.projetomensal.model.Funcionario;
-import br.edu.uniamerica.projetomensal.model.Servico;
+import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
+import br.edu.uniamerica.projetomensal.model.entity.FuncionarioEntity;
+import br.edu.uniamerica.projetomensal.model.entity.ServicoEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.ClienteService;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
-import br.edu.uniamerica.projetomensal.service.ServicoService;
+import br.edu.uniamerica.projetomensal.model.service.ClienteService;
+import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.model.service.ServicoService;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import br.edu.uniamerica.projetomensal.view.Tema;
 import jakarta.persistence.EntityManager;
@@ -126,10 +126,10 @@ public class RelatorioPanel extends JPanel {
     // ========== RELATORIO CLIENTES ==========
     private void mostrarRelatorioClientes() {
         // Pega todos os clientes via service
-        List<Cliente> clientes = clienteService.listar();
+        List<ClienteEntity> clienteEntities = clienteService.listar();
 
-        long ativos = clientes.stream().filter(c -> c.getStatus() == Status.ATIVO).count();
-        long inativos = clientes.stream().filter(c -> c.getStatus() == Status.INATIVO).count();
+        long ativos = clienteEntities.stream().filter(c -> c.getStatus() == Status.ATIVO).count();
+        long inativos = clienteEntities.stream().filter(c -> c.getStatus() == Status.INATIVO).count();
 
         // Painel principal
         JPanel painel = new JPanel(new BorderLayout(0, 10));
@@ -139,7 +139,7 @@ public class RelatorioPanel extends JPanel {
         JPanel resumo = new JPanel(new GridLayout(3, 2, 5, 5));
         resumo.setBorder(BorderFactory.createTitledBorder("Resumo"));
         resumo.add(new JLabel("Total de clientes:"));
-        resumo.add(new JLabel(String.valueOf(clientes.size())));
+        resumo.add(new JLabel(String.valueOf(clienteEntities.size())));
         resumo.add(new JLabel("Ativos:"));
         resumo.add(new JLabel(String.valueOf(ativos)));
         resumo.add(new JLabel("Inativos:"));
@@ -148,9 +148,9 @@ public class RelatorioPanel extends JPanel {
 
         // Tabela
         String[] colunas = {"ID", "Nome", "Documento", "Telefone", "Email", "Status"};
-        Object[][] dados = new Object[clientes.size()][6];
-        for (int i = 0; i < clientes.size(); i++) {
-            Cliente c = clientes.get(i);
+        Object[][] dados = new Object[clienteEntities.size()][6];
+        for (int i = 0; i < clienteEntities.size(); i++) {
+            ClienteEntity c = clienteEntities.get(i);
             dados[i] = new Object[]{
                     c.getId(), c.getNomeEmpresa(), c.getDocumento(),
                     c.getTelefone(), c.getEmail(), c.getStatus()
@@ -166,11 +166,11 @@ public class RelatorioPanel extends JPanel {
     // ========== RELATORIO FUNCIONARIOS ==========
     private void mostrarRelatorioFuncionarios() {
         // Pega todos os funcionarios via service
-        List<Funcionario> funcionarios = funcionarioService.listar();
+        List<FuncionarioEntity> funcionarioEntities = funcionarioService.listar();
 
-        long gerentes = funcionarios.stream().filter(f -> f.getCargo() == Cargo.GERENTE).count();
-        long qtdFuncionarios = funcionarios.stream().filter(f -> f.getCargo() == Cargo.FUNCIONARIO).count();
-        double totalSalarios = funcionarios.stream().mapToDouble(Funcionario::getSalario).sum();
+        long gerentes = funcionarioEntities.stream().filter(f -> f.getCargo() == Cargo.GERENTE).count();
+        long qtdFuncionarios = funcionarioEntities.stream().filter(f -> f.getCargo() == Cargo.FUNCIONARIO).count();
+        double totalSalarios = funcionarioEntities.stream().mapToDouble(FuncionarioEntity::getSalario).sum();
 
         JPanel painel = new JPanel(new BorderLayout(0, 10));
         painel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -178,7 +178,7 @@ public class RelatorioPanel extends JPanel {
         JPanel resumo = new JPanel(new GridLayout(4, 2, 5, 5));
         resumo.setBorder(BorderFactory.createTitledBorder("Resumo"));
         resumo.add(new JLabel("Total de funcionários:"));
-        resumo.add(new JLabel(String.valueOf(funcionarios.size())));
+        resumo.add(new JLabel(String.valueOf(funcionarioEntities.size())));
         resumo.add(new JLabel("Gerentes:"));
         resumo.add(new JLabel(String.valueOf(gerentes)));
         resumo.add(new JLabel("Funcionários:"));
@@ -188,9 +188,9 @@ public class RelatorioPanel extends JPanel {
         painel.add(resumo, BorderLayout.NORTH);
 
         String[] colunas = {"ID", "Nome", "CPF", "Cargo", "Salário", "Status"};
-        Object[][] dados = new Object[funcionarios.size()][6];
-        for (int i = 0; i < funcionarios.size(); i++) {
-            Funcionario f = funcionarios.get(i);
+        Object[][] dados = new Object[funcionarioEntities.size()][6];
+        for (int i = 0; i < funcionarioEntities.size(); i++) {
+            FuncionarioEntity f = funcionarioEntities.get(i);
             dados[i] = new Object[]{
                     f.getId(), f.getNome(), f.getCpf(),
                     f.getCargo(), String.format("R$ %.2f", f.getSalario()), f.getStatus()
@@ -206,24 +206,24 @@ public class RelatorioPanel extends JPanel {
     // ========== RELATORIO SERVICOS ==========
     private void mostrarRelatorioServicos() {
         // Pega todos os servicos via service
-        List<Servico> servicos = servicoService.listar();
+        List<ServicoEntity> servicoEntities = servicoService.listar();
 
-        double totalFaturado = servicos.stream()
+        double totalFaturado = servicoEntities.stream()
                 .filter(s -> s.getStatus() == Status.CONCLUIDO)
-                .mapToDouble(Servico::getValor).sum();
+                .mapToDouble(ServicoEntity::getValor).sum();
 
-        double totalPendente = servicos.stream()
+        double totalPendente = servicoEntities.stream()
                 .filter(s -> s.getStatus() == Status.AGENDADO || s.getStatus() == Status.EM_ANDAMENTO)
-                .mapToDouble(Servico::getValor).sum();
+                .mapToDouble(ServicoEntity::getValor).sum();
 
-        Servico maisLucrativo = servicos.stream()
+        ServicoEntity maisLucrativo = servicoEntities.stream()
                 .filter(s -> s.getStatus() == Status.CONCLUIDO)
                 .max((a, b) -> Double.compare(a.getValor(), b.getValor()))
                 .orElse(null);
 
-        long concluidos = servicos.stream().filter(s -> s.getStatus() == Status.CONCLUIDO).count();
-        long emAndamento = servicos.stream().filter(s -> s.getStatus() == Status.EM_ANDAMENTO).count();
-        long agendados = servicos.stream().filter(s -> s.getStatus() == Status.AGENDADO).count();
+        long concluidos = servicoEntities.stream().filter(s -> s.getStatus() == Status.CONCLUIDO).count();
+        long emAndamento = servicoEntities.stream().filter(s -> s.getStatus() == Status.EM_ANDAMENTO).count();
+        long agendados = servicoEntities.stream().filter(s -> s.getStatus() == Status.AGENDADO).count();
 
         JPanel painel = new JPanel(new BorderLayout(0, 10));
         painel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -243,13 +243,13 @@ public class RelatorioPanel extends JPanel {
         resumo.add(new JLabel("Agendados:"));
         resumo.add(new JLabel(String.valueOf(agendados)));
         resumo.add(new JLabel("Total de serviços:"));
-        resumo.add(new JLabel(String.valueOf(servicos.size())));
+        resumo.add(new JLabel(String.valueOf(servicoEntities.size())));
         painel.add(resumo, BorderLayout.NORTH);
 
         String[] colunas = {"ID", "Nome", "Data", "Valor", "Cliente", "Status"};
-        Object[][] dados = new Object[servicos.size()][6];
-        for (int i = 0; i < servicos.size(); i++) {
-            Servico s = servicos.get(i);
+        Object[][] dados = new Object[servicoEntities.size()][6];
+        for (int i = 0; i < servicoEntities.size(); i++) {
+            ServicoEntity s = servicoEntities.get(i);
             dados[i] = new Object[]{
                     s.getId(), s.getNomeServico(),
                     s.getData().format(formatter),
@@ -268,20 +268,20 @@ public class RelatorioPanel extends JPanel {
     // ========== RELATORIO AGENDA ==========
     private void mostrarRelatorioAgenda() {
         // Pega todos os servicos e filtra os proximos 3 meses
-        List<Servico> servicos = servicoService.listar();
+        List<ServicoEntity> servicoEntities = servicoService.listar();
 
         LocalDate hoje  = LocalDate.now();
         LocalDate limite = hoje.plusMonths(3);
 
         // Filtra servicos dos proximos 3 meses que nao estao concluidos ou inativos
-        List<Servico> agenda = servicos.stream()
+        List<ServicoEntity> agenda = servicoEntities.stream()
                 .filter(s -> s.getData() != null)
                 .filter(s -> !s.getData().isBefore(hoje) && !s.getData().isAfter(limite))
                 .filter(s -> s.getStatus() == Status.AGENDADO || s.getStatus() == Status.EM_ANDAMENTO)
                 .sorted((a, b) -> a.getData().compareTo(b.getData()))
                 .toList();
 
-        double totalPrevisto = agenda.stream().mapToDouble(Servico::getValor).sum();
+        double totalPrevisto = agenda.stream().mapToDouble(ServicoEntity::getValor).sum();
 
         JPanel painel = new JPanel(new BorderLayout(0, 10));
         painel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -299,7 +299,7 @@ public class RelatorioPanel extends JPanel {
         String[] colunas = {"ID", "Nome do Serviço", "Data", "Valor", "Cliente", "Status"};
         Object[][] dados = new Object[agenda.size()][6];
         for (int i = 0; i < agenda.size(); i++) {
-            Servico s = agenda.get(i);
+            ServicoEntity s = agenda.get(i);
             dados[i] = new Object[]{
                     s.getId(), s.getNomeServico(),
                     s.getData().format(formatter),

@@ -1,9 +1,9 @@
-package br.edu.uniamerica.projetomensal.service;
+package br.edu.uniamerica.projetomensal.model.service;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
-import br.edu.uniamerica.projetomensal.model.Servico;
+import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
+import br.edu.uniamerica.projetomensal.model.entity.ServicoEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.repository.ServicoRepository;
+import br.edu.uniamerica.projetomensal.model.repository.ServicoRepository;
 import br.edu.uniamerica.projetomensal.utils.NegocioException;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
@@ -22,30 +22,30 @@ public class ServicoService {
     }
 
     // Cria um novo servico e salva usando as validacoes deste service
-    public Servico cadastrar(String nomeServico, String descricao, LocalDate data,
-                             double valor, Cliente cliente, Status status) {
-        Servico servico = new Servico(nomeServico, descricao, data, valor, cliente, status);
-        salvar(servico);
-        return servico;
+    public ServicoEntity cadastrar(String nomeServico, String descricao, LocalDate data,
+                                   double valor, ClienteEntity clienteEntity, Status status) {
+        ServicoEntity servicoEntity = new ServicoEntity(nomeServico, descricao, data, valor, clienteEntity, status);
+        salvar(servicoEntity);
+        return servicoEntity;
     }
 
     // Salva um servico no banco com validacoes basicas
-    public void salvar(Servico servico) {
+    public void salvar(ServicoEntity servicoEntity) {
         try {
             em.getTransaction().begin();
 
             // Validacoes simples antes de persistir
-            if (servico.getValor() <= 0) {
+            if (servicoEntity.getValor() <= 0) {
                 throw new NegocioException("Valor do servico deve ser maior que 0");
             }
-            if (servico.getCliente() == null) {
+            if (servicoEntity.getCliente() == null) {
                 throw new NegocioException("Servico deve ter um cliente vinculado");
             }
-            if (servico.getData() == null) {
+            if (servicoEntity.getData() == null) {
                 throw new NegocioException("Data do servico nao pode estar vazia");
             }
 
-            repository.salvar(servico);
+            repository.salvar(servicoEntity);
             em.getTransaction().commit();
 
         } catch (NegocioException e) {
@@ -60,26 +60,26 @@ public class ServicoService {
     }
 
     // Atualiza um servico existente aplicando validacoes
-    public void editar(Servico servico) {
+    public void editar(ServicoEntity servicoEntity) {
         try {
             em.getTransaction().begin();
 
             // Verifica se o servico existe antes de alterar
-            Servico existente = repository.buscarPorId(servico.getId());
+            ServicoEntity existente = repository.buscarPorId(servicoEntity.getId());
             if (existente == null) {
                 throw new NegocioException("Servico nao encontrado");
             }
-            if (servico.getValor() <= 0) {
+            if (servicoEntity.getValor() <= 0) {
                 throw new NegocioException("Valor do servico deve ser maior que 0");
             }
 
             // Copia os dados atualizados
-            existente.setNomeServico(servico.getNomeServico());
-            existente.setDescricao(servico.getDescricao());
-            existente.setData(servico.getData());
-            existente.setValor(servico.getValor());
-            existente.setCliente(servico.getCliente());
-            existente.setStatus(servico.getStatus());
+            existente.setNomeServico(servicoEntity.getNomeServico());
+            existente.setDescricao(servicoEntity.getDescricao());
+            existente.setData(servicoEntity.getData());
+            existente.setValor(servicoEntity.getValor());
+            existente.setCliente(servicoEntity.getCliente());
+            existente.setStatus(servicoEntity.getStatus());
 
             repository.editar(existente);
             em.getTransaction().commit();
@@ -98,8 +98,8 @@ public class ServicoService {
         try {
             em.getTransaction().begin();
 
-            Servico servico = repository.buscarPorId(id);
-            if (servico == null) {
+            ServicoEntity servicoEntity = repository.buscarPorId(id);
+            if (servicoEntity == null) {
                 throw new NegocioException("Servico nao encontrado");
             }
 
@@ -116,7 +116,7 @@ public class ServicoService {
     }
 
     // Busca um servico pelo id
-    public Servico buscarPorId(int id) {
+    public ServicoEntity buscarPorId(int id) {
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
@@ -125,7 +125,7 @@ public class ServicoService {
     }
 
     // Lista todos os servicos cadastrados
-    public List<Servico> listar() {
+    public List<ServicoEntity> listar() {
         try {
             return repository.listar();
         } catch (Exception e) {
