@@ -33,6 +33,34 @@ Projeto acadêmico desenvolvido no curso de Análise e Desenvolvimento de Sistem
 
 ---
 
+## 🏗 Arquitetura
+
+O sistema segue uma arquitetura em camadas inspirada em MVC, com Service e Repository separados:
+
+```
+View (Swing)
+   ↓
+Controller
+   ↓
+Service     → regras de negócio e transações (begin / commit / rollback)
+   ↓
+Repository  → único ponto que fala com o EntityManager (JPA/Hibernate)
+   ↓
+PostgreSQL
+```
+
+| Camada | Pacote | Responsabilidade |
+|---|---|---|
+| View | `view`, `view.panels` | Telas Swing (`LoginFrame`, `MainFrame`, painéis). Não acessa Service nem banco diretamente. |
+| Controller | `controller` | Recebe as ações da View e delega ao Service correspondente. Não importa nada de `javax.swing`. |
+| Service | `service` | Regras de negócio, validações (`NegocioException`) e controle de transação. |
+| Repository | `repository` | Persistência via JPA — único lugar que usa o `EntityManager`. |
+| Model | `model`, `model.enums` | Entidades JPA (`Cliente`, `Funcionario`, `Servico`) e enums (`Status`, `Cargo`). |
+
+Toda ação da interface passa pelo Controller — a View nunca chama Service ou Repository diretamente.
+
+---
+
 ## ✅ Pré-requisitos
 
 - Java JDK 21+
