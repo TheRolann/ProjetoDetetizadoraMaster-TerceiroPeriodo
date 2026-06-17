@@ -1,8 +1,8 @@
 package br.edu.uniamerica.projetomensal.view.panels;
 
+import br.edu.uniamerica.projetomensal.controller.ClienteController;
 import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.ClienteService;
 import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import jakarta.persistence.EntityManager;
@@ -16,8 +16,8 @@ import java.awt.*;
 // Contem o formulario para criar/editar clientes e uma tabela para listar
 public class ClientePanel extends JPanel {
 
-    // Service que executa as regras de negocio (salvar, editar, excluir, listar)
-    private ClienteService clienteService;
+    // Controller que recebe as acoes da view e delega ao service
+    private ClienteController clienteController;
 
     // === Campos do formulario ======================
     private JTextField campoNome;
@@ -40,29 +40,24 @@ public class ClientePanel extends JPanel {
     // Guarda o ID do cliente selecionado para editar/excluir
     private int idSelecionado = -1;
 
-    // Construtor recebe um EntityManager e cria o service usado pelo painel
-    // Tambem monta a interface e carrega os dados iniciais
+    // Construtor recebe um EntityManager e cria o controller usado pelo painel
     public ClientePanel(EntityManager em) {
-        this.clienteService = new ClienteService(em);
+        this.clienteController = new ClienteController(em);
         setLayout(new BorderLayout());
         inicializarComponentes();
         carregarTabela();
     }
 
-    // Metodo que monta e configura todos os componentes visuais do painel
-    // Divide a tela em formulario (esquerda) e tabela (direita)
     private void inicializarComponentes() {
         // ============ Lado Esquerdo - Formulario ============
         JPanel painelEsquerdo = new JPanel(new BorderLayout());
         painelEsquerdo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
 
-        // === Titulo ======================
         JLabel titulo = new JLabel("Clientes", SwingConstants.CENTER);
         titulo.setFont(new Font("Atial", Font.BOLD, 16));
         titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         painelEsquerdo.add(titulo, BorderLayout.NORTH);
 
-        // === Campos ======================
         JPanel painelCampos = new JPanel(new GridLayout(6, 2, 5, 8));
 
         painelCampos.add(new JLabel("Nome do Cliente:"));
@@ -91,7 +86,6 @@ public class ClientePanel extends JPanel {
 
         painelEsquerdo.add(painelCampos, BorderLayout.CENTER);
 
-        // === Botoes ======================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         botaoSalvar = new JButton("Salvar");
         botaoEditar = new JButton("Editar");
@@ -108,23 +102,21 @@ public class ClientePanel extends JPanel {
         JPanel painelDireito = new JPanel(new BorderLayout());
         painelDireito.setBorder(BorderFactory.createTitledBorder("Lista de Clientes"));
 
-        // === Colunas da tabela ======================
         String[] colunas = {"ID", "Nome", "Documento", "Telefone", "Email", "Status"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Tabela nao editavel diretamente
+                return false;
             }
         };
 
         tabela = new JTable(modeloTabela);
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tabela.getColumnModel().getColumn(0).setPreferredWidth(40); // Coluna ID pequena
+        tabela.getColumnModel().getColumn(0).setPreferredWidth(40);
 
         JScrollPane scroll = new JScrollPane(tabela);
         painelDireito.add(scroll, BorderLayout.CENTER);
 
-        // ============ Divisao 50/50 ============
         JSplitPane divisor = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelEsquerdo, painelDireito);
         divisor.setDividerLocation(420);
         divisor.setResizeWeight(0.45);
@@ -132,13 +124,11 @@ public class ClientePanel extends JPanel {
         add(divisor, BorderLayout.CENTER);
         SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
-        // ============ Eventos ============
         botaoSalvar.addActionListener(e -> salvarCliente());
         botaoEditar.addActionListener(e -> editarCliente());
         botaoExcluir.addActionListener(e -> excluirCliente());
         botaoLimpar.addActionListener(e -> limparFormulario());
 
-        // Ao clicar na tabela, preenche o formulario
         tabela.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int linha = tabela.getSelectedRow();
@@ -152,14 +142,13 @@ public class ClientePanel extends JPanel {
 
     // ============ Metodos de Acao ============
 
-    // Acao do botao Salvar: valida campos e solicita ao service salvar o cliente
     private void salvarCliente() {
         if (!validarCampos()) return;
 
         try {
             String documento = campoDocumento.getText().trim().replaceAll("[./-]", "");
 
-            Cliente cliente = new Cliente(
+            clienteController.salvar(
                     campoNome.getText().trim(),
                     documento,
                     campoEndereco.getText().trim(),
@@ -168,7 +157,6 @@ public class ClientePanel extends JPanel {
                     Status.ATIVO
             );
 
-            clienteService.salvar(cliente);
             JOptionPane.showMessageDialog(this, "Cliente salvo com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -179,7 +167,6 @@ public class ClientePanel extends JPanel {
         }
     }
 
-    // Acao do botao Editar: atualiza o cliente selecionado
     private void editarCliente() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela para editar.",
@@ -189,21 +176,18 @@ public class ClientePanel extends JPanel {
         if (!validarCampos()) return;
 
         try {
-            Cliente cliente = clienteService.buscarPorId(idSelecionado);
-            if (cliente == null) {
-                JOptionPane.showMessageDialog(this, "Cliente nao encontrado!");
-                return;
-            }
-
             String documento = campoDocumento.getText().trim().replaceAll("[./-]", "");
-            cliente.setNomeEmpresa(campoNome.getText().trim());
-            cliente.setDocumento(documento);
-            cliente.setEndereco(campoEndereco.getText().trim());
-            cliente.setTelefone(campoTelefone.getText().trim());
-            cliente.setEmail(campoEmail.getText().trim());
-            cliente.setStatus((Status) campoStatus.getSelectedItem());
 
-            clienteService.editar(cliente);
+            clienteController.editar(
+                    idSelecionado,
+                    campoNome.getText().trim(),
+                    documento,
+                    campoEndereco.getText().trim(),
+                    campoTelefone.getText().trim(),
+                    campoEmail.getText().trim(),
+                    (Status) campoStatus.getSelectedItem()
+            );
+
             JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -214,7 +198,6 @@ public class ClientePanel extends JPanel {
         }
     }
 
-    // Acao do botao Excluir: confirma e solicita exclusao via service
     private void excluirCliente() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -229,13 +212,12 @@ public class ClientePanel extends JPanel {
 
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-                clienteService.excluir(idSelecionado);
+                clienteController.excluir(idSelecionado);
                 JOptionPane.showMessageDialog(this, "Cliente excluido com sucesso!");
                 limparFormulario();
                 carregarTabela();
 
             } catch (Exception ex) {
-                // Busca a mensagem em toda a cadeia de causas
                 String mensagemCompleta = getMensagemCompleta(ex);
 
                 if (mensagemCompleta.contains("foreign key") ||
@@ -256,8 +238,6 @@ public class ClientePanel extends JPanel {
         }
     }
 
-    // Percorre a cadeia de excecoes (causes) e concatena as mensagens
-    // Util para extrair a causa real de erros de banco, por exemplo
     private String getMensagemCompleta(Throwable ex) {
         StringBuilder sb = new StringBuilder();
         Throwable atual = ex;
@@ -270,7 +250,6 @@ public class ClientePanel extends JPanel {
         return sb.toString();
     }
 
-    // Reseta os campos do formulario para o estado inicial
     private void limparFormulario() {
         campoNome.setText("");
         campoDocumento.setText("");
@@ -282,11 +261,10 @@ public class ClientePanel extends JPanel {
         tabela.clearSelection();
     }
 
-    // Busca os clientes no service e atualiza o conteudo da tabela
     private void carregarTabela() {
-        modeloTabela.setRowCount(0); // Limpa a tabela
+        modeloTabela.setRowCount(0);
 
-        List<Cliente> clientes = clienteService.listar();
+        List<Cliente> clientes = clienteController.listar();
         for (Cliente c : clientes) {
             modeloTabela.addRow(new Object[]{
                     c.getId(),
@@ -299,16 +277,8 @@ public class ClientePanel extends JPanel {
         }
     }
 
-    // Carrega os dados do cliente selecionado no formulario para edicao
     private void preencherFormularioComSelecionado() {
-//        int linhaSelecionada = tabela.getSelectedRow();
-//        if (linhaSelecionada != -1) return;
-//
-//        idSelecionado = (int) modeloTabela.getValueAt(linhaSelecionada, 0);
-//        Cliente cliente = clienteService.buscarPorId(idSelecionado);
-//        if (cliente == null) return;
-
-        Cliente cliente = clienteService.buscarPorId(idSelecionado);
+        Cliente cliente = clienteController.buscarPorId(idSelecionado);
         if (cliente == null) return;
 
         campoNome.setText(cliente.getNomeEmpresa());
@@ -319,7 +289,6 @@ public class ClientePanel extends JPanel {
         campoStatus.setSelectedItem(cliente.getStatus());
     }
 
-    // Valida os campos do formulario antes de salvar ou editar
     private boolean validarCampos() {
         if (campoNome.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nome e obrigatorio.");

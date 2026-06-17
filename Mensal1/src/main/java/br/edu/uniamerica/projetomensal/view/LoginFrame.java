@@ -1,8 +1,8 @@
 package br.edu.uniamerica.projetomensal.view;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
+import br.edu.uniamerica.projetomensal.controller.FuncionarioController;
 import br.edu.uniamerica.projetomensal.model.Funcionario;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,8 +12,8 @@ import java.awt.event.*;
 // Se as credenciais estiverem corretas, abre o sistema principal
 public class LoginFrame extends JFrame {
 
-    // Service usado para autenticar o funcionario
-    private FuncionarioService funcionarioService;
+    // Controller usado para autenticar o funcionario
+    private FuncionarioController funcionarioController;
 
     // Campo do nome do usuario
     private JTextField campoNome;
@@ -26,7 +26,7 @@ public class LoginFrame extends JFrame {
 
     // Construtor da tela de login
     public LoginFrame() {
-        this.funcionarioService = new FuncionarioService(PersistenceManager.getEntityManager());
+        this.funcionarioController = new FuncionarioController(PersistenceManager.getEntityManager());
         configurarJanela();
         inicializarComponentes();
     }
@@ -50,13 +50,11 @@ public class LoginFrame extends JFrame {
         painel.setBackground(Tema.COR_FUNDO);
         painel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        // Posicionamento mais flexivel dos elementos
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(8, 10, 8, 10);
 
         // ========== TITULO ==========
-        // Mostra o nome do sistema
         JLabel titulo = new JLabel("Detetizadora Master", SwingConstants.CENTER);
         titulo.setFont(Tema.FONTE_TITULO);
         titulo.setForeground(Tema.COR_DESTAQUE);
@@ -67,7 +65,6 @@ public class LoginFrame extends JFrame {
         painel.add(titulo, gbc);
 
         // ========== SUBTITULO ==========
-        // Pequena descricao da aplicacao
         JLabel subtitulo = new JLabel("🦟 Sistema de Controle de Pragas", SwingConstants.CENTER);
         subtitulo.setFont(Tema.FONTE_REGULAR);
         subtitulo.setForeground(Tema.COR_TEXTO_SECUNDARIO);
@@ -76,7 +73,6 @@ public class LoginFrame extends JFrame {
         painel.add(subtitulo, gbc);
 
         // ========== LABEL USUARIO ==========
-        // Rotulo do campo de usuario
         JLabel labelNome = new JLabel("Usuário:");
         labelNome.setFont(Tema.FONTE_BOLD);
         labelNome.setForeground(Tema.COR_TEXTO);
@@ -87,7 +83,6 @@ public class LoginFrame extends JFrame {
         painel.add(labelNome, gbc);
 
         // ========== CAMPO USUARIO ==========
-        // Campo onde o usuario digita o nome de acesso
         campoNome = new JTextField(18);
         EstiloUtils.estilizarCampo(campoNome);
         gbc.gridx = 1;
@@ -95,7 +90,6 @@ public class LoginFrame extends JFrame {
         painel.add(campoNome, gbc);
 
         // ========== LABEL SENHA ==========
-        // Rotulo do campo de senha
         JLabel labelSenha = new JLabel("Senha:");
         labelSenha.setFont(Tema.FONTE_BOLD);
         labelSenha.setForeground(Tema.COR_TEXTO);
@@ -105,7 +99,6 @@ public class LoginFrame extends JFrame {
         painel.add(labelSenha, gbc);
 
         // ========== CAMPO SENHA ==========
-        // Campo para digitar a senha, com caracteres ocultos
         campoSenha = new JPasswordField(18);
         campoSenha.setBackground(Tema.COR_FUNDO_CAMPO);
         campoSenha.setForeground(Tema.COR_TEXTO);
@@ -120,7 +113,6 @@ public class LoginFrame extends JFrame {
         painel.add(campoSenha, gbc);
 
         // ========== CHECKBOX MOSTRAR SENHA ==========
-        // Permite alternar entre senha visivel e escondida
         mostrarSenhaCheckBox = new JCheckBox("Mostrar senha");
         mostrarSenhaCheckBox.setFont(Tema.FONTE_REGULAR);
         mostrarSenhaCheckBox.setForeground(Tema.COR_TEXTO_SECUNDARIO);
@@ -133,16 +125,13 @@ public class LoginFrame extends JFrame {
         painel.add(mostrarSenhaCheckBox, gbc);
 
         // ========== PAINEL BOTOES ==========
-        // Agrupa os botoes de entrar, limpar e sair
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         painelBotoes.setBackground(Tema.COR_FUNDO);
 
-        // Botao que tenta autenticar o usuario
         JButton botaoEntrar = new JButton("Entrar");
         Tema.estilizarBotao(botaoEntrar);
         botaoEntrar.setPreferredSize(new Dimension(110, 36));
 
-        // Botao que limpa os campos da tela
         JButton botaoLimpar = new JButton("Limpar");
         botaoLimpar.setFont(Tema.FONTE_BOTAO);
         botaoLimpar.setBackground(Tema.COR_FUNDO_CAMPO);
@@ -156,7 +145,6 @@ public class LoginFrame extends JFrame {
             public void mouseExited(MouseEvent e)  { botaoLimpar.setBackground(Tema.COR_FUNDO_CAMPO); }
         });
 
-        // Botao para fechar a aplicacao
         JButton botaoSair = new JButton("Sair");
         botaoSair.setFont(Tema.FONTE_BOTAO);
         botaoSair.setBackground(Tema.COR_FUNDO_CAMPO);
@@ -181,7 +169,6 @@ public class LoginFrame extends JFrame {
         painel.add(painelBotoes, gbc);
 
         // ========== LABEL MENSAGEM ==========
-        // Mensagem exibida para orientar o usuario
         labelMensagem = new JLabel("Digite seu usuário e senha", SwingConstants.CENTER);
         labelMensagem.setFont(Tema.FONTE_REGULAR);
         labelMensagem.setForeground(Tema.COR_TEXTO_SECUNDARIO);
@@ -192,18 +179,13 @@ public class LoginFrame extends JFrame {
         add(painel);
 
         // ========== EVENTOS ==========
-        // Cada botao chama uma acao especifica
         botaoEntrar.addActionListener(e -> realizarLogin());
         botaoLimpar.addActionListener(e -> limparCampos());
         botaoSair.addActionListener(e -> System.exit(0));
 
-        // Enter navega entre campos e confirma
-        // Facilita o uso do teclado
         campoNome.addActionListener(e -> campoSenha.requestFocus());
         campoSenha.addActionListener(e -> realizarLogin());
 
-        // Checkbox mostrar/ocultar senha
-        // Troca o caracter de exibicao da senha
         mostrarSenhaCheckBox.addActionListener(e -> {
             if (mostrarSenhaCheckBox.isSelected()) {
                 campoSenha.setEchoChar((char) 0);
@@ -212,13 +194,11 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        // Foco inicial
         SwingUtilities.invokeLater(() -> campoNome.requestFocus());
     }
 
     // ========== METODOS DE ACAO ==========
 
-    // Tenta autenticar o usuario com nome e senha informados
     private void realizarLogin() {
         String nome  = campoNome.getText().trim();
         String senha = new String(campoSenha.getPassword()).trim();
@@ -234,7 +214,7 @@ public class LoginFrame extends JFrame {
             return;
         }
 
-        Funcionario funcionario = funcionarioService.autenticar(nome, senha);
+        Funcionario funcionario = funcionarioController.autenticar(nome, senha);
 
         if (funcionario != null) {
             mostrarMensagem("Login realizado! Bem-vindo, " + funcionario.getNome() + ".", false);
@@ -246,7 +226,6 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    // Limpa os campos e restaura a tela ao estado inicial
     private void limparCampos() {
         campoNome.setText("");
         campoSenha.setText("");
@@ -256,13 +235,10 @@ public class LoginFrame extends JFrame {
         campoNome.requestFocus();
     }
 
-    // Mostra uma mensagem na tela, podendo ser erro ou informacao
     private void mostrarMensagem(String mensagem, boolean isErro) {
         labelMensagem.setText(mensagem);
         labelMensagem.setForeground(isErro ? Tema.COR_DESTAQUE : Tema.COR_TEXTO_SECUNDARIO);
 
-        // Limpa a mensagem de sucesso/info apos 3 segundos
-        // Mantem a tela organizada sem mensagens permanentes
         if (!isErro) {
             Timer timer = new Timer(3000, e -> {
                 labelMensagem.setText("Digite seu usuário e senha");
@@ -273,7 +249,6 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    // Abre a janela principal do sistema para o funcionario autenticado
     private void abrirSistema(Funcionario funcionario) {
         MainFrame mainFrame = new MainFrame(funcionario);
         mainFrame.setVisible(true);

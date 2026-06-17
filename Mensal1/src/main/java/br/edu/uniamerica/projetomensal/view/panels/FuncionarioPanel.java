@@ -1,9 +1,9 @@
 package br.edu.uniamerica.projetomensal.view.panels;
 
+import br.edu.uniamerica.projetomensal.controller.FuncionarioController;
 import br.edu.uniamerica.projetomensal.model.Funcionario;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import br.edu.uniamerica.projetomensal.view.EstiloUtils;
 import br.edu.uniamerica.projetomensal.view.Tema;
@@ -18,8 +18,8 @@ import java.util.List;
 // Contem formulario, tabela e botoes para cadastro, edicao e exclusao
 public class FuncionarioPanel extends JPanel {
 
-    // Service que faz a ligacao com a camada de negocio
-    private FuncionarioService funcionarioService;
+    // Controller que recebe as acoes da view e delega ao service
+    private FuncionarioController funcionarioController;
 
     // === Campos do formulario =====
     private JTextField campoNome;
@@ -45,30 +45,26 @@ public class FuncionarioPanel extends JPanel {
     // Guarda o ID do funcionario selecionado para editar/excluir
     private int idSelecionado = -1;
 
-    // Construtor do painel: recebe o EntityManager, cria o service
+    // Construtor do painel: recebe o EntityManager, cria o controller
     // e monta a interface inicial com os dados da tabela
     public FuncionarioPanel(EntityManager em) {
-        this.funcionarioService = new FuncionarioService(em);
+        this.funcionarioController = new FuncionarioController(em);
         setLayout(new BorderLayout());
         inicializarComponentes();
         carregarTabela();
     }
 
-    // Monta toda a interface visual do painel
-    // Divide a tela em formulario na esquerda e tabela na direita
     private void inicializarComponentes() {
 
         // ========== Lado Esquerdo - Formulario ==========
         JPanel painelEsquerdo = new JPanel(new BorderLayout());
         painelEsquerdo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
 
-        // === Titulo ======================
         JLabel titulo = new JLabel("Funcionários", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 16));
         titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         painelEsquerdo.add(titulo, BorderLayout.NORTH);
 
-        // === Campos ======================
         JPanel painelCampos = new JPanel(new GridLayout(9, 2, 5, 8));
 
         painelCampos.add(new JLabel("Nome:"));
@@ -117,7 +113,6 @@ public class FuncionarioPanel extends JPanel {
 
         painelEsquerdo.add(painelCampos, BorderLayout.CENTER);
 
-        // === Botoes ======================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         botaoSalvar = new JButton("Salvar");
         botaoEditar = new JButton("Editar");
@@ -134,23 +129,21 @@ public class FuncionarioPanel extends JPanel {
         JPanel painelDireito = new JPanel(new BorderLayout());
         painelDireito.setBorder(BorderFactory.createTitledBorder("Lista de Funcionarios"));
 
-        // === Colunas da tabela ======================
         String[] colunas = {"ID", "Nome", "CPF", "Cargo", "Salario", "Status"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
-            @Override // Metodo da classe DefaultTableModel. Controla se uma celula da tabela pode ser editada diretamente
+            @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Tabela nao editavel diretamente
+                return false;
             }
         };
 
         tabela = new JTable(modeloTabela);
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tabela.getColumnModel().getColumn(0).setMaxWidth(40); // Coluna ID pequena
+        tabela.getColumnModel().getColumn(0).setMaxWidth(40);
 
         JScrollPane scroll = new JScrollPane(tabela);
         painelDireito.add(scroll, BorderLayout.CENTER);
 
-        // ============== Divisao 50/50 =============
         JSplitPane divisor = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelEsquerdo, painelDireito);
         divisor.setDividerLocation(420);
         divisor.setResizeWeight(0.45);
@@ -158,13 +151,11 @@ public class FuncionarioPanel extends JPanel {
         add(divisor, BorderLayout.CENTER);
         SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
-        // ========== Eventos ==========
         botaoSalvar.addActionListener(e -> salvarFuncionario());
         botaoEditar.addActionListener(e -> editarFuncionario());
         botaoExcluir.addActionListener(e -> excluirFuncionario());
         botaoLimpar.addActionListener(e -> limparFormulario());
 
-        // Verifica linha valida antes de atualizar idSelecionado
         tabela.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int linha = tabela.getSelectedRow();
@@ -178,7 +169,6 @@ public class FuncionarioPanel extends JPanel {
 
     // ========== Metodos de Acao ==========
 
-    // Salva um funcionario novo depois de validar os campos
     private void salvarFuncionario() {
         if (!validarCampos()) return;
 
@@ -192,7 +182,7 @@ public class FuncionarioPanel extends JPanel {
                 return;
             }
 
-            Funcionario funcionario = new Funcionario(
+            funcionarioController.salvar(
                     campoNome.getText().trim(),
                     cpf,
                     campoTelefone.getText().trim(),
@@ -200,13 +190,9 @@ public class FuncionarioPanel extends JPanel {
                     campoEndereco.getText().trim(),
                     salario,
                     (Cargo) campoCargo.getSelectedItem(),
-                    Status.ATIVO
+                    senha
             );
 
-            funcionario.setSenha(senha);
-
-            // Envia o objeto completo para o service persistir
-            funcionarioService.salvar(funcionario);
             JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -222,7 +208,6 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
-    // Edita o funcionario selecionado na tabela
     private void editarFuncionario() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -233,31 +218,23 @@ public class FuncionarioPanel extends JPanel {
         if (!validarCampos()) return;
 
         try {
-            Funcionario funcionario = funcionarioService.buscarPorId(idSelecionado);
-            if (funcionario == null) {
-                JOptionPane.showMessageDialog(this, "Funcionário não encontrado.");
-                return;
-            }
-
             String cpf = campoCpf.getText().trim().replaceAll("[./-]", "");
             double salario = Double.parseDouble(campoSalario.getText().trim().replace(",", "."));
-
-            funcionario.setNome(campoNome.getText().trim());
-            funcionario.setCpf(cpf);
-            funcionario.setTelefone(campoTelefone.getText().trim());
-            funcionario.setEmail(campoEmail.getText().trim());
-            funcionario.setEndereco(campoEndereco.getText().trim());
-            funcionario.setSalario(salario);
-            funcionario.setCargo((Cargo) campoCargo.getSelectedItem());
-            funcionario.setStatus((Status) campoStatus.getSelectedItem());
-
             String senha = new String(campoSenha.getPassword()).trim();
-            if (!senha.isEmpty()) {
-                funcionario.setSenha(senha);
-            } // Se o campo estiver vazio, mantem a atual
 
-            // Envia o objeto atualizado para o service
-            funcionarioService.editar(funcionario);
+            funcionarioController.editar(
+                    idSelecionado,
+                    campoNome.getText().trim(),
+                    cpf,
+                    campoTelefone.getText().trim(),
+                    campoEmail.getText().trim(),
+                    campoEndereco.getText().trim(),
+                    salario,
+                    (Cargo) campoCargo.getSelectedItem(),
+                    (Status) campoStatus.getSelectedItem(),
+                    senha
+            );
+
             JOptionPane.showMessageDialog(this, "Funcionário atualizado com sucesso!");
             limparFormulario();
             carregarTabela();
@@ -274,7 +251,6 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
-    // Remove o funcionario selecionado depois de confirmar com o usuario
     private void excluirFuncionario() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -289,7 +265,7 @@ public class FuncionarioPanel extends JPanel {
 
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-                funcionarioService.excluir(idSelecionado);
+                funcionarioController.excluir(idSelecionado);
                 JOptionPane.showMessageDialog(this, "Funcionário excluído com sucesso!");
                 limparFormulario();
                 carregarTabela();
@@ -302,7 +278,6 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
-    // Limpa todos os campos e remove a selecao da tabela
     private void limparFormulario() {
         campoNome.setText("");
         campoCpf.setText("");
@@ -317,11 +292,10 @@ public class FuncionarioPanel extends JPanel {
         tabela.clearSelection();
     }
 
-    // Busca os funcionarios no service e atualiza a tabela
     private void carregarTabela() {
         modeloTabela.setRowCount(0);
 
-        List<Funcionario> funcionarios = funcionarioService.listar();
+        List<Funcionario> funcionarios = funcionarioController.listar();
         for (Funcionario f : funcionarios) {
             modeloTabela.addRow(new Object[]{
                     f.getId(),
@@ -334,9 +308,8 @@ public class FuncionarioPanel extends JPanel {
         }
     }
 
-    // Preenche os campos do formulario com os dados do funcionario selecionado
     private void preencherFormularioComSelecionado() {
-        Funcionario funcionario = funcionarioService.buscarPorId(idSelecionado);
+        Funcionario funcionario = funcionarioController.buscarPorId(idSelecionado);
         if (funcionario == null) return;
 
         campoNome.setText(funcionario.getNome());
@@ -350,7 +323,6 @@ public class FuncionarioPanel extends JPanel {
         campoSenha.setText("");
     }
 
-    // Valida os campos antes de salvar ou editar
     private boolean validarCampos() {
         if (campoNome.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nome é obrigatório.");
