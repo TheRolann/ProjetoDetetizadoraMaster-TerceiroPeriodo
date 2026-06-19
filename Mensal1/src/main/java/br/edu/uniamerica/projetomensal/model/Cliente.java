@@ -40,7 +40,7 @@ public class Cliente {
     private Status status;
 
     // Um cliente pode ter varios servicos ligados a ele
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "clienteEntity")
     private List<Servico> servicoEntities;
 
     // Construtor vazio exigido pelo JPA
