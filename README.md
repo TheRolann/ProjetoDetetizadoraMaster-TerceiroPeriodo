@@ -1,6 +1,6 @@
 # 🦟 Sistema de Gestão de Serviços — Detetizadora Master
 
-Sistema desktop desenvolvido em Java para gestão de clientes, funcionários e serviços de uma empresa de controle de pragas, substituindo o uso informal do WhatsApp por uma solução estruturada.
+Sistema desktop desenvolvido em Java para gestão de clienteEntities, funcionários e serviços de uma empresa de controle de pragas, substituindo o uso informal do WhatsApp por uma solução estruturada.
 
 Projeto acadêmico desenvolvido no curso de Análise e Desenvolvimento de Sistemas — UniAmérica Descomplica, Foz do Iguaçu — PR.
 
@@ -165,7 +165,7 @@ Para cadastrar novos usuários, acesse a aba **Funcionários** após o login e d
 ## ✨ Funcionalidades
 
 ### Clientes
-- Cadastrar, editar, listar e excluir clientes
+- Cadastrar, editar, listar e excluir clienteEntities
 - Validação de CPF (11 dígitos) e CNPJ (14 dígitos)
 - Validação de e-mail e telefone
 - Controle de status (Ativo / Inativo)
@@ -179,7 +179,7 @@ Para cadastrar novos usuários, acesse a aba **Funcionários** após o login e d
 
 ### Serviços
 - Cadastrar, editar, listar e excluir serviços
-- Vinculação com cliente
+- Vinculação com clienteEntity
 - Controle de status (Agendado / Em andamento / Concluído / Inativo)
 - Validação de data e valor
 
@@ -194,9 +194,9 @@ Para cadastrar novos usuários, acesse a aba **Funcionários** após o login e d
 ## 🗄 Banco de dados
 
 ### Tabelas
-- `clientes` — dados dos clientes
-- `funcionarios` — dados dos funcionários com senha
-- `servicos` — serviços vinculados a clientes
+- `clienteEntities` — dados dos clienteEntities
+- `funcionarioEntities` — dados dos funcionários com senha
+- `servicoEntities` — serviços vinculados a clienteEntities
 - `agenda` — agendamentos vinculados a serviços
 - `historico_servicos` — log automático de serviços concluídos
 - `funcionario_servico` — relacionamento ManyToMany

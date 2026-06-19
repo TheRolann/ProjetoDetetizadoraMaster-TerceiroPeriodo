@@ -56,17 +56,20 @@ public class ServicoPanel extends JPanel {
         carregarTabela();
     }
 
+    // Monta os componentes visuais da tela
     private void inicializarComponentes() {
 
         // ========== Lado Esquerdo - Formulario ==========
         JPanel painelEsquerdo = new JPanel(new BorderLayout());
         painelEsquerdo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5));
 
+        // Titulo da area de cadastro
         JLabel titulo = new JLabel("Serviços", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 16));
         titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         painelEsquerdo.add(titulo, BorderLayout.NORTH);
 
+        // Painel com os campos do formulario
         JPanel painelCampos = new JPanel(new GridLayout(6, 2, 5, 8));
 
         painelCampos.add(new JLabel("Nome do Serviço:"));
@@ -86,11 +89,13 @@ public class ServicoPanel extends JPanel {
         painelCampos.add(campoValor);
 
         painelCampos.add(new JLabel("Cliente:"));
+        // Combo preenche os clientes cadastrados
         campoCliente = new JComboBox<>();
         carregarClientes();
         painelCampos.add(campoCliente);
 
         painelCampos.add(new JLabel("Status:"));
+        // Estados possiveis do servico
         campoStatus = new JComboBox<>(new Status[]{
                 Status.AGENDADO, Status.EM_ANDAMENTO, Status.CONCLUIDO, Status.INATIVO
         });
@@ -98,6 +103,8 @@ public class ServicoPanel extends JPanel {
 
         painelEsquerdo.add(painelCampos, BorderLayout.CENTER);
 
+        // === Botoes ======================
+        // Botoes de acao da tela
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         botaoSalvar  = new JButton("Salvar");
         botaoEditar  = new JButton("Editar");
@@ -114,6 +121,7 @@ public class ServicoPanel extends JPanel {
         JPanel painelDireito = new JPanel(new BorderLayout());
         painelDireito.setBorder(BorderFactory.createTitledBorder("Lista de Serviços"));
 
+        // Configuracao da tabela que mostra os servicos
         String[] colunas = {"ID", "Nome", "Data", "Valor", "Cliente", "Status"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
             @Override
@@ -129,12 +137,15 @@ public class ServicoPanel extends JPanel {
         JScrollPane scroll = new JScrollPane(tabela);
         painelDireito.add(scroll, BorderLayout.CENTER);
 
+        // Divide a janela em formulario e tabela
         JSplitPane divisor = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelEsquerdo, painelDireito);
         divisor.setDividerLocation(420);
         divisor.setResizeWeight(0.45);
         add(divisor, BorderLayout.CENTER);
         SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
+        // ========== Eventos ==========
+        // Cada botao chama o metodo da acao correspondente
         botaoSalvar.addActionListener(e -> salvarServico());
         botaoEditar.addActionListener(e -> editarServico());
         botaoExcluir.addActionListener(e -> excluirServico());
@@ -153,6 +164,7 @@ public class ServicoPanel extends JPanel {
 
     // ========== Metodos de Acao ==========
 
+    // Salva um novo servico usando os dados do formulario
     private void salvarServico() {
         if (!validarCampos()) return;
 
@@ -181,6 +193,7 @@ public class ServicoPanel extends JPanel {
         }
     }
 
+    // Edita o servico selecionado na tabela
     private void editarServico() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -216,6 +229,7 @@ public class ServicoPanel extends JPanel {
         }
     }
 
+    // Exclui o servico selecionado depois da confirmacao do usuario
     private void excluirServico() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -243,6 +257,7 @@ public class ServicoPanel extends JPanel {
         }
     }
 
+    // Limpa todos os campos e remove a selecao atual
     private void limparFormulario() {
         campoNome.setText("");
         campoDescricao.setText("");
@@ -256,6 +271,7 @@ public class ServicoPanel extends JPanel {
         tabela.clearSelection();
     }
 
+    // Busca os servicos no banco e atualiza a tabela
     private void carregarTabela() {
         modeloTabela.setRowCount(0);
 
@@ -272,6 +288,7 @@ public class ServicoPanel extends JPanel {
         }
     }
 
+    // Carrega os clientes cadastrados no combo de clientes
     private void carregarClientes() {
         campoCliente.removeAllItems();
         List<Cliente> clientes = clienteController.listar();
@@ -280,6 +297,7 @@ public class ServicoPanel extends JPanel {
         }
     }
 
+    // Preenche o formulario com os dados do servico selecionado
     private void preencherFormularioComSelecionado() {
         Servico servico = servicoController.buscarPorId(idSelecionado);
         if (servico == null) return;
@@ -290,6 +308,7 @@ public class ServicoPanel extends JPanel {
         campoValor.setText(String.valueOf(servico.getValor()));
         campoStatus.setSelectedItem(servico.getStatus());
 
+        // Seleciona o cliente correto no JComboBox
         for (int i = 0; i < campoCliente.getItemCount(); i++) {
             Cliente c = campoCliente.getItemAt(i);
             if (c.getId() == servico.getCliente().getId()) {
@@ -299,6 +318,7 @@ public class ServicoPanel extends JPanel {
         }
     }
 
+    // Valida os campos antes de salvar ou editar
     private boolean validarCampos() {
         if (campoNome.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nome do servico e obrigatorio.");

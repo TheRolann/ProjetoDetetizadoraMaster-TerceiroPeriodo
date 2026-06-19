@@ -58,6 +58,7 @@ public class ClientePanel extends JPanel {
         titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         painelEsquerdo.add(titulo, BorderLayout.NORTH);
 
+        // === Campos ======================
         JPanel painelCampos = new JPanel(new GridLayout(6, 2, 5, 8));
 
         painelCampos.add(new JLabel("Nome do Cliente:"));
@@ -86,6 +87,7 @@ public class ClientePanel extends JPanel {
 
         painelEsquerdo.add(painelCampos, BorderLayout.CENTER);
 
+        // === Botoes ======================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         botaoSalvar = new JButton("Salvar");
         botaoEditar = new JButton("Editar");
@@ -102,6 +104,7 @@ public class ClientePanel extends JPanel {
         JPanel painelDireito = new JPanel(new BorderLayout());
         painelDireito.setBorder(BorderFactory.createTitledBorder("Lista de Clientes"));
 
+        // === Colunas da tabela ======================
         String[] colunas = {"ID", "Nome", "Documento", "Telefone", "Email", "Status"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
             @Override
@@ -117,6 +120,7 @@ public class ClientePanel extends JPanel {
         JScrollPane scroll = new JScrollPane(tabela);
         painelDireito.add(scroll, BorderLayout.CENTER);
 
+        // ============ Divisao 50/50 ============
         JSplitPane divisor = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelEsquerdo, painelDireito);
         divisor.setDividerLocation(420);
         divisor.setResizeWeight(0.45);
@@ -124,11 +128,13 @@ public class ClientePanel extends JPanel {
         add(divisor, BorderLayout.CENTER);
         SwingUtilities.invokeLater(() -> EstiloUtils.aplicarFundoEscuro(this));
 
+        // ============ Eventos ============
         botaoSalvar.addActionListener(e -> salvarCliente());
         botaoEditar.addActionListener(e -> editarCliente());
         botaoExcluir.addActionListener(e -> excluirCliente());
         botaoLimpar.addActionListener(e -> limparFormulario());
 
+        // Ao clicar na tabela, preenche o formulario
         tabela.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int linha = tabela.getSelectedRow();
@@ -142,6 +148,7 @@ public class ClientePanel extends JPanel {
 
     // ============ Metodos de Acao ============
 
+    // Acao do botao Salvar: valida campos e solicita ao service salvar o cliente
     private void salvarCliente() {
         if (!validarCampos()) return;
 
@@ -167,6 +174,7 @@ public class ClientePanel extends JPanel {
         }
     }
 
+    // Acao do botao Editar: atualiza o cliente selecionado
     private void editarCliente() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela para editar.",
@@ -198,6 +206,7 @@ public class ClientePanel extends JPanel {
         }
     }
 
+    // Acao do botao Excluir: confirma e solicita exclusao via service
     private void excluirCliente() {
         if (idSelecionado == -1) {
             JOptionPane.showMessageDialog(this,
@@ -218,6 +227,7 @@ public class ClientePanel extends JPanel {
                 carregarTabela();
 
             } catch (Exception ex) {
+                // Busca a mensagem em toda a cadeia de causas
                 String mensagemCompleta = getMensagemCompleta(ex);
 
                 if (mensagemCompleta.contains("foreign key") ||
@@ -238,6 +248,8 @@ public class ClientePanel extends JPanel {
         }
     }
 
+    // Percorre a cadeia de excecoes (causes) e concatena as mensagens
+    // Util para extrair a causa real de erros de banco, por exemplo
     private String getMensagemCompleta(Throwable ex) {
         StringBuilder sb = new StringBuilder();
         Throwable atual = ex;
@@ -250,6 +262,7 @@ public class ClientePanel extends JPanel {
         return sb.toString();
     }
 
+    // Reseta os campos do formulario para o estado inicial
     private void limparFormulario() {
         campoNome.setText("");
         campoDocumento.setText("");
@@ -261,6 +274,7 @@ public class ClientePanel extends JPanel {
         tabela.clearSelection();
     }
 
+    // Busca os clientes no service e atualiza o conteudo da tabela
     private void carregarTabela() {
         modeloTabela.setRowCount(0);
 
@@ -277,6 +291,7 @@ public class ClientePanel extends JPanel {
         }
     }
 
+    // Carrega os dados do cliente selecionado no formulario para edicao
     private void preencherFormularioComSelecionado() {
         Cliente cliente = clienteController.buscarPorId(idSelecionado);
         if (cliente == null) return;
@@ -289,6 +304,7 @@ public class ClientePanel extends JPanel {
         campoStatus.setSelectedItem(cliente.getStatus());
     }
 
+    // Valida os campos do formulario antes de salvar ou editar
     private boolean validarCampos() {
         if (campoNome.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nome e obrigatorio.");

@@ -2,8 +2,12 @@ package br.edu.uniamerica.projetomensal.relatorio;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Cliente;
+<<<<<<< HEAD
 import br.edu.uniamerica.projetomensal.service.ClienteService;
 import jakarta.persistence.EntityManager;
+=======
+import br.edu.uniamerica.projetomensal.model.service.ClienteService;
+>>>>>>> origin/feature/funcionario-controller
 
 public class RelatorioCliente {
 

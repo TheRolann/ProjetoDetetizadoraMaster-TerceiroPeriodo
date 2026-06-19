@@ -3,7 +3,7 @@ package br.edu.uniamerica.projetomensal.relatorio;
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Funcionario;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
 import jakarta.persistence.EntityManager;
 
 public class RelatorioFuncionario {

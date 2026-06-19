@@ -12,9 +12,9 @@ public class FlywayConfig {
         String password = System.getenv("DB_PASSWORD");
 
         // Fallback se a variavel de ambiente nao estiver definida
-        // if (url == null) url = "jdbc:postgresql://localhost:5432/detetizadora_master";
-        // if (user == null) user = "postgres";
-        // if (password == null) password = "";
+        if (url == null) url = "jdbc:postgresql://localhost:5432/detetizadora_master";
+        if (user == null) user = "postgres";
+        if (password == null) password = "abacate21";
 
         // Cria o objeto Flyway com os dados do banco
         Flyway flyway = Flyway.configure()

@@ -1,6 +1,6 @@
-package br.edu.uniamerica.projetomensal.repository;
+package br.edu.uniamerica.projetomensal.model.repository;
 
-import br.edu.uniamerica.projetomensal.model.Cliente;
+import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -18,32 +18,32 @@ public class ClienteRepository {
     }
 
     // Salva um novo cliente no banco
-    public void salvar(Cliente cliente) {
-        em.persist(cliente); // Adiciona o objeto no contexto de persistencia
+    public void salvar(ClienteEntity clienteEntity) {
+        em.persist(clienteEntity); // Adiciona o objeto no contexto de persistencia
     }
 
     // Exclui um cliente pelo id
     // Primeiro busca o registro, depois remove se ele existir
     public void excluir(int id) {
-        Cliente cliente = buscarPorId(id); // Busca o cliente pela chave primaria
-        if (cliente != null) {
-            em.remove(cliente); // Remove o registro do banco
+        ClienteEntity clienteEntity = buscarPorId(id); // Busca o cliente pela chave primaria
+        if (clienteEntity != null) {
+            em.remove(clienteEntity); // Remove o registro do banco
         }
     }
 
     // Atualiza os dados de um cliente ja existente
-    public void editar(Cliente cliente) {
-        em.merge(cliente); // Atualiza o objeto no banco
+    public void editar(ClienteEntity clienteEntity) {
+        em.merge(clienteEntity); // Atualiza o objeto no banco
     }
 
     // Busca um cliente pelo id
     // Retorna null se nao encontrar
-    public Cliente buscarPorId(int id) {
-        return em.find(Cliente.class, id); // Procura pela chave primaria
+    public ClienteEntity buscarPorId(int id) {
+        return em.find(ClienteEntity.class, id); // Procura pela chave primaria
     }
 
     // Lista todos os clientes cadastrados
-    public List<Cliente> listar() {
-        return em.createQuery("SELECT c FROM Cliente c", Cliente.class).getResultList();
+    public List<ClienteEntity> listar() {
+        return em.createQuery("SELECT c FROM Cliente c", ClienteEntity.class).getResultList();
     }
 }

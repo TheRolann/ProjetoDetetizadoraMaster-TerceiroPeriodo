@@ -16,9 +16,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger
-DROP TRIGGER IF EXISTS trg_historico_servico ON servicos;
+DROP TRIGGER IF EXISTS trg_historico_servico ON servicoEntities;
 CREATE TRIGGER trg_historico_servico
-    AFTER UPDATE ON servicos
+    AFTER UPDATE ON servicoEntities
     FOR EACH ROW
 EXECUTE FUNCTION fn_registrar_historico_servico();
 
@@ -28,20 +28,20 @@ CREATE OR REPLACE FUNCTION fn_validar_status_funcionario()
     RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.status = 'INATIVO' THEN
-        RAISE EXCEPTION 'Nao e permitido cadastrar funcionario INATIVO';
+        RAISE EXCEPTION 'Nao e permitido cadastrar funcionarioEntity INATIVO';
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger
-DROP TRIGGER IF EXISTS trg_validar_status_funcionario ON funcionarios;
+DROP TRIGGER IF EXISTS trg_validar_status_funcionario ON funcionarioEntities;
 CREATE TRIGGER trg_validar_status_funcionario
-    BEFORE INSERT ON funcionarios
+    BEFORE INSERT ON funcionarioEntities
     FOR EACH ROW
 EXECUTE FUNCTION fn_validar_status_funcionario();
 
--- Trigger para atualizar agenda quando servico finalizado
+-- Trigger para atualizar agenda quando servicoEntity finalizado
 -- Funcao do Trigger
 CREATE OR REPLACE FUNCTION fn_atualizar_agenda_servico()
     RETURNS TRIGGER AS $$
@@ -56,8 +56,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger
-DROP TRIGGER IF EXISTS trg_atualizar_agenda_servico ON servicos;
+DROP TRIGGER IF EXISTS trg_atualizar_agenda_servico ON servicoEntities;
 CREATE TRIGGER trg_atualizar_agenda_servico
-    AFTER UPDATE ON servicos
+    AFTER UPDATE ON servicoEntities
     FOR EACH ROW
 EXECUTE FUNCTION fn_atualizar_agenda_servico();

@@ -1,9 +1,9 @@
 package br.edu.uniamerica.projetomensal.view.panels.preview;
 
+import br.edu.uniamerica.projetomensal.model.entity.FuncionarioEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.service.FuncionarioService;
-import br.edu.uniamerica.projetomensal.model.Funcionario;
+import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -172,18 +172,18 @@ public class ViewFuncionario {
 
         novo.addActionListener(e -> {
             try {
-                Funcionario funcionario = new Funcionario();
+                FuncionarioEntity funcionarioEntity = new FuncionarioEntity();
 
-                funcionario.setNome(txtNome.getText());
-                funcionario.setCpf(txtCpf.getText());
-                funcionario.setTelefone(txtTelefone.getText());
-                funcionario.setEmail(txtEmail.getText());
-                funcionario.setEndereco(txtEndereco.getText());
-                funcionario.setCargo((Cargo) txtCargo.getSelectedItem());
-                funcionario.setStatus((Status) txtStatus.getSelectedItem());
-                funcionario.setSalario(Double.parseDouble(txtSalario.getText()));
+                funcionarioEntity.setNome(txtNome.getText());
+                funcionarioEntity.setCpf(txtCpf.getText());
+                funcionarioEntity.setTelefone(txtTelefone.getText());
+                funcionarioEntity.setEmail(txtEmail.getText());
+                funcionarioEntity.setEndereco(txtEndereco.getText());
+                funcionarioEntity.setCargo((Cargo) txtCargo.getSelectedItem());
+                funcionarioEntity.setStatus((Status) txtStatus.getSelectedItem());
+                funcionarioEntity.setSalario(Double.parseDouble(txtSalario.getText()));
 
-                funcionarioService.salvar(funcionario);
+                funcionarioService.salvar(funcionarioEntity);
                 carregarTabela(tblModelo, funcionarioService);
 
                 JOptionPane.showMessageDialog(null, "Funcionário salvo com sucesso!");
@@ -195,19 +195,19 @@ public class ViewFuncionario {
         editar.addActionListener(e -> {
 
             try {
-                Funcionario funcionario = new Funcionario();
+                FuncionarioEntity funcionarioEntity = new FuncionarioEntity();
 
-                funcionario.setId(Integer.parseInt(txtId.getText()));
-                funcionario.setNome(txtNome.getText());
-                funcionario.setCpf(txtCpf.getText());
-                funcionario.setTelefone(txtTelefone.getText());
-                funcionario.setEmail(txtEmail.getText());
-                funcionario.setEndereco(txtEndereco.getText());
-                funcionario.setCargo((Cargo) txtCargo.getSelectedItem());
-                funcionario.setStatus((Status) txtStatus.getSelectedItem());
-                funcionario.setSalario(Double.parseDouble(txtSalario.getText()));
+                funcionarioEntity.setId(Integer.parseInt(txtId.getText()));
+                funcionarioEntity.setNome(txtNome.getText());
+                funcionarioEntity.setCpf(txtCpf.getText());
+                funcionarioEntity.setTelefone(txtTelefone.getText());
+                funcionarioEntity.setEmail(txtEmail.getText());
+                funcionarioEntity.setEndereco(txtEndereco.getText());
+                funcionarioEntity.setCargo((Cargo) txtCargo.getSelectedItem());
+                funcionarioEntity.setStatus((Status) txtStatus.getSelectedItem());
+                funcionarioEntity.setSalario(Double.parseDouble(txtSalario.getText()));
 
-                funcionarioService.editar(funcionario);
+                funcionarioService.editar(funcionarioEntity);
                 JOptionPane.showMessageDialog(null, "Funcionário editado com sucesso!");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -335,13 +335,13 @@ public class ViewFuncionario {
 
     private static void carregarTabela(DefaultTableModel modelo, FuncionarioService service) {
         modelo.setRowCount(0);
-        for (Funcionario funcionario : service.listar()){
+        for (FuncionarioEntity funcionarioEntity : service.listar()){
             modelo.addRow(new Object[]{
-                    funcionario.getId(),
-                    funcionario.getNome(),
-                    funcionario.getCpf(),
-                    funcionario.getCargo(),
-                    funcionario.getStatus()
+                    funcionarioEntity.getId(),
+                    funcionarioEntity.getNome(),
+                    funcionarioEntity.getCpf(),
+                    funcionarioEntity.getCargo(),
+                    funcionarioEntity.getStatus()
             });
         }
     }
