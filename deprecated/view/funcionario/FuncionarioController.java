@@ -1,7 +1,7 @@
 package br.edu.uniamerica.projetomensal.controller.funcionario;
 
-import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
-import br.edu.uniamerica.projetomensal.model.entity.FuncionarioEntity;
+import br.edu.uniamerica.projetomensal.model.Funcionario;
+import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class FuncionarioController {
     }
 
     public FuncionarioResponse buscarFuncionarioPorId(int id) {
-        FuncionarioEntity entity = funcionarioService.buscarPorId(id);
+        Funcionario entity = funcionarioService.buscarPorId(id);
         if (entity == null) return null;
 
         return new FuncionarioResponse(

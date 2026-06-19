@@ -1,10 +1,9 @@
 package br.edu.uniamerica.projetomensal.menu;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
-import br.edu.uniamerica.projetomensal.model.Funcionario;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import br.edu.uniamerica.projetomensal.utils.InputUtils;
 import jakarta.persistence.EntityManager;
 

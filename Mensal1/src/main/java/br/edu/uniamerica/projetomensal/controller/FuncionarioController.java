@@ -41,7 +41,7 @@ public class FuncionarioController {
         funcionario.setCargo(cargo);
         funcionario.setStatus(status);
 
-        // So atualiza a senha se o campo nao estiver vazio
+        // So atualiza a senha (gera novo hash) se o campo nao estiver vazio
         if (senha != null && !senha.isEmpty()) {
             funcionario.setSenha(senha);
         }

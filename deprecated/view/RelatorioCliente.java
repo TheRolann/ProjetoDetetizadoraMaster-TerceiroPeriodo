@@ -2,28 +2,22 @@ package br.edu.uniamerica.projetomensal.relatorio;
 
 import br.edu.uniamerica.projetomensal.config.PersistenceManager;
 import br.edu.uniamerica.projetomensal.model.Cliente;
-<<<<<<< HEAD
 import br.edu.uniamerica.projetomensal.service.ClienteService;
 import jakarta.persistence.EntityManager;
-=======
-import br.edu.uniamerica.projetomensal.model.service.ClienteService;
->>>>>>> origin/feature/funcionario-controller
 
 public class RelatorioCliente {
 
     // Relatorio que exibe o total de clientes cadastrados e seus nomes
     public void totalClientes() {
-        // Instancia o ClienteService para acessar os dados dos clientes
         EntityManager em = PersistenceManager.getEntityManager();
         ClienteService clienteService = new ClienteService(em);
-        int total = clienteService.listar().size(); // Obtem o total de clientes cadastrados
+        int total = clienteService.listar().size();
 
         System.out.println("|--------------------------------------|");
         System.out.println("|  --- --- Relatorio Clientes --- ---  |");
         System.out.println("| Total de Clientes: " + total);
         System.out.println("|--------------------------------------|");
 
-        // Exibe os nomes e IDs dos clientes cadastrados
         for (Cliente c : clienteService.listar()) {
             System.out.printf("| %d | %s \n", c.getId(), c.getNomeEmpresa());
         }

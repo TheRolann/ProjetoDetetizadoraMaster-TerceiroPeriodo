@@ -3,7 +3,7 @@ package br.edu.uniamerica.projetomensal.view.panels.preview;
 import br.edu.uniamerica.projetomensal.model.entity.FuncionarioEntity;
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.model.service.FuncionarioService;
+import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

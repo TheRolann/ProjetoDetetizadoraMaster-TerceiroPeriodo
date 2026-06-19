@@ -6,27 +6,30 @@ import org.flywaydb.core.Flyway;
 public class FlywayConfig {
 
     public static void migrar() {
-        // Pega os dados de conexao que estao nas variaveis de ambiente
+        // Pega os dados de conexao das variaveis de ambiente.
+        // NAO colocar senha de banco direto no codigo-fonte (risco de seguranca,
+        // sobretudo se o repositorio for publico ou compartilhado).
         String url = System.getenv("DB_URL");
         String user = System.getenv("DB_USER");
         String password = System.getenv("DB_PASSWORD");
 
-        // Fallback se a variavel de ambiente nao estiver definida
-        if (url == null) url = "jdbc:postgresql://localhost:5432/detetizadora_master";
+        if (url == null) url = "jdbc:postgresql://localhost:5433/detetizadora_master";
         if (user == null) user = "postgres";
-        if (password == null) password = "abacate21";
 
-        // Cria o objeto Flyway com os dados do banco
+        if (password == null) {
+            throw new IllegalStateException(
+                    "Variavel de ambiente DB_PASSWORD nao definida. " +
+                            "Configure-a antes de iniciar a aplicacao (nao deixe a senha no codigo)."
+            );
+        }
+
         Flyway flyway = Flyway.configure()
                 .dataSource(url, user, password)
                 .validateOnMigrate(false)
                 .outOfOrder(true)
                 .load();
 
-        // Corrige o historico antes de aplicar novas migracoes
         flyway.repair();
-
-        // Executa as migracoes pendentes do banco
         flyway.migrate();
     }
 }

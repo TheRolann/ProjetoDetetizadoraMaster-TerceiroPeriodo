@@ -41,7 +41,7 @@ CREATE TRIGGER trg_validar_status_funcionario
     FOR EACH ROW
 EXECUTE FUNCTION fn_validar_status_funcionario();
 
--- Trigger para atualizar agenda quando servicoEntity finalizado
+-- Trigger para atualizar agenda quando servico finalizado
 -- Funcao do Trigger
 CREATE OR REPLACE FUNCTION fn_atualizar_agenda_servico()
     RETURNS TRIGGER AS $$

@@ -1,6 +1,6 @@
-package br.edu.uniamerica.projetomensal.model.repository;
+package br.edu.uniamerica.projetomensal.repository;
 
-import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
+import br.edu.uniamerica.projetomensal.model.Cliente;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -18,32 +18,32 @@ public class ClienteRepository {
     }
 
     // Salva um novo cliente no banco
-    public void salvar(ClienteEntity clienteEntity) {
+    public void salvar(Cliente clienteEntity) {
         em.persist(clienteEntity); // Adiciona o objeto no contexto de persistencia
     }
 
     // Exclui um cliente pelo id
     // Primeiro busca o registro, depois remove se ele existir
     public void excluir(int id) {
-        ClienteEntity clienteEntity = buscarPorId(id); // Busca o cliente pela chave primaria
+        Cliente clienteEntity = buscarPorId(id); // Busca o cliente pela chave primaria
         if (clienteEntity != null) {
             em.remove(clienteEntity); // Remove o registro do banco
         }
     }
 
     // Atualiza os dados de um cliente ja existente
-    public void editar(ClienteEntity clienteEntity) {
+    public void editar(Cliente clienteEntity) {
         em.merge(clienteEntity); // Atualiza o objeto no banco
     }
 
     // Busca um cliente pelo id
     // Retorna null se nao encontrar
-    public ClienteEntity buscarPorId(int id) {
-        return em.find(ClienteEntity.class, id); // Procura pela chave primaria
+    public Cliente buscarPorId(int id) {
+        return em.find(Cliente.class, id); // Procura pela chave primaria
     }
 
     // Lista todos os clientes cadastrados
-    public List<ClienteEntity> listar() {
-        return em.createQuery("SELECT c FROM Cliente c", ClienteEntity.class).getResultList();
+    public List<Cliente> listar() {
+        return em.createQuery("SELECT c FROM Cliente c", Cliente.class).getResultList();
     }
 }

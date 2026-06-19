@@ -1,64 +1,53 @@
-package br.edu.uniamerica.projetomensal.model.entity;
+package br.edu.uniamerica.projetomensal.model;
 
 import br.edu.uniamerica.projetomensal.model.enums.Cargo;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 // Classe que representa um funcionario no banco de dados
 @Entity
-@Table(name = "funcionarios") // Nome da tabela no banco
-public class FuncionarioEntity {
-    // Identificador unico do funcionario
+@Table(name = "funcionarios")
+public class Funcionario {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID gerado automaticamente
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Nome completo do funcionario
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    // CPF do funcionario
     @Column(name = "cpf", length = 14, nullable = false, unique = true)
     private String cpf;
 
-    // Senha de acesso do funcionario
+    // Hash da senha de acesso do funcionario (BCrypt, nunca texto puro)
     @Column(name = "senha", length = 100)
     private String senha;
 
-    // Telefone de contato
     @Column(name = "telefone", length = 20)
     private String telefone;
 
-    // Email de contato
     @Column(name = "email", length = 100)
     private String email;
 
-    // Endereco completo
     @Column(name = "endereco", columnDefinition = "text")
     private String endereco;
 
-    // Salario do funcionario com casa decimal no banco
     @Column(name = "salario", columnDefinition = "numeric(10,2)")
     private double salario;
 
-    // Cargo do funcionario guardado como texto
     @Enumerated(EnumType.STRING)
     @Column(name = "cargo", nullable = false)
     private Cargo cargo;
 
-    // Status do funcionario guardado como texto
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 
-    // Construtor vazio exigido pelo JPA
-    public FuncionarioEntity() {}
+    public Funcionario() {}
 
-    // Construtor para criar um funcionario com os dados principais
-    public FuncionarioEntity(String nome, String cpf, String senha,String telefone, String email, String endereco, double salario, Cargo cargo, Status status) {
+    public Funcionario(String nome, String cpf, String telefone, String email, String endereco, double salario, Cargo cargo, Status status) {
         this.nome = nome;
         this.cpf = cpf;
-        this.senha = senha;
         this.telefone = telefone;
         this.email = email;
         this.endereco = endereco;
@@ -66,8 +55,6 @@ public class FuncionarioEntity {
         this.cargo = cargo;
         this.status = status;
     }
-
-    // Getters e setters para acessar e alterar os dados
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -78,12 +65,30 @@ public class FuncionarioEntity {
     public String getCpf() { return cpf; }
     public void setCpf(String cpf) { this.cpf = cpf; }
 
-    // Define a senha do funcionario
-    public void setSenha(String senha) { this.senha = senha; }
+    // Retorna o hash armazenado (uso interno/JPA). Nunca expor a senha em texto puro.
+    public String getSenha() { return senha; }
 
-    // Confere se a senha informada bate com a senha salva
-    public boolean senhaCorreta(String senhaInformada) { // Metodo para verificacao sem expor. Sem hash
-        return this.senha != null && this.senha.equals(senhaInformada);
+    // Recebe a senha em texto puro e armazena apenas o hash BCrypt.
+    // BCrypt.gensalt() gera um salt aleatorio novo a cada chamada,
+    // entao a mesma senha produz hashes diferentes - isso e esperado.
+    public void setSenha(String senhaTextoPuro) {
+        this.senha = BCrypt.hashpw(senhaTextoPuro, BCrypt.gensalt());
+    }
+
+    // Regrava um hash ja existente (ex: vindo do banco). Nao faz hash em cima de hash.
+    public void setSenhaHash(String hashJaExistente) {
+        this.senha = hashJaExistente;
+    }
+
+    // Confere se a senha informada (texto puro) bate com o hash salvo
+    public boolean senhaCorreta(String senhaInformada) {
+        if (this.senha == null || senhaInformada == null) return false;
+        try {
+            return BCrypt.checkpw(senhaInformada, this.senha);
+        } catch (IllegalArgumentException e) {
+            // Valor salvo nao e um hash BCrypt valido (ex: registro antigo em texto puro)
+            return false;
+        }
     }
 
     public String getTelefone() { return telefone; }

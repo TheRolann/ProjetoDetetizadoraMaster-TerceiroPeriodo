@@ -3,7 +3,7 @@
 -- =====================
 
 -- INNER JOIN: Servicos com clienteEntity (apenas registros que existem em ambas as tabelas)
--- Mostra: ID do servicoEntity, nome, status e clienteEntity relacionado
+-- Mostra: ID do servico, nome, status e clienteEntity relacionado
 SELECT
     s.id AS servico_id,
     s.nome_servico,
@@ -39,7 +39,7 @@ RIGHT JOIN funcionarioEntities f ON a.funcionario_id = f.id
 LEFT JOIN servicoEntities s ON a.servico_id = s.id;
 
 -- FULL OUTER JOIN: Todos os clienteEntities + todos os servicoEntities (com ou sem correspondencia)
--- Mostra: Cliente e servicoEntity, preenchendo com NULL onde nao houver correspondencia
+-- Mostra: Cliente e servico, preenchendo com NULL onde nao houver correspondencia
 SELECT
     c.nome_empresa AS clienteEntity,
     c.status AS status_cliente,

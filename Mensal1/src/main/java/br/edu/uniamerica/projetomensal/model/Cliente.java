@@ -1,4 +1,4 @@
-package br.edu.uniamerica.projetomensal.model.entity;
+package br.edu.uniamerica.projetomensal.model;
 
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
@@ -8,7 +8,7 @@ import java.util.List;
 // Classe que representa um cliente no banco de dados
 @Entity // Transforma a classe em tabela
 @Table(name = "clientes") // Define o nome da tabela
-public class ClienteEntity {
+public class Cliente {
     // Identificador unico do cliente
     @Id // Campo chave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ID gerado automaticamente
@@ -41,13 +41,13 @@ public class ClienteEntity {
 
     // Um cliente pode ter varios servicos ligados a ele
     @OneToMany(mappedBy = "cliente")
-    private List<ServicoEntity> servicoEntities;
+    private List<Servico> servicoEntities;
 
     // Construtor vazio exigido pelo JPA
-    public ClienteEntity() {}
+    public Cliente() {}
 
     // Construtor para criar um cliente com os dados principais
-    public ClienteEntity(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
+    public Cliente(String nomeEmpresa, String documento, String endereco, String telefone, String email, Status status) {
         this.nomeEmpresa = nomeEmpresa;
         this.documento = documento;
         this.endereco = endereco;

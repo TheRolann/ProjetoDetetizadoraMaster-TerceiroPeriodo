@@ -1,8 +1,8 @@
-package br.edu.uniamerica.projetomensal.model.service;
+package br.edu.uniamerica.projetomensal.service;
 
-import br.edu.uniamerica.projetomensal.model.entity.ClienteEntity;
+import br.edu.uniamerica.projetomensal.model.Cliente;
 import br.edu.uniamerica.projetomensal.model.enums.Status;
-import br.edu.uniamerica.projetomensal.model.repository.ClienteRepository;
+import br.edu.uniamerica.projetomensal.repository.ClienteRepository;
 import br.edu.uniamerica.projetomensal.utils.NegocioException;
 import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import jakarta.persistence.EntityManager;
@@ -25,15 +25,15 @@ public class ClienteService {
     }
 
     // Cria um cliente novo e salva usando os dados recebidos
-    public ClienteEntity cadastrarCliente(String nomeEmpresa, String documento, String endereco,
-                                          String telefone, String email, Status status) {
-        ClienteEntity clienteEntity = new ClienteEntity(nomeEmpresa, documento, endereco, telefone, email, status);
+    public Cliente cadastrarCliente(String nomeEmpresa, String documento, String endereco,
+                                    String telefone, String email, Status status) {
+        Cliente clienteEntity = new Cliente(nomeEmpresa, documento, endereco, telefone, email, status);
         salvar(clienteEntity);
         return clienteEntity;
     }
 
     // Salva um cliente no banco com validacoes basicas
-    public void salvar(ClienteEntity clienteEntity) {
+    public void salvar(Cliente clienteEntity) {
         try {
             em.getTransaction().begin();
 
@@ -64,12 +64,12 @@ public class ClienteService {
     }
 
     // Atualiza um cliente ja existente
-    public void editar(ClienteEntity clienteEntity) {
+    public void editar(Cliente clienteEntity) {
         try {
             em.getTransaction().begin();
 
             // Primeiro verifica se o cliente existe
-            ClienteEntity existente = repository.buscarPorId(clienteEntity.getId());
+            Cliente existente = repository.buscarPorId(clienteEntity.getId());
             if (existente == null) {
                 throw new NegocioException("Cliente não encontrado");
             }
@@ -102,7 +102,7 @@ public class ClienteService {
             em.getTransaction().begin();
 
             // Confere se o cliente existe antes de apagar
-            ClienteEntity clienteEntity = repository.buscarPorId(id);
+            Cliente clienteEntity = repository.buscarPorId(id);
             if (clienteEntity == null) {
                 throw new NegocioException("Cliente não encontrado");
             }
@@ -122,7 +122,7 @@ public class ClienteService {
     }
 
     // Busca um cliente pelo id
-    public ClienteEntity buscarPorId(int id) {
+    public Cliente buscarPorId(int id) {
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class ClienteService {
     }
 
     // Lista todos os clientes cadastrados
-    public List<ClienteEntity> listar() {
+    public List<Cliente> listar() {
         try {
             return repository.listar();
         } catch (Exception e) {

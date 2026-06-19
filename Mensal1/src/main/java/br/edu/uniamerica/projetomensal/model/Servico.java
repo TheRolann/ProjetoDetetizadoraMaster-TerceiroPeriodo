@@ -1,4 +1,4 @@
-package br.edu.uniamerica.projetomensal.model.entity;
+package br.edu.uniamerica.projetomensal.model;
 
 import br.edu.uniamerica.projetomensal.model.enums.Status;
 import jakarta.persistence.*;
@@ -8,7 +8,7 @@ import java.util.List;
 // Classe que representa um servico no banco de dados
 @Entity
 @Table(name = "servicos") // Nome da tabela no banco
-public class ServicoEntity {
+public class Servico {
 
     // Identificador unico do servico
     @Id
@@ -34,7 +34,7 @@ public class ServicoEntity {
     // Muitos servicos podem pertencer a um cliente
     @ManyToOne // Relacao muitos para um
     @JoinColumn(name = "cliente_id", nullable = false, referencedColumnName = "id")
-    private ClienteEntity clienteEntity;
+    private Cliente clienteEntity;
 
     // Status do servico guardado como texto
     @Enumerated(EnumType.STRING)
@@ -48,13 +48,13 @@ public class ServicoEntity {
             joinColumns = @JoinColumn(name = "servico_id"),
             inverseJoinColumns = @JoinColumn(name = "funcionario_id")
     )
-    private List<FuncionarioEntity> funcionarioEntities;
+    private List<Funcionario> funcionarioEntities;
 
     // Construtor vazio exigido pelo JPA
-    public ServicoEntity() {}
+    public Servico() {}
 
     // Construtor para criar um servico com os dados principais
-    public ServicoEntity(String nomeServico, String descricao, LocalDate data, double valor, ClienteEntity clienteEntity, Status status) {
+    public Servico(String nomeServico, String descricao, LocalDate data, double valor, Cliente clienteEntity, Status status) {
         this.nomeServico = nomeServico;
         this.descricao = descricao;
         this.data = data;
@@ -79,8 +79,8 @@ public class ServicoEntity {
     public double getValor() { return valor; }
     public void setValor(double valor) { this.valor = valor; }
 
-    public ClienteEntity getCliente() { return clienteEntity; }
-    public void setCliente(ClienteEntity clienteEntity) { this.clienteEntity = clienteEntity; }
+    public Cliente getCliente() { return clienteEntity; }
+    public void setCliente(Cliente clienteEntity) { this.clienteEntity = clienteEntity; }
 
     // Retorna o ID do cliente ligado a este servico
     public int getClienteId() { return clienteEntity.getId(); }
@@ -88,8 +88,8 @@ public class ServicoEntity {
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
 
-    public List<FuncionarioEntity> getFuncionarios() { return funcionarioEntities; }
-    public void setFuncionarios(List<FuncionarioEntity> funcionarioEntities) { this.funcionarioEntities = funcionarioEntities; }
+    public List<Funcionario> getFuncionarios() { return funcionarioEntities; }
+    public void setFuncionarios(List<Funcionario> funcionarioEntities) { this.funcionarioEntities = funcionarioEntities; }
 }
 
 

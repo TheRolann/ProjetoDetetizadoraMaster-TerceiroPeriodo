@@ -1,6 +1,6 @@
-package br.edu.uniamerica.projetomensal.model.repository;
+package br.edu.uniamerica.projetomensal.repository;
 
-import br.edu.uniamerica.projetomensal.model.entity.ServicoEntity;
+import br.edu.uniamerica.projetomensal.model.Servico;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 
@@ -16,30 +16,30 @@ public class ServicoRepository {
     }
 
     // Salva um novo servico no banco
-    public void salvar(ServicoEntity servicoEntity) {
-        em.persist(servicoEntity);
+    public void salvar(Servico servico) {
+        em.persist(servico);
     }
 
     // Exclui um servico pelo id
     public void excluir(int id) {
-        ServicoEntity servicoEntity = buscarPorId(id);
-        if (servicoEntity != null) {
-            em.remove(servicoEntity);
+        Servico servico = buscarPorId(id);
+        if (servico != null) {
+            em.remove(servico);
         }
     }
 
     // Atualiza os dados de um servico existente
-    public void editar(ServicoEntity servicoEntity) {
-        em.merge(servicoEntity);
+    public void editar(Servico servico) {
+        em.merge(servico);
     }
 
     // Busca um servico pelo id
-    public ServicoEntity buscarPorId(int id) {
-        return em.find(ServicoEntity.class, id);
+    public Servico buscarPorId(int id) {
+        return em.find(Servico.class, id);
     }
 
     // Lista todos os servicos cadastrados
-    public List<ServicoEntity> listar() {
-        return em.createQuery("SELECT s FROM Servico s", ServicoEntity.class).getResultList();
+    public List<Servico> listar() {
+        return em.createQuery("SELECT s FROM Servico s", Servico.class).getResultList();
     }
 }
