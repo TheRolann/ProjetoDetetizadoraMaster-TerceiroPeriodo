@@ -25,21 +25,8 @@ public class FuncionarioRepository {
         return em.find(Funcionario.class, id);
     }
 
-    public List<Funcionario> buscarPorNome(String prefixo) {
-        return em.createQuery("SELECT f FROM Funcionario f WHERE f.nome LIKE :prefixo", Funcionario.class)
-                .setParameter("prefixo", prefixo + "%")
-                .getResultList();
-    }
-
     public List<Funcionario> listar() {
         return em.createQuery("SELECT f FROM Funcionario f", Funcionario.class)
-                .getResultList();
-    }
-
-    public List<Funcionario> listarAtivos() {
-        return em.createQuery(
-                        "SELECT f FROM Funcionario f WHERE f.status = :status", Funcionario.class)
-                .setParameter("status", Status.ATIVO)
                 .getResultList();
     }
 

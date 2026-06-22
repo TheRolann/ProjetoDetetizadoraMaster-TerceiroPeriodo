@@ -73,7 +73,7 @@ public class FuncionarioService {
 
             // O hash da senha NAO e tratado aqui de proposito: o FuncionarioController
             // ja busca essa mesma entidade gerenciada (mesmo EntityManager) e so chama
-            // funcionario.setSenha(novaSenha) quando o usuario digitou uma nova senha.
+            // funcionario.setSenha(novaSenha) quando o usuario digitou uma nova senha
             // Como "existente" e o mesmo objeto que o controller alterou, o hash novo
             // (se houver) ja esta presente; senao, o hash antigo do banco permanece.
 
