@@ -12,8 +12,10 @@ import java.awt.event.*;
 // Se as credenciais estiverem corretas, abre o sistema principal
 public class LoginFrame extends JFrame {
 
+    private boolean autenticando;
+    private Timer timerMensagem;
+
     // Controller usado para autenticar o funcionario
-    private FuncionarioController funcionarioController;
 
     // Campo do nome do usuario
     private JTextField campoNome;
@@ -26,18 +28,19 @@ public class LoginFrame extends JFrame {
 
     // Construtor da tela de login
     public LoginFrame() {
-        this.funcionarioController = new FuncionarioController(PersistenceManager.getEntityManager());
         configurarJanela();
         inicializarComponentes();
     }
 
     // Configura tamanho, titulo e comportamento da janela
     private void configurarJanela() {
+        setIconImage(Icones.marcaJanela());
         setTitle("Login — Detetizadora Master");
-        setSize(450, 480);
+        setSize(520, 560);
+        setMinimumSize(new Dimension(480, 520));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setResizable(false);
+        setResizable(true);
         getContentPane().setBackground(Tema.COR_FUNDO);
     }
 
@@ -58,7 +61,8 @@ public class LoginFrame extends JFrame {
         // ========== TITULO ==========
         // Mostra o nome do sistema
         JLabel titulo = new JLabel("Detetizadora Master", SwingConstants.CENTER);
-        titulo.setFont(Tema.FONTE_TITULO);
+        titulo.setFont(Tema.FONTE_MARCA);
+        titulo.setIcon(Icones.criar(Icones.Tipo.MARCA,36)); titulo.setIconTextGap(10);
         titulo.setForeground(Tema.COR_DESTAQUE);
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -68,7 +72,7 @@ public class LoginFrame extends JFrame {
 
         // ========== SUBTITULO ==========
         // Pequena descricao da aplicacao
-        JLabel subtitulo = new JLabel("🦟 Sistema de Controle de Pragas", SwingConstants.CENTER);
+        JLabel subtitulo = new JLabel("Sistema de Controle de Pragas", SwingConstants.CENTER);
         subtitulo.setFont(Tema.FONTE_REGULAR);
         subtitulo.setForeground(Tema.COR_TEXTO_SECUNDARIO);
         gbc.gridy = 1;
@@ -171,6 +175,8 @@ public class LoginFrame extends JFrame {
         });
 
         painelBotoes.add(botaoEntrar);
+        Tema.estilizarBotaoSecundario(botaoLimpar);
+        Tema.estilizarBotaoSecundario(botaoSair);
         painelBotoes.add(botaoLimpar);
         painelBotoes.add(botaoSair);
 
@@ -221,7 +227,7 @@ public class LoginFrame extends JFrame {
     // Tenta autenticar o usuario com nome e senha informados
     private void realizarLogin() {
         String nome  = campoNome.getText().trim();
-        String senha = new String(campoSenha.getPassword()).trim();
+        String senha = new String(campoSenha.getPassword());
 
         if (nome.isEmpty()) {
             mostrarMensagem("Por favor, digite o usuário.", true);
@@ -234,16 +240,23 @@ public class LoginFrame extends JFrame {
             return;
         }
 
-        Funcionario funcionario = funcionarioController.autenticar(nome, senha);
-
-        if (funcionario != null) {
-            mostrarMensagem("Login realizado! Bem-vindo, " + funcionario.getNome() + ".", false);
-            abrirSistema(funcionario);
-        } else {
-            mostrarMensagem("Usuário ou senha incorretos. Tente novamente.", true);
-            campoSenha.setText("");
-            campoSenha.requestFocus();
-        }
+        if (autenticando) return;
+        autenticando = true; mostrarMensagem("Verificando acesso...", true);
+        new SwingWorker<Funcionario, Void>() {
+            protected Funcionario doInBackground() {
+                return PersistenceManager.executar(em -> new FuncionarioController(em).autenticar(nome, senha));
+            }
+            protected void done() {
+                autenticando = false;
+                try {
+                    Funcionario funcionario = get();
+                    if (funcionario != null) {
+                        br.edu.uniamerica.projetomensal.config.Sessao.iniciar(funcionario);
+                        abrirSistema(funcionario);
+                    } else { mostrarMensagem("Usuário ou senha incorretos.", true); campoSenha.setText(""); }
+                } catch (Exception ex) { mostrarMensagem(Mensagens.erro(ex), true); }
+            }
+        }.execute();
     }
 
     // Limpa os campos e restaura a tela ao estado inicial
@@ -258,18 +271,19 @@ public class LoginFrame extends JFrame {
 
     // Mostra uma mensagem na tela, podendo ser erro ou informacao
     private void mostrarMensagem(String mensagem, boolean isErro) {
+        if (timerMensagem != null) timerMensagem.stop();
         labelMensagem.setText(mensagem);
         labelMensagem.setForeground(isErro ? Tema.COR_DESTAQUE : Tema.COR_TEXTO_SECUNDARIO);
 
         // Limpa a mensagem de sucesso/info apos 3 segundos
         // Mantem a tela organizada sem mensagens permanentes
         if (!isErro) {
-            Timer timer = new Timer(3000, e -> {
+            timerMensagem = new Timer(3000, e -> {
                 labelMensagem.setText("Digite seu usuário e senha");
                 labelMensagem.setForeground(Tema.COR_TEXTO_SECUNDARIO);
             });
-            timer.setRepeats(false);
-            timer.start();
+            timerMensagem.setRepeats(false);
+            timerMensagem.start();
         }
     }
 

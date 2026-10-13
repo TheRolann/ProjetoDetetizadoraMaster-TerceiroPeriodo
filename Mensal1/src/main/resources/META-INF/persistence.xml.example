@@ -10,12 +10,11 @@
         <class>br.edu.uniamerica.projetomensal.model.Cliente</class>
         <class>br.edu.uniamerica.projetomensal.model.Funcionario</class>
         <class>br.edu.uniamerica.projetomensal.model.Servico</class>
+        <class>br.edu.uniamerica.projetomensal.model.Agenda</class>
 
+        <!-- Conexão fornecida por DB_URL, DB_USER e DB_PASSWORD em BancoConfig. -->
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/detetizadora_master"/>
-            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password" value="sua_senha"/>
 
             <!-- Flyway cuida do schema, Hibernate so valida que bate com o que o JPA espera -->
             <property name="hibernate.hbm2ddl.auto" value="validate"/>

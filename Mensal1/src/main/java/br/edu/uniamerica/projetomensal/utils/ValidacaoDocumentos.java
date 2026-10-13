@@ -8,6 +8,7 @@ public class ValidacaoDocumentos {
 
     // Valida CPF ou CNPJ automaticamente baseado no tamanho
     public static boolean validar(String documento) {
+        if (documento == null) return false;
         String limpo = documento.replaceAll("[./-]",""). trim();
 
         // Remove pontuacao e verifica o tamanho
@@ -18,6 +19,7 @@ public class ValidacaoDocumentos {
 
     // ======== CPF ==========
     public static boolean validarCPF(String cpf) {
+        if (cpf == null || !cpf.matches("\\d{11}")) return false;
 
         // Rejeita casos triviais onde todos os digitos sao iguais
         if (cpf.matches("(\\d)\\1{10}")) return false;
@@ -49,6 +51,7 @@ public class ValidacaoDocumentos {
 
     // ======== CNPJ ==========
     public static boolean validarCNPJ(String cnpj) {
+        if (cnpj == null || !cnpj.matches("\\d{14}")) return false;
         // Rejeita casos triviais onde todos os digitos sao iguais
         if (cnpj.matches("(\\d)\\1{13}")) return false;
 

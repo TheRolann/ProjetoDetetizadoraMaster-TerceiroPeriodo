@@ -27,6 +27,7 @@ public class EstiloUtils {
 
         // Se for um JScrollPane, ajusta a cor da area interna e da view
         } else if (componente instanceof JScrollPane scroll) {
+            scroll.setBorder(BorderFactory.createLineBorder(Tema.COR_BORDA));
             scroll.setBackground(Tema.COR_FUNDO_PAINEL);
             scroll.getViewport().setBackground(Tema.COR_FUNDO_PAINEL);
             aplicarFundoEscuro(scroll.getViewport().getView());
@@ -60,8 +61,15 @@ public class EstiloUtils {
         campo.setForeground(Tema.COR_TEXTO);
         campo.setCaretColor(Tema.COR_TEXTO);
         campo.setFont(Tema.FONTE_REGULAR);
+        if (!Boolean.TRUE.equals(campo.getClientProperty("tema.foco"))) {
+            campo.putClientProperty("tema.foco", true);
+            campo.addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent e) { if (!Boolean.TRUE.equals(campo.getClientProperty("erroCampo"))) campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Tema.COR_DESTAQUE), BorderFactory.createEmptyBorder(7,10,7,10))); }
+                public void focusLost(java.awt.event.FocusEvent e) { if (!Boolean.TRUE.equals(campo.getClientProperty("erroCampo"))) campo.setBorder(Tema.bordaCampo()); }
+            });
+        }
         campo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Tema.COR_DESTAQUE, 1),  // Borda de destaque
+                BorderFactory.createLineBorder(Tema.COR_BORDA, 1),
                 BorderFactory.createEmptyBorder(4, 8, 4, 8)
         ));
     }
@@ -98,6 +106,7 @@ public class EstiloUtils {
         tabela.setSelectionForeground(Tema.COR_TEXTO);
         tabela.setGridColor(Tema.COR_BORDA);
         tabela.setShowGrid(true);
+        tabela.setShowVerticalLines(false);
         tabela.setIntercellSpacing(new Dimension(1, 1));
 
         // Configura o cabecalho da tabela
@@ -106,5 +115,23 @@ public class EstiloUtils {
         header.setForeground(Tema.COR_DESTAQUE);
         header.setFont(Tema.FONTE_BOLD);
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Tema.COR_DESTAQUE));
+        header.setPreferredSize(new Dimension(header.getPreferredSize().width, 36));
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, selected, focus, row, column);
+                setBackground(Tema.COR_FUNDO_CAMPO); setForeground(Tema.COR_TEXTO); setFont(Tema.FONTE_BOLD);
+                setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0,0,2,0,Tema.COR_DESTAQUE),BorderFactory.createEmptyBorder(6,8,6,8)));
+                return this;
+            }
+        });
+        tabela.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focus, int row, int column) {
+                super.getTableCellRendererComponent(table,value,selected,focus,row,column);
+                setBackground(selected?Tema.COR_DESTAQUE:(row%2==0?Tema.COR_FUNDO_PAINEL:Tema.COR_FUNDO_CAMPO)); setForeground(Tema.COR_TEXTO);
+                setBorder(BorderFactory.createEmptyBorder(4,8,4,8)); setToolTipText(value==null?null:value.toString());
+                return this;
+            }
+        });
+        tabela.setRowHeight(34);
     }
 }

@@ -26,8 +26,8 @@ public class ServicoController {
 
     public void editar(int id, String nomeServico, String descricao, LocalDate data,
                        double valor, Cliente cliente, Status status) {
-        Servico servico = servicoService.buscarPorId(id);
-        if (servico == null) throw new NegocioException("Servico não encontrado");
+        Servico servico = new Servico();
+        servico.setId(id);
 
         servico.setNomeServico(nomeServico);
         servico.setDescricao(descricao);

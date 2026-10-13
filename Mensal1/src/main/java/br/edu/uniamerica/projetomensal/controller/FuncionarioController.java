@@ -6,6 +6,7 @@ import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.service.FuncionarioService;
 import br.edu.uniamerica.projetomensal.utils.NegocioException;
 import jakarta.persistence.EntityManager;
+import br.edu.uniamerica.projetomensal.utils.ValidacaoCadastro;
 import java.util.List;
 
 // Controller recebe as acoes da View e delega ao Service
@@ -23,14 +24,15 @@ public class FuncionarioController {
         Funcionario funcionario = new Funcionario(
                 nome, cpf, telefone, email, endereco, salario, cargo, Status.ATIVO
         );
+        ValidacaoCadastro.senha(senha);
         funcionario.setSenha(senha);
         funcionarioService.salvar(funcionario);
     }
 
     public void editar(int id, String nome, String cpf, String telefone, String email,
                        String endereco, double salario, Cargo cargo, Status status, String senha) {
-        Funcionario funcionario = funcionarioService.buscarPorId(id);
-        if (funcionario == null) throw new NegocioException("Funcionário não encontrado");
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(id);
 
         funcionario.setNome(nome);
         funcionario.setCpf(cpf);
@@ -41,8 +43,9 @@ public class FuncionarioController {
         funcionario.setCargo(cargo);
         funcionario.setStatus(status);
 
-        // So atualiza a senha (gera novo hash) se o campo nao estiver vazio
+        // Campo vazio mantém a senha; o service copia um novo hash apenas após validar.
         if (senha != null && !senha.isEmpty()) {
+            ValidacaoCadastro.senha(senha);
             funcionario.setSenha(senha);
         }
 

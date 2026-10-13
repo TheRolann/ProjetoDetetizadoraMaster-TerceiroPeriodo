@@ -24,8 +24,8 @@ public class ClienteController {
 
     public void editar(int id, String nomeEmpresa, String documento, String endereco,
                        String telefone, String email, Status status) {
-        Cliente cliente = clienteService.buscarPorId(id);
-        if (cliente == null) throw new NegocioException("Cliente não encontrado");
+        Cliente cliente = new Cliente();
+        cliente.setId(id);
 
         cliente.setNomeEmpresa(nomeEmpresa);
         cliente.setDocumento(documento);

@@ -46,6 +46,11 @@ public class FuncionarioRepository {
         return count > 0;
     }
 
+    public boolean temAgendaPendente(int id) {
+        return em.createQuery("SELECT COUNT(a) FROM Agenda a WHERE a.funcionario.id = :id AND a.status IN (:agendado, :andamento)", Long.class)
+                .setParameter("id", id).setParameter("agendado", Status.AGENDADO).setParameter("andamento", Status.EM_ANDAMENTO).getSingleResult() > 0;
+    }
+
     // Busca um funcionario ATIVO pelo nome, sem checar a senha.
     // A senha e hash (BCrypt) e cada hash de uma mesma senha e diferente
     // por causa do salt aleatorio, entao NUNCA da pra comparar via WHERE no SQL.

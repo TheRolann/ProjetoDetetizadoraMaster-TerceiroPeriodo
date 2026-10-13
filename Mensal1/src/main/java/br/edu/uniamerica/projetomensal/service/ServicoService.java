@@ -6,6 +6,9 @@ import br.edu.uniamerica.projetomensal.model.enums.Status;
 import br.edu.uniamerica.projetomensal.repository.ServicoRepository;
 import br.edu.uniamerica.projetomensal.utils.NegocioException;
 import jakarta.persistence.EntityManager;
+import br.edu.uniamerica.projetomensal.config.Sessao;
+import br.edu.uniamerica.projetomensal.utils.ValidacaoCadastro;
+import br.edu.uniamerica.projetomensal.utils.Transacoes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,36 +37,31 @@ public class ServicoService {
 
     // Salva um servico no banco com validacoes basicas
     public void salvar(Servico servico) {
+        Sessao.exigirLogin();
+        if (servico.getStatus() == Status.INATIVO) Sessao.exigirGerente();
+        ValidacaoCadastro.servico(servico);
         try {
             em.getTransaction().begin();
-
-            // Validacoes simples antes de persistir
-            if (servico.getValor() <= 0) {
-                throw new NegocioException("Valor do servico deve ser maior que 0");
-            }
-            if (servico.getCliente() == null) {
-                throw new NegocioException("Servico deve ter um cliente vinculado");
-            }
-            if (servico.getData() == null) {
-                throw new NegocioException("Data do servico nao pode estar vazia");
-            }
 
             repository.salvar(servico);
             em.getTransaction().commit();
 
         } catch (NegocioException e) {
             // Regra de negocio invalida: desfaz transacao e propaga a excecao
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw e;
         } catch (Exception e) {
             // Erro generico: desfaz transacao e encapsula
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw new RuntimeException("Erro ao salvar servico: ", e);
         }
     }
 
     // Atualiza um servico existente aplicando validacoes
     public void editar(Servico servico) {
+        Sessao.exigirLogin();
+        if (servico.getStatus() == Status.INATIVO) Sessao.exigirGerente();
+        ValidacaoCadastro.servico(servico);
         try {
             em.getTransaction().begin();
 
@@ -71,9 +69,6 @@ public class ServicoService {
             Servico existente = repository.buscarPorId(servico.getId());
             if (existente == null) {
                 throw new NegocioException("Servico nao encontrado");
-            }
-            if (servico.getValor() <= 0) {
-                throw new NegocioException("Valor do servico deve ser maior que 0");
             }
 
             // Copia os dados atualizados
@@ -88,16 +83,17 @@ public class ServicoService {
             em.getTransaction().commit();
 
         } catch (NegocioException e) {
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw e;
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw new RuntimeException("Erro ao editar servico: ", e);
         }
     }
 
     // Remove um servico por id (apaga do banco)
     public void excluir(int id) {
+        Sessao.exigirGerente();
         try {
             em.getTransaction().begin();
 
@@ -106,20 +102,22 @@ public class ServicoService {
                 throw new NegocioException("Servico nao encontrado");
             }
 
+            if (servico.getStatus() == Status.CONCLUIDO) throw new NegocioException("Serviço concluído deve permanecer no histórico.");
             repository.excluir(id);
             em.getTransaction().commit();
 
         } catch (NegocioException e) {
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw e;
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw new RuntimeException("Erro ao excluir servico: ", e);
         }
     }
 
     // Busca um servico pelo id
     public Servico buscarPorId(int id) {
+        Sessao.exigirLogin();
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
@@ -129,6 +127,7 @@ public class ServicoService {
 
     // Lista todos os servicos cadastrados
     public List<Servico> listar() {
+        Sessao.exigirLogin();
         try {
             return repository.listar();
         } catch (Exception e) {

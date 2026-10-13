@@ -14,7 +14,7 @@ public class PersistenceManager {
     // Abre a conexao com o banco quando a aplicacao inicia
     // Usa o nome da unidade de persistencia definido no persistence.xml
     public static void conectar() {
-        emf = Persistence.createEntityManagerFactory("detetizadora_master");
+        emf = Persistence.createEntityManagerFactory("detetizadora_master", BancoConfig.propriedadesJpa());
         em = emf.createEntityManager();
     }
 
@@ -23,10 +23,16 @@ public class PersistenceManager {
         return em; // Retorna a conexao aberta. EX: em = PersistenceManager.getEntityManager();
     }
 
+    public static <T> T executar(java.util.function.Function<EntityManager, T> operacao) {
+        EntityManager contexto = emf.createEntityManager();
+        try { return operacao.apply(contexto); }
+        finally { if (contexto.getTransaction().isActive()) contexto.getTransaction().rollback(); contexto.close(); }
+    }
+
     // Fecha a conexao quando a aplicacao vai encerrar
     public static void desconectar() {
-        emf.close();
-        em.close();
+        if (em != null && em.isOpen()) em.close();
+        if (emf != null && emf.isOpen()) emf.close();
     }
 
 }

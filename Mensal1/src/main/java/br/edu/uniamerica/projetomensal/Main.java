@@ -18,6 +18,7 @@ public class Main {
 
         // 2 - Abre a conexao JPA
         PersistenceManager.conectar();
+        Runtime.getRuntime().addShutdownHook(new Thread(PersistenceManager::desconectar));
 
         // 3 - Inicia a janela Swing na thread correta
         SwingUtilities.invokeLater(() -> {

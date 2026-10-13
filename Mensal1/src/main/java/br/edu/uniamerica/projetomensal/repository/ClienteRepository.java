@@ -42,6 +42,11 @@ public class ClienteRepository {
         return em.find(Cliente.class, id); // Procura pela chave primaria
     }
 
+    public boolean documentoEmUso(String documento, int idIgnorado) {
+        return em.createQuery("SELECT COUNT(c) FROM Cliente c WHERE c.documento = :documento AND c.id <> :id", Long.class)
+                .setParameter("documento", documento).setParameter("id", idIgnorado).getSingleResult() > 0;
+    }
+
     // Lista todos os clientes cadastrados
     public List<Cliente> listar() {
         return em.createQuery("SELECT c FROM Cliente c", Cliente.class).getResultList();

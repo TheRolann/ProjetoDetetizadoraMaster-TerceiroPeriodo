@@ -6,6 +6,9 @@ import br.edu.uniamerica.projetomensal.repository.ClienteRepository;
 import br.edu.uniamerica.projetomensal.utils.NegocioException;
 import br.edu.uniamerica.projetomensal.utils.ValidacaoDocumentos;
 import jakarta.persistence.EntityManager;
+import br.edu.uniamerica.projetomensal.config.Sessao;
+import br.edu.uniamerica.projetomensal.utils.ValidacaoCadastro;
+import br.edu.uniamerica.projetomensal.utils.Transacoes;
 
 import java.util.List;
 
@@ -34,37 +37,33 @@ public class ClienteService {
 
     // Salva um cliente no banco com validacoes basicas
     public void salvar(Cliente clienteEntity) {
+        Sessao.exigirLogin();
+        if (clienteEntity.getStatus() == Status.INATIVO) Sessao.exigirGerente();
+        ValidacaoCadastro.cliente(clienteEntity);
         try {
             em.getTransaction().begin();
 
-            // Documento nao pode ficar vazio
-            if (clienteEntity.getDocumento() == null || clienteEntity.getDocumento().isEmpty()) {
-                throw new NegocioException("Documento nao pode estar vazio");
-            }
-            // Documento precisa ter 11 ou 14 digitos
-            if (!clienteEntity.getDocumento().matches("\\d{11}|\\d{14}")) {
-                throw new NegocioException("Documento deve conter 11 ou 14 digitos");
-            }
-            if (!ValidacaoDocumentos.validar(clienteEntity.getDocumento())) {
-                throw new NegocioException("CPF ou CNPJ invalido");
-            }
+            verificarDocumento(clienteEntity);
 
             repository.salvar(clienteEntity);
             em.getTransaction().commit();
 
         } catch (NegocioException e) {
             // Se der erro de regra de negocio, desfaz a transacao
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw e;
         } catch (Exception e) {
             // Se der qualquer outro erro, tambem desfaz a transacao
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw new RuntimeException("Erro ao salvar cliente: ", e);
         }
     }
 
     // Atualiza um cliente ja existente
     public void editar(Cliente clienteEntity) {
+        Sessao.exigirLogin();
+        if (clienteEntity.getStatus() == Status.INATIVO) Sessao.exigirGerente();
+        ValidacaoCadastro.cliente(clienteEntity);
         try {
             em.getTransaction().begin();
 
@@ -73,6 +72,8 @@ public class ClienteService {
             if (existente == null) {
                 throw new NegocioException("Cliente não encontrado");
             }
+
+            verificarDocumento(clienteEntity);
 
             // Copia os novos dados para o objeto encontrado
             existente.setNomeEmpresa(clienteEntity.getNomeEmpresa());
@@ -87,17 +88,24 @@ public class ClienteService {
 
         } catch (NegocioException e) {
             // Se a regra de negocio falhar, desfaz tudo
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw e;
         } catch (Exception e) {
             // Se acontecer outro erro, desfaz tudo tambem
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw new RuntimeException("Erro ao editar cliente: ", e);
+        }
+    }
+
+    private void verificarDocumento(Cliente cliente) {
+        if (repository.documentoEmUso(cliente.getDocumento(), cliente.getId())) {
+            throw new NegocioException("Documento já cadastrado para outro cliente.");
         }
     }
 
     // Exclui um cliente pelo id
     public void excluir(int id) {
+        Sessao.exigirGerente();
         try {
             em.getTransaction().begin();
 
@@ -112,17 +120,18 @@ public class ClienteService {
 
         } catch (NegocioException e) {
             // Desfaz a operacao se o cliente nao existir
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw e;
         } catch (Exception e) {
             // Desfaz a operacao se ocorrer qualquer erro
-            em.getTransaction().rollback();
+            Transacoes.desfazer(em);
             throw new RuntimeException("Erro ao excluir cliente: ", e);
         }
     }
 
     // Busca um cliente pelo id
     public Cliente buscarPorId(int id) {
+        Sessao.exigirLogin();
         try {
             return repository.buscarPorId(id);
         } catch (Exception e) {
@@ -132,6 +141,7 @@ public class ClienteService {
 
     // Lista todos os clientes cadastrados
     public List<Cliente> listar() {
+        Sessao.exigirLogin();
         try {
             return repository.listar();
         } catch (Exception e) {

@@ -90,6 +90,7 @@ public class Servico {
 
     public List<Funcionario> getFuncionarios() { return funcionarioEntities; }
     public void setFuncionarios(List<Funcionario> funcionarioEntities) { this.funcionarioEntities = funcionarioEntities; }
+    @Override public String toString() { return nomeServico + " (#" + id + ")"; }
 }
 
 

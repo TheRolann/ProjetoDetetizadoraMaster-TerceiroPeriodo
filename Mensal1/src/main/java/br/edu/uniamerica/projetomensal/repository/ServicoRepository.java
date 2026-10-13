@@ -40,6 +40,6 @@ public class ServicoRepository {
 
     // Lista todos os servicos cadastrados
     public List<Servico> listar() {
-        return em.createQuery("SELECT s FROM Servico s", Servico.class).getResultList();
+        return em.createQuery("SELECT s FROM Servico s JOIN FETCH s.clienteEntity ORDER BY s.data, s.id", Servico.class).getResultList();
     }
 }

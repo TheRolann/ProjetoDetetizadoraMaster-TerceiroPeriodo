@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="titulo">
+  <title id="titulo">Detetizadora Master</title>
+  <path fill="#e0474c" d="M48 4 88 20 84 56Q76 80 48 92 20 80 12 56L8 20Z"/>
+  <path d="M28 60V32l20 20 20-20v28" fill="none" stroke="#f5f6f8" stroke-width="9.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

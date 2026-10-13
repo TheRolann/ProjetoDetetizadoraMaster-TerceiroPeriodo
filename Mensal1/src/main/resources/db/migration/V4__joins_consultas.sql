@@ -10,10 +10,10 @@ SELECT
     s.status,
     s.valor,
     c.nome_empresa AS clienteEntity
-FROM servicoEntities s
-INNER JOIN clienteEntities c ON s.cliente_id = c.id;
+FROM servicos s
+INNER JOIN clientes c ON s.cliente_id = c.id;
 
--- LEFT JOIN: Todos os servicoEntities + agenda + funcionaio (mesmo sem agendamento)
+-- LEFT JOIN: Todos os servicos + agenda + funcionaio (mesmo sem agendamento)
 -- Mostra: Servico, data agendada e funcionarioEntity responsavel (pode ter NULL)
 SELECT
     s.nome_servico,
@@ -21,11 +21,11 @@ SELECT
     a.data_agendada,
     a.status AS status_agenda,
     f.nome AS funcionario_responsavel
-FROM servicoEntities s
+FROM servicos s
 LEFT JOIN agenda a ON a.servico_id = s.id
-LEFT JOIN funcionarioEntities f ON a.funcionario_id = f.id;
+LEFT JOIN funcionarios f ON a.funcionario_id = f.id;
 
--- RIGHT JOIN: Todos os funcionarioEntities + agenda (mesmo sem agendamento)
+-- RIGHT JOIN: Todos os funcionarios + agenda (mesmo sem agendamento)
 -- Mostra: Funcionario, cargo e dados do agendamento (pode ter NULL)
 SELECT
     f.nome AS funcionarioEntity,
@@ -35,10 +35,10 @@ SELECT
     a.status AS status_agenda,
     s.nome_servico
 FROM agenda a
-RIGHT JOIN funcionarioEntities f ON a.funcionario_id = f.id
-LEFT JOIN servicoEntities s ON a.servico_id = s.id;
+RIGHT JOIN funcionarios f ON a.funcionario_id = f.id
+LEFT JOIN servicos s ON a.servico_id = s.id;
 
--- FULL OUTER JOIN: Todos os clienteEntities + todos os servicoEntities (com ou sem correspondencia)
+-- FULL OUTER JOIN: Todos os clientes + todos os servicos (com ou sem correspondencia)
 -- Mostra: Cliente e servico, preenchendo com NULL onde nao houver correspondencia
 SELECT
     c.nome_empresa AS clienteEntity,
@@ -46,6 +46,6 @@ SELECT
     s.nome_servico,
     s.status AS status_servico,
     s.valor
-FROM clienteEntities c
-FULL OUTER JOIN servicoEntities s ON s.cliente_id = c.id;
+FROM clientes c
+FULL OUTER JOIN servicos s ON s.cliente_id = c.id;
 

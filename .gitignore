@@ -71,9 +71,8 @@ ehthumbs.db
 
 # ==================== BANCO DE DADOS ====================
 # Arquivo com credenciais (NUNCA comitar!)
-# persistence.xml com senha do banco - IGNORAR
+# persistence.xml contém apenas metadados; credenciais ficam no ambiente
 # persistence.xml.example pode ser commitado como modelo
-src/main/resources/META-INF/persistence.xml
 *.db
 *.sqlite
 *.sqlite3
@@ -108,4 +107,3 @@ Mensal1/target/maven-status/maven-compiler-plugin/compile/default-compile/inputF
 Mensal1/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 Mensal1/target/classes/META-INF/persistence.xml
 Mensal1/target/classes/br/edu/uniamerica/projetomensal/config/FlywayConfig.class
-Mensal1/src/main/resources/META-INF/persistence.xml

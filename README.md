@@ -1,224 +1,214 @@
-# 🦟 Sistema de Gestão de Serviços — Detetizadora Master
+<div align="center">
+  <img src="docs/images/logo.svg" width="76" alt="Logo da Detetizadora Master">
+  <h1>Detetizadora Master</h1>
+  <p>Gestão de clientes, serviços e agendamentos em uma aplicação desktop Java.</p>
+  <p><strong>Java 21 · Swing · PostgreSQL · JPA/Hibernate · Flyway · JUnit 5</strong></p>
+</div>
 
-Sistema desktop desenvolvido em Java para gestão de clienteEntities, funcionários e serviços de uma empresa de controle de pragas, substituindo o uso informal do WhatsApp por uma solução estruturada.
+![Tela de clientes com navegação, pesquisa e filtros](docs/images/clientes.jpg)
 
-Projeto acadêmico desenvolvido no curso de Análise e Desenvolvimento de Sistemas — UniAmérica Descomplica, Foz do Iguaçu — PR.
+## Sobre o projeto
 
----
+Sistema acadêmico desenvolvido para organizar a operação de uma empresa de controle de pragas: clientes, funcionários, serviços e agenda de atendimentos. A proposta é centralizar informações que antes eram tratadas informalmente pelo WhatsApp.
 
-## 👥 Time
+Desenvolvido no curso de Análise e Desenvolvimento de Sistemas da UniAmérica Descomplica, em Foz do Iguaçu — PR.
 
-| Nome                             |
-|----------------------------------|
-| Luan Augusto de Castro Rolan     |
-| Adriano Ramos dos Santos Junior  |
-| Victor Hugo de Almeida Marques   |
-| Victor Luís da Luz               |
+## Funcionalidades
 
-**Mentor:** Riad Younes — Engenheiro de Software FrontEnd  
-**Orientador:** Victor Matheus de Souza Muller
+| Área | Recursos |
+| --- | --- |
+| Clientes | Cadastro, edição, pesquisa, filtro por status e validação de CPF/CNPJ, incluindo dígitos verificadores. |
+| Funcionários | Cadastro, cargos, salário, senha e inativação. Acesso exclusivo de gerente. |
+| Serviços | Vínculo com cliente, descrição, data, valor e acompanhamento por status. |
+| Agenda | Serviço, responsável, data, horário, observações e filtros por período/status. |
+| Relatórios | Resumos de clientes, funcionários, serviços e agenda, com exportação CSV. |
+| Acesso | Autenticação com BCrypt, permissões por cargo e encerramento de sessão. |
 
----
+CPF/CNPJ e telefone recebem pontuação automática, inclusive ao colar valores, e são armazenados somente com dígitos. E-mail, telefone e endereço são opcionais quando disponíveis no cadastro, com validação quando preenchidos. Os erros aparecem junto ao campo correspondente.
 
-## 🛠 Tecnologias
+A interface usa tema escuro com destaque vermelho, fonte Inter, ícones vetoriais, navegação por abas e formulários separados das tabelas. Consultas e gravações rodam em segundo plano com `SwingWorker`.
 
-| Tecnologia | Versão | Descrição |
-|---|---|---|
-| Java | 21 | Linguagem principal |
-| PostgreSQL | 12+ | Banco de dados relacional |
-| Hibernate | 6.4.4 | Implementação JPA |
-| Flyway | 10.10.0 | Versionamento de banco |
-| Maven | 3.9+ | Gerenciador de dependências |
-| Swing | — | Interface gráfica |
+### Cadastros organizados
 
----
+![Formulário com campos obrigatórios e contatos opcionais](docs/images/cadastro.jpg)
 
-## 🏗 Arquitetura
+### Relatórios e exportação
 
-O sistema segue uma arquitetura em camadas inspirada em MVC, com Service e Repository separados:
+![Relatório de serviços com receitas e resumo por status](docs/images/relatorios.jpg)
 
-```
-View (Swing)
-   ↓
-Controller
-   ↓
-Service     → regras de negócio e transações (begin / commit / rollback)
-   ↓
-Repository  → único ponto que fala com o EntityManager (JPA/Hibernate)
-   ↓
-PostgreSQL
-```
+Receita realizada considera serviços concluídos; receita prevista considera serviços agendados ou em andamento. O maior valor concluído representa o valor do serviço, sem cálculo de lucro. O relatório da agenda mostra atendimentos pendentes entre hoje e os próximos três meses. O CSV usa separador `;`, UTF-8 com BOM e proteção contra interpretação de textos como fórmulas.
 
-| Camada | Pacote | Responsabilidade |
-|---|---|---|
-| View | `view`, `view.panels` | Telas Swing (`LoginFrame`, `MainFrame`, painéis). Não acessa Service nem banco diretamente. |
-| Controller | `controller` | Recebe as ações da View e delega ao Service correspondente. Não importa nada de `javax.swing`. |
-| Service | `service` | Regras de negócio, validações (`NegocioException`) e controle de transação. |
-| Repository | `repository` | Persistência via JPA — único lugar que usa o `EntityManager`. |
-| Model | `model`, `model.enums` | Entidades JPA (`Cliente`, `Funcionario`, `Servico`) e enums (`Status`, `Cargo`). |
+As imagens usam somente dados demonstrativos, em um banco separado.
 
-Toda ação da interface passa pelo Controller — a View nunca chama Service ou Repository diretamente.
+## Permissões e regras
 
----
+| Operação | Funcionário | Gerente |
+| --- | :---: | :---: |
+| Consultar e cadastrar/editar clientes e serviços ativos | Sim | Sim |
+| Criar e editar agendamentos | Sim | Sim |
+| Excluir/inativar registros e cancelar agendamentos | Não | Sim |
+| Gerenciar funcionários e salários | Não | Sim |
+| Consultar relatórios e exportar CSV | Não | Sim |
 
-## ✅ Pré-requisitos
+Agendamentos pendentes devem estar no futuro, usar serviço pendente e responsável ativo. O sistema impede dois atendimentos pendentes do mesmo responsável na mesma data e horário; essa regra não calcula duração nem sobreposição entre intervalos.
 
-- Java JDK 21+
-- Maven 3.9+
-- PostgreSQL 12+ rodando localmente
+Serviços e agendamentos concluídos têm proteção contra exclusão/cancelamento. Vínculos podem impedir a exclusão de clientes ou serviços; nesses casos, use a inativação. O gerente não pode inativar a própria conta nem retirar o próprio cargo de gerente. Funcionários com atendimentos pendentes precisam ter sua agenda resolvida antes da inativação.
 
-Verificar instalação:
+## Como executar
+
+### Pré-requisitos
+
+- JDK 21 ou superior.
+- Maven 3.9 ou superior.
+- PostgreSQL instalado e em execução.
+
+A integração foi validada com PostgreSQL 18. O Flyway 10.10.0 emite um aviso por ter suporte oficialmente testado até PostgreSQL 16; o aviso não impediu os testes nesta configuração.
+
+### 1. Obter o projeto
 
 ```bash
-java -version
-mvn -version
-psql --version
+git clone https://github.com/TheRolann/ProjetoDetetizadoraMaster-TerceiroPeriodo.git
+cd ProjetoDetetizadoraMaster-TerceiroPeriodo/Mensal1
 ```
 
----
+### 2. Criar o banco
 
-## 🚀 Como executar
-
-### 1. Clonar o repositório
-
-```bash
-git clone https://github.com/TheRolann/ProjetoMensal-TerceiroPeriodo.git
-cd ProjetoMensal-TerceiroPeriodo/Mensal1
-```
-
-### 2. Criar o banco de dados
-
-No PostgreSQL, execute:
+No PostgreSQL, com um usuário que tenha permissão para criar bancos:
 
 ```sql
 CREATE DATABASE detetizadora_master;
 ```
 
-### 3. Configurar o arquivo de persistência
+O usuário da aplicação precisa poder criar e alterar as tabelas nesse banco. O Flyway executa as migrações na inicialização e inclui dados demonstrativos.
 
-```bash
-# Windows (PowerShell)
-Copy-Item src/main/resources/META-INF/persistence.xml.example `
-          src/main/resources/META-INF/persistence.xml
+### 3. Configurar a conexão
 
-# Linux / Mac
-cp src/main/resources/META-INF/persistence.xml.example \
-   src/main/resources/META-INF/persistence.xml
-```
+| Variável | Valor padrão |
+| --- | --- |
+| `DB_URL` | `jdbc:postgresql://localhost:5432/detetizadora_master` |
+| `DB_USER` | `postgres` |
+| `DB_PASSWORD` | Obrigatória; sem valor padrão. |
 
-Edite o arquivo copiado com suas credenciais:
+**PowerShell:**
 
-```xml
-<property name="jakarta.persistence.jdbc.url"
-          value="jdbc:postgresql://localhost:5432/detetizadora_master"/>
-<property name="jakarta.persistence.jdbc.user" value="postgres"/>
-<property name="jakarta.persistence.jdbc.password" value="sua_senha"/>
-```
-
-### 4. Configurar variáveis de ambiente para o Flyway
-
-O Flyway lê as credenciais via variáveis de ambiente. Configure antes de rodar:
-
-**Windows (PowerShell):**
 ```powershell
-$env:DB_URL      = "jdbc:postgresql://localhost:5432/detetizadora_master"
-$env:DB_USER     = "postgres"
-$env:DB_PASSWORD = "sua_senha"
+$env:DB_URL = "jdbc:postgresql://localhost:5432/detetizadora_master"
+$env:DB_USER = "postgres"
+$env:DB_PASSWORD = "sua_senha_do_postgres"
 ```
 
-**Linux / Mac:**
+**Linux/macOS:**
+
 ```bash
 export DB_URL="jdbc:postgresql://localhost:5432/detetizadora_master"
 export DB_USER="postgres"
-export DB_PASSWORD="sua_senha"
+export DB_PASSWORD="sua_senha_do_postgres"
 ```
 
-### 5. Compilar e executar
+O `persistence.xml` contém os metadados JPA, sem credenciais. Flyway e Hibernate usam as mesmas variáveis. Na IDE, configure-as na execução do `Main`; se alterar as variáveis do Windows com a IDE aberta, reinicie a IDE para receber os novos valores.
 
-```bash
-mvn clean install
-mvn exec:java -Dexec.mainClass="br.edu.uniamerica.projetomensal.Main"
-```
+### 4. Compilar e abrir
 
-Ou via JAR:
+Na pasta `Mensal1`, use o mesmo terminal em que definiu as variáveis:
 
 ```bash
 mvn clean package
 java -jar target/Mensal1-1.0-SNAPSHOT.jar
 ```
 
----
+O JAR inclui as dependências Java. O PostgreSQL precisa continuar disponível durante o uso. Pela IDE, execute `br.edu.uniamerica.projetomensal.Main`.
 
-## 🔐 Login
+### Acessos demonstrativos
 
-O Flyway cria automaticamente os dados iniciais. Para acessar o sistema use:
+Em um banco recém-criado, as migrações disponibilizam:
 
-| Campo | Valor |
-|-------|-------|
-| Nome | João Silva |
-| Senha | 1234 |
+| Perfil | Usuário | Senha |
+| --- | --- | --- |
+| Gerente | Maria Souza | 1234 |
+| Funcionário | João Silva | 1234 |
 
-Para cadastrar novos usuários, acesse a aba **Funcionários** após o login e defina a senha diretamente no cadastro.
+Entre como **Maria Souza** para acessar funcionários e relatórios. Essas credenciais são de demonstração; substitua as senhas antes de usar dados reais. Novos usuários são cadastrados pelo gerente na aba **Funcionários**. Na edição, deixar a senha vazia mantém a senha atual.
 
----
+## Arquitetura
 
-## ✨ Funcionalidades
+```text
+Interface Swing → Controller → Service → Repository → PostgreSQL
+                                  ↓
+                         Validações e transações
+```
 
-### Clientes
-- Cadastrar, editar, listar e excluir clienteEntities
-- Validação de CPF (11 dígitos) e CNPJ (14 dígitos)
-- Validação de e-mail e telefone
-- Controle de status (Ativo / Inativo)
+| Pacote | Responsabilidade |
+| --- | --- |
+| `view` / `view.panels` | Telas, tema, máscaras, mensagens e tarefas assíncronas. |
+| `controller` | Recebe as ações das telas e encaminha para os serviços. |
+| `service` | Regras de negócio, autorização e transações. |
+| `repository` | Consultas e persistência com JPA. |
+| `model` / `model.enums` | Entidades e estados de clientes, funcionários, serviços e agenda. |
+| `config` | Conexão, migrações e sessão do usuário. |
+| `utils` | Validações, erros de negócio, rollback e exportação CSV. |
 
-### Funcionários
-- Cadastrar, editar, listar e excluir funcionários
-- Controle de cargo (Gerente / Funcionário)
-- Controle de salário
-- Login com autenticação por nome e senha
-- Exclusão lógica (muda status para Inativo)
+Cada tarefa da interface recebe um `EntityManager` próprio, fechado ao terminar. As migrações mantêm o esquema, vínculos e histórico dos serviços no banco.
 
-### Serviços
-- Cadastrar, editar, listar e excluir serviços
-- Vinculação com clienteEntity
-- Controle de status (Agendado / Em andamento / Concluído / Inativo)
-- Validação de data e valor
+```text
+Mensal1/
+├── pom.xml
+├── src/main/java/br/edu/uniamerica/projetomensal/
+│   ├── Main.java
+│   ├── config/ · controller/ · model/ · repository/
+│   └── service/ · utils/ · view/
+├── src/main/resources/
+│   ├── db/migration/        # Migrações V1 a V9
+│   ├── fonts/               # Fontes da interface
+│   └── META-INF/persistence.xml
+├── src/test/java/           # Testes unitários e de integração
+└── deprecated/             # Versões antigas, fora da compilação
+docs/images/                # Logo e capturas do README
+```
 
-### Relatórios
-- **Clientes** — total, ativos e inativos
-- **Funcionários** — total por cargo, soma de salários
-- **Serviços** — faturamento, pendentes, serviço mais lucrativo
-- **Agenda** — serviços dos próximos 3 meses com valor previsto
+## Testes
 
----
+Na pasta `Mensal1`:
 
-## 🗄 Banco de dados
+```bash
+mvn test
+```
 
-### Tabelas
-- `clienteEntities` — dados dos clienteEntities
-- `funcionarioEntities` — dados dos funcionários com senha
-- `servicoEntities` — serviços vinculados a clienteEntities
-- `agenda` — agendamentos vinculados a serviços
-- `historico_servicos` — log automático de serviços concluídos
-- `funcionario_servico` — relacionamento ManyToMany
+Sem banco, são executados **24 testes unitários**; os **19 testes de integração** ficam desativados por padrão. A última validação completa executou **43 testes**, sem falhas, erros ou testes ignorados.
 
-### Triggers
-| Trigger | Ação |
-|---------|------|
-| `trg_historico_servico` | Registra automaticamente serviços concluídos |
-| `trg_validar_status_funcionario` | Bloqueia cadastro de funcionário inativo |
-| `trg_atualizar_agenda_servico` | Atualiza agenda ao concluir serviço |
+Para a integração, crie um banco local separado chamado `master_test`, sem dados reais. Os testes executam migrações e alteram registros nesse banco.
 
----
+```powershell
+$env:DB_URL = "jdbc:postgresql://127.0.0.1:5432/master_test"
+$env:DB_USER = "usuario_do_banco_de_testes"
+$env:DB_PASSWORD = "senha_do_banco_de_testes"
+$env:MASTER_INTEGRATION = "1"
+mvn test
+Remove-Item Env:MASTER_INTEGRATION
+```
 
-## 🐛 Troubleshooting
+Antes de abrir a aplicação normal, restaure `DB_URL`, `DB_USER` e `DB_PASSWORD` para a conexão desejada. A cobertura inclui documentos, contatos opcionais, máscaras, CSV, persistência, permissões, conflitos de agenda e relatórios.
 
-| Erro | Causa | Solução |
-|------|-------|---------|
-| `Connection refused` | PostgreSQL não está rodando | Inicie o PostgreSQL |
-| `Database does not exist` | Banco não criado | Execute `CREATE DATABASE detetizadora_master` |
-| `Table not found` | Flyway não rodou | Execute `mvn clean install` |
-| `Invalid password` | Credenciais erradas | Verifique `persistence.xml` e variáveis de ambiente |
-| `Não é possível excluir` | Chave estrangeira | Exclua os registros dependentes primeiro |
+## Problemas comuns
 
----
+| Situação | Como resolver |
+| --- | --- |
+| `Defina DB_PASSWORD` | Configure a variável na execução da IDE ou no terminal que abrirá o JAR. Reinicie a IDE após alterar variáveis do Windows. |
+| Conexão recusada | Verifique se o PostgreSQL está ativo e confira host/porta de `DB_URL`. |
+| Banco inexistente | Crie o banco indicado em `DB_URL` antes de iniciar. |
+| Falha de autenticação do PostgreSQL | Confira `DB_USER` e `DB_PASSWORD`; a senha do banco é diferente da senha do login da aplicação. |
+| Aba Funcionários/Relatórios ausente | Entre com um gerente, como Maria Souza no banco demonstrativo. |
+| Documento ou horário recusado | Confira a mensagem do campo; documentos repetidos e horários já ocupados são bloqueados. |
+| Divergência de checksum do Flyway | V3 a V6 foram corrigidas durante a evolução do projeto. Em bancos antigos, analise o histórico e faça backup antes de qualquer ajuste. A aplicação não executa `repair()` automaticamente. |
 
+## Equipe
+
+| Integrantes |
+| --- |
+| Luan Augusto de Castro Rolan |
+| Adriano Ramos dos Santos Junior |
+| Victor Hugo de Almeida Marques |
+| Victor Luís da Luz |
+
+**Mentor:** Riad Younes — Engenheiro de Software FrontEnd
+
+**Orientador:** Victor Matheus de Souza Muller
