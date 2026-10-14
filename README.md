@@ -38,7 +38,7 @@ A interface usa tema escuro com destaque vermelho, fonte Inter, ícones vetoriai
 
 Receita realizada considera serviços concluídos; receita prevista considera serviços agendados ou em andamento. O maior valor concluído representa o valor do serviço, sem cálculo de lucro. O relatório da agenda mostra atendimentos pendentes entre hoje e os próximos três meses. O CSV usa separador `;`, UTF-8 com BOM e proteção contra interpretação de textos como fórmulas.
 
-As imagens usam somente dados demonstrativos, em um banco separado.
+As imagens usam somente dados demonstrativos.
 
 ## Permissões e regras
 
